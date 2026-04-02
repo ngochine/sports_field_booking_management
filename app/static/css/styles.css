@@ -1,0 +1,9 @@
+body {
+  font-family: 'Inter', 'Roboto', 'Arial', sans-serif;
+}
+
+:root {
+    --blue: #003c6d;
+    --orange: #f97316;
+    --white: #f8fafc;
+}

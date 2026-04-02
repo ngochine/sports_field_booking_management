@@ -1,5 +1,5 @@
 from app.extension import db
-from sqlalchemy import Column, Integer, Time, DateTime, Date, ForeignKey, Numeric, Text
+from sqlalchemy import Column, Integer, Time, DateTime, Date, ForeignKey, Numeric, Text, String
 from sqlalchemy import Enum as sqlEnum
 from sqlalchemy.orm import relationship
 from datetime import datetime
@@ -48,7 +48,7 @@ class Booking(db.Model):
     status = Column(sqlEnum(BookingStatusEnum), nullable=False, default=BookingStatusEnum.PENDING)
 
     time_frame_id = Column(Integer, ForeignKey('time_frame.id'), nullable=False)
-    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    user_id = Column(String(50), ForeignKey('user.id'), nullable=False)
     field_id = Column(Integer, ForeignKey('field.id'), nullable=False)
 
     time_frame = relationship('TimeFrame', backref='booking')
@@ -65,7 +65,7 @@ class Report(db.Model):
     tag = Column(sqlEnum(ReportTagEnum), nullable=False, default=ReportTagEnum.INFRASTRUCTURE)
 
     booking_id = Column(Integer, ForeignKey('booking.id'), nullable=False)
-    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    user_id = Column(String(50), ForeignKey('user.id'), nullable=False)
 
     booking = relationship('Booking', backref='reports', lazy=True)
     user = relationship('User', backref='reports', lazy=True)
