@@ -46,7 +46,7 @@ class Field(db.Model):
     location_id = Column(Integer, ForeignKey('location.id'), nullable=False)
 
     field_type = relationship('FieldType', backref='fields')
-    location = relationship('Location', backref='fields', lazy='True')
+    location = relationship('Location', backref='fields', lazy=True)
 
     def __str__(self):
         return f'{self.name}'
@@ -60,7 +60,7 @@ class Review(db.Model):
     rating = Column(Integer, nullable=False)
     created_at = Column(DateTime, nullable=False, default=datetime.now)
     field_id = Column(Integer, ForeignKey('field.id'), nullable=False)
-    customer_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    customer_id = Column(String(50), ForeignKey('user.id'), nullable=False)
 
     field = relationship('Field', backref='reviews')
     user = relationship('User', backref='reviews')

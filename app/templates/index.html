@@ -1,0 +1,575 @@
+{% extends "layout/base.html" %}
+{% block title %}Trang Chủ - PicklePadel{% endblock %}
+
+{% block body %}
+
+<style>
+  :root {
+    --orange: #f97316;
+    --white: #ffffff;
+    --dark: #1a1a1a;
+    --gray-light: #f5f5f5;
+    --gray-mid: #e5e5e5;
+  }
+
+  /* HERO */
+  .hero-section {
+    position: relative;
+    height: 88vh;
+    min-height: 560px;
+    overflow: hidden;
+  }
+  .hero-bg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, rgba(0,0,0,0.72) 40%, rgba(0,0,0,0.15) 100%);
+    display: flex;
+    align-items: center;
+  }
+  .hero-content {
+    max-width: 560px;
+    padding: 0 3rem;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--orange);
+    color: var(--white);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+  .hero-title {
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    font-weight: 900;
+    color: var(--white);
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  .hero-title span { color: var(--orange); }
+  .hero-sub {
+    color: rgba(255,255,255,0.78);
+    font-size: 1.05rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+  .btn-orange {
+    background: var(--orange);
+    color: var(--white);
+    border: none;
+    padding: 13px 32px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    display: inline-block;
+    transition: opacity .2s;
+  }
+  .btn-orange:hover { opacity: .88; color: var(--white); }
+  .btn-outline-white {
+    border: 2px solid rgba(255,255,255,.6);
+    color: var(--white);
+    background: transparent;
+    padding: 11px 28px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: background .2s;
+  }
+  .btn-outline-white:hover { background: rgba(255,255,255,.12); color: var(--white); }
+
+  /* QUICK BOOKING STRIP */
+  .booking-strip {
+    background: var(--white);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    border-radius: 16px;
+    margin-top: -56px;
+    position: relative;
+    z-index: 10;
+    padding: 2rem 2.5rem;
+  }
+  .booking-strip label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: #888; }
+  .booking-strip .form-control, .booking-strip .form-select {
+    border: 1.5px solid var(--gray-mid);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.97rem;
+  }
+  .booking-strip .form-control:focus, .booking-strip .form-select:focus {
+    border-color: var(--orange);
+    box-shadow: 0 0 0 3px rgba(249,115,22,.12);
+  }
+
+  /* SECTION TITLES */
+  .section-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--orange);
+  }
+  .section-title {
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+    font-weight: 800;
+    color: var(--dark);
+    margin-top: .25rem;
+    margin-bottom: .5rem;
+  }
+  .section-sub { color: #666; font-size: .97rem; }
+
+  /* STATS BAR */
+  .stat-bar {
+    background: var(--dark);
+    color: var(--white);
+    padding: 1.8rem 0;
+  }
+  .stat-num { font-size: 2.2rem; font-weight: 900; color: var(--orange); }
+  .stat-lbl { font-size: .82rem; color: rgba(255,255,255,.6); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* COURT CARDS */
+  .court-card {
+    border: none;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+    transition: transform .22s, box-shadow .22s;
+  }
+  .court-card:hover { transform: translateY(-5px); box-shadow: 0 8px 32px rgba(0,0,0,0.14); }
+  .court-card img { height: 200px; object-fit: cover; width: 100%; }
+  .court-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: rgba(249,115,22,.12);
+    color: var(--orange);
+  }
+  .court-badge.available { background: rgba(34,197,94,.12); color: #16a34a; }
+  .court-price { font-size: 1.15rem; font-weight: 800; color: var(--orange); }
+  .rating-star { color: #f59e0b; font-size: 13px; }
+
+  /* EVENT CARDS */
+  .event-card {
+    border: 1.5px solid var(--gray-mid);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .event-card:hover { border-color: var(--orange); box-shadow: 0 4px 20px rgba(249,115,22,.1); }
+  .event-date-box {
+    background: var(--orange);
+    color: var(--white);
+    min-width: 64px;
+    text-align: center;
+    padding: 10px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    border-radius: 10px 0 0 10px;
+  }
+  .event-day { font-size: 1.8rem; font-weight: 900; line-height: 1; }
+
+  /* HOW IT WORKS */
+  .step-icon {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: rgba(249,115,22,.1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    margin: 0 auto 1rem;
+    transition: background .2s;
+  }
+  .step-card:hover .step-icon { background: var(--orange); }
+  .step-num {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--orange);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* TESTIMONIALS */
+  .testi-card {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 1.6rem;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    height: 100%;
+  }
+  .testi-quote { font-size: 2rem; color: var(--orange); line-height: 1; font-weight: 900; }
+  .avatar-circle {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: var(--orange);
+    color: var(--white);
+    font-weight: 800;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* CTA BANNER */
+  .cta-banner {
+    background: var(--orange);
+    border-radius: 20px;
+    padding: 3.5rem 2rem;
+    color: var(--white);
+  }
+</style>
+
+<!-- ============ HERO ============ -->
+<div class="hero-section">
+  <img src="https://res.cloudinary.com/dsfv5nawc/image/upload/v1775032058/Padel_1_fr0qqu.jpg"
+       alt="Padel court" class="hero-bg">
+  <div class="hero-overlay">
+    <div class="hero-content">
+      <span class="hero-badge">🏆 Hệ thống đặt sân #1 Việt Nam</span>
+      <h1 class="hero-title">Đặt Sân <span>Pickleball</span><br>& Padel Dễ Dàng</h1>
+      <p class="hero-sub">Hơn 200 sân tại 15 tỉnh thành. Đặt trong 30 giây, nhận xác nhận ngay tức thì.</p>
+      <div class="d-flex gap-3 flex-wrap">
+        <a href="{{ url_for('auth.index') }}" class="btn-orange">Đặt sân ngay</a>
+        <a href="#how-it-works" class="btn-outline-white">Xem hướng dẫn</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ QUICK BOOKING ============ -->
+<div class="container">
+  <div class="booking-strip">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-3 col-sm-6">
+        <label class="mb-1">Môn thể thao</label>
+        <select class="form-select">
+          <option>🏓 Pickleball</option>
+          <option>🎾 Padel</option>
+          <option>🏸 Cầu lông</option>
+        </select>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <label class="mb-1">Khu vực</label>
+        <select class="form-select">
+          <option>TP. Hồ Chí Minh</option>
+          <option>Hà Nội</option>
+          <option>Đà Nẵng</option>
+          <option>Cần Thơ</option>
+        </select>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <label class="mb-1">Ngày đặt sân</label>
+        <input type="date" class="form-control" value="2025-05-20">
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <button class="btn w-100 btn-orange" style="padding:11px">Tìm sân</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ STATS ============ -->
+<div class="stat-bar mt-5">
+  <div class="container">
+    <div class="row text-center g-4">
+      <div class="col-6 col-md-3">
+        <div class="stat-num">200+</div>
+        <div class="stat-lbl">Sân thể thao</div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-num">15</div>
+        <div class="stat-lbl">Tỉnh / Thành phố</div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-num">50K+</div>
+        <div class="stat-lbl">Lượt đặt sân</div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-num">4.9★</div>
+        <div class="stat-lbl">Đánh giá trung bình</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ FEATURED COURTS ============ -->
+<div class="container my-5 py-3">
+  <div class="d-flex justify-content-between align-items-end mb-4">
+    <div>
+      <div class="section-label">Nổi bật</div>
+      <h2 class="section-title mb-1">Sân Được Đặt Nhiều</h2>
+      <p class="section-sub">Những sân chất lượng cao được người chơi yêu thích nhất</p>
+    </div>
+    <a href="{{ url_for('auth.index') }}" class="btn-orange d-none d-md-inline-block">Xem tất cả</a>
+  </div>
+
+  <div class="row g-4">
+    <!-- Card 1 -->
+    <div class="col-lg-4 col-md-6">
+      <div class="court-card card">
+        <div class="position-relative">
+          <img src="https://res.cloudinary.com/dsfv5nawc/image/upload/v1775032058/Padel_1_fr0qqu.jpg" alt="Sân 1">
+          <span class="position-absolute top-0 end-0 m-2 court-badge available">Còn trống</span>
+        </div>
+        <div class="card-body p-3">
+          <div class="d-flex justify-content-between align-items-start mb-1">
+            <h6 class="fw-bold mb-0" style="font-size:.97rem">Sân Pickleball Quận 7</h6>
+            <div class="court-price">180K<small class="fw-normal text-muted" style="font-size:.72rem">/giờ</small></div>
+          </div>
+          <div class="text-muted mb-2" style="font-size:.82rem">📍 Nguyễn Thị Thập, Quận 7, TP.HCM</div>
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <div class="rating-star">★★★★★</div>
+            <small class="text-muted">4.9 (128 đánh giá)</small>
+          </div>
+          <a href="#" class="btn w-100 btn-orange" style="font-size:.9rem;padding:8px">Đặt sân</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="col-lg-4 col-md-6">
+      <div class="court-card card">
+        <div class="position-relative">
+          <img src="https://res.cloudinary.com/dsfv5nawc/image/upload/v1775032058/Padel_1_fr0qqu.jpg" alt="Sân 2">
+          <span class="position-absolute top-0 end-0 m-2 court-badge">Hôm nay kín</span>
+        </div>
+        <div class="card-body p-3">
+          <div class="d-flex justify-content-between align-items-start mb-1">
+            <h6 class="fw-bold mb-0" style="font-size:.97rem">Padel Center Thảo Điền</h6>
+            <div class="court-price">350K<small class="fw-normal text-muted" style="font-size:.72rem">/giờ</small></div>
+          </div>
+          <div class="text-muted mb-2" style="font-size:.82rem">📍 Xuân Thủy, Thảo Điền, TP.HCM</div>
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <div class="rating-star">★★★★★</div>
+            <small class="text-muted">4.8 (96 đánh giá)</small>
+          </div>
+          <a href="#" class="btn w-100 btn-orange" style="font-size:.9rem;padding:8px">Đặt sân</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="col-lg-4 col-md-6">
+      <div class="court-card card">
+        <div class="position-relative">
+          <img src="https://res.cloudinary.com/dsfv5nawc/image/upload/v1775032058/Padel_1_fr0qqu.jpg" alt="Sân 3">
+          <span class="position-absolute top-0 end-0 m-2 court-badge available">Còn trống</span>
+        </div>
+        <div class="card-body p-3">
+          <div class="d-flex justify-content-between align-items-start mb-1">
+            <h6 class="fw-bold mb-0" style="font-size:.97rem">Pickleball Arena Bình Thạnh</h6>
+            <div class="court-price">150K<small class="fw-normal text-muted" style="font-size:.72rem">/giờ</small></div>
+          </div>
+          <div class="text-muted mb-2" style="font-size:.82rem">📍 Đinh Bộ Lĩnh, Bình Thạnh, TP.HCM</div>
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <div class="rating-star">★★★★☆</div>
+            <small class="text-muted">4.7 (74 đánh giá)</small>
+          </div>
+          <a href="#" class="btn w-100 btn-orange" style="font-size:.9rem;padding:8px">Đặt sân</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center mt-4 d-md-none">
+    <a href="{{ url_for('auth.index') }}" class="btn-orange">Xem tất cả sân</a>
+  </div>
+</div>
+
+<!-- ============ HOW IT WORKS ============ -->
+<div id="how-it-works" style="background: var(--gray-light)">
+  <div class="container py-5">
+    <div class="text-center mb-5">
+      <div class="section-label">Đơn giản & nhanh chóng</div>
+      <h2 class="section-title">Đặt Sân Chỉ 3 Bước</h2>
+    </div>
+    <div class="row g-4 text-center">
+      <div class="col-md-4 step-card">
+        <div class="step-icon">📅</div>
+        <div class="step-num">Bước 01</div>
+        <h5 class="fw-bold mt-1">Chọn sân & khung giờ</h5>
+        <p class="text-muted" style="font-size:.9rem">Lọc theo khu vực, môn thể thao và xem lịch trống theo thời gian thực.</p>
+      </div>
+      <div class="col-md-4 step-card">
+        <div class="step-icon">💳</div>
+        <div class="step-num">Bước 02</div>
+        <h5 class="fw-bold mt-1">Thanh toán online</h5>
+        <p class="text-muted" style="font-size:.9rem">Hỗ trợ MoMo, VNPay, chuyển khoản ngân hàng và thanh toán tại sân.</p>
+      </div>
+      <div class="col-md-4 step-card">
+        <div class="step-icon">✅</div>
+        <div class="step-num">Bước 03</div>
+        <h5 class="fw-bold mt-1">Nhận vé & ra sân</h5>
+        <p class="text-muted" style="font-size:.9rem">Vé điện tử gửi về Zalo/Email. Check-in bằng mã QR tại cổng.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ UPCOMING EVENTS ============ -->
+<div class="container my-5 py-3">
+  <div class="d-flex justify-content-between align-items-end mb-4">
+    <div>
+      <div class="section-label">Sắp diễn ra</div>
+      <h2 class="section-title mb-1">Giải Đấu & Sự Kiện</h2>
+      <p class="section-sub">Tham gia thi đấu, gặp gỡ cộng đồng và nâng cao kỹ năng của bạn</p>
+    </div>
+    <a href="#" class="btn-orange d-none d-md-inline-block">Tất cả sự kiện</a>
+  </div>
+
+  <div class="row g-3">
+    <!-- Event 1 -->
+    <div class="col-12">
+      <div class="event-card d-flex align-items-stretch overflow-hidden">
+        <div class="event-date-box">
+          <div class="event-day">24</div>
+          <div>Th5</div>
+        </div>
+        <div class="p-3 flex-grow-1">
+          <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+            <div>
+              <h6 class="fw-bold mb-1">Giải Pickleball Mở Rộng TP.HCM 2025</h6>
+              <div class="text-muted" style="font-size:.83rem">📍 Nhà Thi Đấu Phú Thọ, Quận 11 &nbsp;·&nbsp; ⏰ 07:00 - 18:00</div>
+            </div>
+            <a href="#" class="btn-orange" style="padding:7px 18px;font-size:.85rem;white-space:nowrap">Đăng ký</a>
+          </div>
+          <div class="mt-2 d-flex gap-2 flex-wrap">
+            <span class="court-badge">🏅 Cúp + 20 triệu</span>
+            <span class="court-badge available">Còn 12 suất</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Event 2 -->
+    <div class="col-12">
+      <div class="event-card d-flex align-items-stretch overflow-hidden">
+        <div class="event-date-box">
+          <div class="event-day">01</div>
+          <div>Th6</div>
+        </div>
+        <div class="p-3 flex-grow-1">
+          <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+            <div>
+              <h6 class="fw-bold mb-1">Workshop Padel Cơ Bản dành cho Người Mới</h6>
+              <div class="text-muted" style="font-size:.83rem">📍 Padel Center Thảo Điền &nbsp;·&nbsp; ⏰ 09:00 - 12:00</div>
+            </div>
+            <a href="#" class="btn-orange" style="padding:7px 18px;font-size:.85rem;white-space:nowrap">Đăng ký</a>
+          </div>
+          <div class="mt-2 d-flex gap-2 flex-wrap">
+            <span class="court-badge">📚 Có HLV hướng dẫn</span>
+            <span class="court-badge available">Free tham gia</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Event 3 -->
+    <div class="col-12">
+      <div class="event-card d-flex align-items-stretch overflow-hidden">
+        <div class="event-date-box" style="border-radius: 10px 0 0 10px;">
+          <div class="event-day">15</div>
+          <div>Th6</div>
+        </div>
+        <div class="p-3 flex-grow-1">
+          <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+            <div>
+              <h6 class="fw-bold mb-1">Giải Cầu Lông Phong Trào Bình Thạnh Cup</h6>
+              <div class="text-muted" style="font-size:.83rem">📍 Sân cầu lông Đinh Bộ Lĩnh &nbsp;·&nbsp; ⏰ 08:00 - 17:00</div>
+            </div>
+            <a href="#" class="btn-orange" style="padding:7px 18px;font-size:.85rem;white-space:nowrap">Đăng ký</a>
+          </div>
+          <div class="mt-2 d-flex gap-2 flex-wrap">
+            <span class="court-badge">🏸 Nội dung đơn + đôi</span>
+            <span class="court-badge">Phí: 200K/người</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TESTIMONIALS ============ -->
+<div style="background: var(--gray-light)">
+  <div class="container py-5">
+    <div class="text-center mb-5">
+      <div class="section-label">Người dùng nói gì?</div>
+      <h2 class="section-title">Đánh Giá Từ Cộng Đồng</h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="testi-card">
+          <div class="testi-quote">"</div>
+          <p style="font-size:.93rem;color:#444;margin-top:-.5rem">Giao diện rất dễ dùng, đặt sân pickleball cho cả nhóm chỉ mất 2 phút. Nhận QR code là ra sân luôn, không cần gọi điện xác nhận.</p>
+          <div class="d-flex align-items-center gap-3 mt-3">
+            <div class="avatar-circle">MN</div>
+            <div>
+              <div class="fw-bold" style="font-size:.9rem">Minh Nguyễn</div>
+              <div style="font-size:.78rem;color:#888">Quận 7, TP.HCM · ★★★★★</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="testi-card">
+          <div class="testi-quote">"</div>
+          <p style="font-size:.93rem;color:#444;margin-top:-.5rem">Tôi thường đặt sân padel vào sáng sớm. App cho phép hủy trước 24h và hoàn tiền ngay, rất văn minh so với các dịch vụ khác.</p>
+          <div class="d-flex align-items-center gap-3 mt-3">
+            <div class="avatar-circle" style="background:#16a34a">LT</div>
+            <div>
+              <div class="fw-bold" style="font-size:.9rem">Linh Trần</div>
+              <div style="font-size:.78rem;color:#888">Thảo Điền, TP.HCM · ★★★★★</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="testi-card">
+          <div class="testi-quote">"</div>
+          <p style="font-size:.93rem;color:#444;margin-top:-.5rem">Danh sách sân rất phong phú, có cả đánh giá thực tế từ người chơi khác. Nhờ vậy tôi tìm được sân mới chất lượng gần nhà.</p>
+          <div class="d-flex align-items-center gap-3 mt-3">
+            <div class="avatar-circle" style="background:#7c3aed">DP</div>
+            <div>
+              <div class="fw-bold" style="font-size:.9rem">Dũng Phạm</div>
+              <div style="font-size:.78rem;color:#888">Bình Thạnh, TP.HCM · ★★★★☆</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CTA BANNER ============ -->
+<div class="container my-5 pb-3">
+  <div class="cta-banner text-center">
+    <h2 style="font-weight:900;font-size:clamp(1.5rem,4vw,2.4rem);margin-bottom:.75rem">
+      Sẵn Sàng Ra Sân Chưa? 🏓
+    </h2>
+    <p style="font-size:1.05rem;opacity:.88;margin-bottom:2rem">
+      Tạo tài khoản miễn phí — đặt sân đầu tiên tặng ngay voucher <strong>50K</strong>
+    </p>
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+      <a href="{{ url_for('auth.register') }}"
+         style="background:white;color:var(--orange);font-weight:700;padding:13px 32px;border-radius:8px;text-decoration:none;font-size:1rem;">
+        Đăng ký ngay
+      </a>
+      <a href="{{ url_for('auth.index') }}"
+         style="border:2px solid rgba(255,255,255,.7);color:white;font-weight:600;padding:11px 28px;border-radius:8px;text-decoration:none;font-size:1rem;">
+        Xem sân trước
+      </a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

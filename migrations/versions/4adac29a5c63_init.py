@@ -1,8 +1,8 @@
-"""init tables
+"""init
 
-Revision ID: bda597c871fb
+Revision ID: 4adac29a5c63
 Revises: 
-Create Date: 2026-03-26 19:03:09.328597
+Create Date: 2026-04-01 17:09:39.587289
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'bda597c871fb'
+revision = '4adac29a5c63'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -34,9 +34,10 @@ def upgrade():
     sa.UniqueConstraint('name')
     )
     op.create_table('user',
-    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('id', sa.String(length=50), nullable=False),
     sa.Column('username', sa.String(length=50), nullable=False),
     sa.Column('password', sa.String(length=255), nullable=False),
+    sa.Column('email', sa.String(length=255), nullable=True),
     sa.Column('first_name', sa.String(length=50), nullable=True),
     sa.Column('last_name', sa.String(length=50), nullable=True),
     sa.Column('avatar', sa.String(length=100), nullable=True),
@@ -44,6 +45,7 @@ def upgrade():
     sa.Column('role', sa.Enum('ADMIN', 'CUSTOMER', name='userroleenum'), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('email'),
     sa.UniqueConstraint('username')
     )
     op.create_table('location',
@@ -69,7 +71,7 @@ def upgrade():
     sa.Column('rating', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('field_id', sa.Integer(), nullable=False),
-    sa.Column('customer_id', sa.Integer(), nullable=False),
+    sa.Column('customer_id', sa.String(length=50), nullable=False),
     sa.ForeignKeyConstraint(['customer_id'], ['user.id'], ),
     sa.ForeignKeyConstraint(['field_id'], ['field.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -89,7 +91,7 @@ def upgrade():
     sa.Column('booking_date', sa.Date(), nullable=False),
     sa.Column('status', sa.Enum('PENDING', 'CANCELLED', 'PAID', name='bookingstatusenum'), nullable=False),
     sa.Column('time_frame_id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.String(length=50), nullable=False),
     sa.Column('field_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['field_id'], ['field.id'], ),
     sa.ForeignKeyConstraint(['time_frame_id'], ['time_frame.id'], ),
@@ -102,7 +104,7 @@ def upgrade():
     sa.Column('status', sa.Enum('PENDING', 'RESOLVED', 'DENIED', name='reportstatusenum'), nullable=False),
     sa.Column('tag', sa.Enum('INFRASTRUCTURE', 'FACILITIES', 'SERVICE', 'ORTHER', name='reporttagenum'), nullable=False),
     sa.Column('booking_id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.String(length=50), nullable=False),
     sa.ForeignKeyConstraint(['booking_id'], ['booking.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
