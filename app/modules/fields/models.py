@@ -42,6 +42,8 @@ class Field(db.Model):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False)
+    image = Column(String(300))
+    description = Column(Text, nullable=True)
     field_type_id = Column(Integer, ForeignKey('field_type.id'), nullable=False)
     location_id = Column(Integer, ForeignKey('location.id'), nullable=False)
 

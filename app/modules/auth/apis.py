@@ -35,17 +35,17 @@ def login_api():
     if not user:
         return jsonify({
             "success": False,
-            "error": "Sai tài khoản hoặc mật khẩu"
+            "message": "Sai tài khoản hoặc mật khẩu"
         }), 401
 
     access_token = create_access_token(identity=user.id)
     refresh_token = create_refresh_token(identity=user.id)
     
     resp = jsonify({
-    "success": True,
-    "access_token": access_token,
-    "refresh_token": refresh_token,
-    "user": schemas.UserOutputSchema().dump(user)
+        "success": True,
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "user": schemas.UserOutputSchema().dump(user)
     })
 
     set_access_cookies(resp, access_token)

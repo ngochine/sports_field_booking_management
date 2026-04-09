@@ -81,7 +81,7 @@ function login() {
     .then(data => {
         container.innerHTML = ""
         showAlert(container, "Đăng nhập thành công", "success")
-        setTimeout(() => window.location.href = "/", 2000)
+        setTimeout(() => window.location.href = "/", 500)
     })
     .catch(err => {
         container.innerHTML = ""

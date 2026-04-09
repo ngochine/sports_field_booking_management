@@ -1,0 +1,86 @@
+[
+  {
+    "id": 1,
+    "start_time": "06:00:00",
+    "end_time": "07:30:00",
+    "price": 150000.00,
+    "field_id": 1
+  },
+  {
+    "id": 2,
+    "start_time": "07:30:00",
+    "end_time": "09:00:00",
+    "price": 150000.00,
+    "field_id": 1
+  },
+  {
+    "id": 3,
+    "start_time": "17:00:00",
+    "end_time": "18:30:00",
+    "price": 200000.00,
+    "field_id": 1
+  },
+  {
+    "id": 4,
+    "start_time": "18:30:00",
+    "end_time": "20:00:00",
+    "price": 250000.00,
+    "field_id": 1
+  },
+  {
+    "id": 5,
+    "start_time": "20:00:00",
+    "end_time": "21:30:00",
+    "price": 250000.00,
+    "field_id": 1
+  },
+  {
+    "id": 6,
+    "start_time": "06:00:00",
+    "end_time": "07:30:00",
+    "price": 150000.00,
+    "field_id": 2
+  },
+  {
+    "id": 7,
+    "start_time": "18:30:00",
+    "end_time": "20:00:00",
+    "price": 250000.00,
+    "field_id": 2
+  },
+  {
+    "id": 8,
+    "start_time": "06:00:00",
+    "end_time": "07:30:00",
+    "price": 300000.00,
+    "field_id": 3
+  },
+  {
+    "id": 9,
+    "start_time": "17:00:00",
+    "end_time": "18:30:00",
+    "price": 350000.00,
+    "field_id": 3
+  },
+  {
+    "id": 10,
+    "start_time": "06:00:00",
+    "end_time": "07:30:00",
+    "price": 80000.00,
+    "field_id": 4
+  },
+  {
+    "id": 11,
+    "start_time": "17:00:00",
+    "end_time": "18:30:00",
+    "price": 100000.00,
+    "field_id": 4
+  },
+  {
+    "id": 12,
+    "start_time": "19:00:00",
+    "end_time": "21:00:00",
+    "price": 200000.00,
+    "field_id": 6
+  }
+]

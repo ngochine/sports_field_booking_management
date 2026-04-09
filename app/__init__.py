@@ -2,6 +2,9 @@ from flask import Flask
 from app.extension import db, migrate, jwt
 from instance.config import Config
 import cloudinary
+from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
+from app.modules.auth import dao
+
 
 def create_app():
     flask_app = Flask(__name__)
@@ -16,6 +19,19 @@ def create_app():
     db.init_app(flask_app)
     migrate.init_app(flask_app, db)
     jwt.init_app(flask_app)
+
+    @flask_app.context_processor
+    def inject_user():
+        try:
+            verify_jwt_in_request(optional=True)
+            user_id = get_jwt_identity()
+            if user_id:
+                user = dao.get_user_by_id(user_id)
+                return dict(current_user=user)
+        except Exception as e:
+            print(e)
+
+        return dict(current_user=None)
     
     import app.modules.auth.models
     import app.modules.fields.models

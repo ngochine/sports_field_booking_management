@@ -1,0 +1,87 @@
+[
+  {
+    "id": 1,
+    "name": "Sân 5A",
+    "field_type_id": 1,
+    "location_id": 1, 
+    "image" : "https://i.pinimg.com/1200x/69/bf/f5/69bff57dd7df19bf4d8a8304ac0e567b.jpg"
+  },
+  {
+    "id": 2,
+    "name": "Sân 5B",
+    "field_type_id": 1,
+    "location_id": 1,
+    "image" : "https://res.cloudinary.com/dsfv5nawc/image/upload/v1775032058/Padel_1_fr0qqu.jpg"
+  },
+  {
+    "id": 3,
+    "name": "Sân 7A",
+    "field_type_id": 2,
+    "location_id": 1, 
+    "image" : "https://i.pinimg.com/1200x/2c/8e/a0/2c8ea057c81d25ca92929fccb8f86058.jpg"
+
+  },
+  {
+    "id": 4,
+    "name": "Sân Cầu Lông 01",
+    "field_type_id": 4,
+    "location_id": 2,
+    "image" : "https://i.pinimg.com/1200x/2c/8e/a0/2c8ea057c81d25ca92929fccb8f86058.jpg"
+  },
+  {
+    "id": 5,
+    "name": "Sân Cầu Lông 02",
+    "field_type_id": 5,
+    "location_id": 2,
+    "image" : "https://i.pinimg.com/1200x/69/bf/f5/69bff57dd7df19bf4d8a8304ac0e567b.jpg"
+  },
+  {
+    "id": 6,
+    "name": "Sân Tennis A",
+    "field_type_id": 6,
+    "location_id": 2,
+    "image" : "https://res.cloudinary.com/dsfv5nawc/image/upload/v1775032058/Padel_1_fr0qqu.jpg"
+  },
+  {
+    "id": 7,
+    "name": "Sân 11 Người Chính",
+    "field_type_id": 3,
+    "location_id": 3,
+    "image" : "https://i.pinimg.com/1200x/69/bf/f5/69bff57dd7df19bf4d8a8304ac0e567b.jpg"
+  },
+  {
+    "id": 8,
+    "name": "Sân Bóng Rổ ĐHQG",
+    "field_type_id": 8,
+    "location_id": 3, 
+    "image" : "https://res.cloudinary.com/dsfv5nawc/image/upload/v1775032058/Padel_1_fr0qqu.jpg"
+  },
+  {
+    "id": 9,
+    "name": "Sân 5 Tân Bình 01",
+    "field_type_id": 1,
+    "location_id": 4,
+    "image" : "https://i.pinimg.com/1200x/2c/8e/a0/2c8ea057c81d25ca92929fccb8f86058.jpg"
+  },
+  {
+    "id": 10,
+    "name": "Sân 5 Tân Bình 02",
+    "field_type_id": 1,
+    "location_id": 4,
+    "image" : "https://i.pinimg.com/1200x/2c/8e/a0/2c8ea057c81d25ca92929fccb8f86058.jpg"
+  },
+  {
+    "id": 11,
+    "name": "Sân 7 Bình Thạnh",
+    "field_type_id": 2,
+    "location_id": 5,
+    "image" : "https://i.pinimg.com/1200x/69/bf/f5/69bff57dd7df19bf4d8a8304ac0e567b.jpg"
+  },
+  {
+    "id": 12,
+    "name": "Sân Pickleball 01",
+    "field_type_id": 11,
+    "location_id": 9,
+    "image" : "https://res.cloudinary.com/dsfv5nawc/image/upload/v1775032058/Padel_1_fr0qqu.jpg"
+  }
+]

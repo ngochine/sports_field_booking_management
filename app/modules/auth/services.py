@@ -1,9 +1,9 @@
 from .models import User
 from . import dao
 from werkzeug.security import generate_password_hash, check_password_hash
-import re
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
+
 
 def register_user(validate_data: dict) -> User:
     validate_data.pop('confirm', None)
