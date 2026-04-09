@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "name": "Sân bóng đá 5 người",
+    "description": "Sân bóng đá mini dành cho 5 người mỗi đội, mặt sân cỏ nhân tạo thế hệ mới"
+  },
+  {
+    "id": 2,
+    "name": "Sân bóng đá 7 người",
+    "description": "Sân bóng đá dành cho 7 người mỗi đội, mặt sân cỏ nhân tạo tiêu chuẩn FIFA"
+  },
+  {
+    "id": 3,
+    "name": "Sân bóng đá 11 người",
+    "description": "Sân bóng đá tiêu chuẩn thi đấu chuyên nghiệp cho 11 người mỗi đội"
+  },
+  {
+    "id": 4,
+    "name": "Sân cầu lông đơn",
+    "description": "Sân cầu lông trong nhà dành cho thi đấu đơn, hệ thống đèn LED tiêu chuẩn"
+  },
+  {
+    "id": 5,
+    "name": "Sân cầu lông đôi",
+    "description": "Sân cầu lông trong nhà dành cho thi đấu đôi, sàn gỗ chống trơn trượt"
+  },
+  {
+    "id": 6,
+    "name": "Sân tennis mặt cứng",
+    "description": "Sân tennis ngoài trời mặt sân bê tông acrylic tiêu chuẩn quốc tế"
+  },
+  {
+    "id": 7,
+    "name": "Sân tennis mặt đất nện",
+    "description": "Sân tennis mặt đất nện (clay court) phong cách Roland Garros"
+  },
+  {
+    "id": 8,
+    "name": "Sân bóng rổ",
+    "description": "Sân bóng rổ toàn sân ngoài trời, nền bê tông, có hệ thống chiếu sáng ban đêm"
+  },
+  {
+    "id": 9,
+    "name": "Sân bóng chuyền",
+    "description": "Sân bóng chuyền trong nhà tiêu chuẩn thi đấu, sàn gỗ đàn hồi"
+  },
+  {
+    "id": 10,
+    "name": "Sân bóng chuyền bãi biển",
+    "description": "Sân bóng chuyền ngoài trời nền cát tự nhiên"
+  },
+  {
+    "id": 11,
+    "name": "Sân pickleball",
+    "description": "Sân pickleball trong nhà dành cho 2-4 người, môn thể thao mới phổ biến"
+  }
+]

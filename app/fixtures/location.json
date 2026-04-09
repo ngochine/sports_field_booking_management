@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "name": "Cụm sân thể thao Lê Văn Việt",
+    "address_id": 1
+  },
+  {
+    "id": 2,
+    "name": "Trung tâm thể thao Phú Mỹ Hưng",
+    "address_id": 2
+  },
+  {
+    "id": 3,
+    "name": "Khu thể thao Đại học Quốc Gia",
+    "address_id": 3
+  },
+  {
+    "id": 4,
+    "name": "Sân thể thao Tân Bình Sport",
+    "address_id": 4
+  },
+  {
+    "id": 5,
+    "name": "Cụm sân Bình Thạnh Arena",
+    "address_id": 5
+  },
+  {
+    "id": 6,
+    "name": "Thể thao Sư Phạm Kỹ Thuật",
+    "address_id": 6
+  },
+  {
+    "id": 7,
+    "name": "Sân vận động Quận 10",
+    "address_id": 7
+  },
+  {
+    "id": 8,
+    "name": "Khu thể thao An Sương",
+    "address_id": 8
+  },
+  {
+    "id": 9,
+    "name": "Trung tâm thể thao Thạnh Mỹ Lợi",
+    "address_id": 9
+  },
+  {
+    "id": 10,
+    "name": "Gò Vấp Sport Center",
+    "address_id": 10
+  },
+  {
+    "id": 11,
+    "name": "Bình Tân Fitness & Sport",
+    "address_id": 11
+  }
+]

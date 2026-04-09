@@ -1,7 +1,161 @@
 {%extends 'layout/base.html'%}
 
-{%block title%}Thông tin người dùng{%endblock%}
+{%block title%}Danh sách sân{%endblock%}
 
 {%block body%}
+    <div class="container my-5">
+        <div class="row">
+            <form action="{{url_for('field.fields', field_type_id= request.args.get('field_type_id',''), 
+                        city_code= request.args.get('city_code',''),
+                        district_code = request.args.get('district_code',''))}}"  class="col-lg-3 me-3">
+                <div class="filter-sidebar">
+                    <div class="filter-title"><i class="bi bi-funnel-fill me-2"></i>Bộ lọc tìm kiếm</div>
 
-{%endblock%}
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Khu vực</label>
+                        <select class="form-select mb-2" id="citySearch" name="city_code">
+                            <option value="">Chọn Tỉnh/Thành phố</option>
+                        </select>
+                        <select class="form-select" id="districtsSearch" name="district_code">
+                            <option value="">Chọn Quận/Huyện</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Loại sân</label>
+                        {% for ft in field_types %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" value="{{ft.id}}" name="field_type_id"
+                                    {% if request.args.get('field_type_id', '') | int == ft.id %} checked {% endif %}>
+                                <label class="form-check-label" >{{ft.name}}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">
+                            Khoảng giá (vnđ/h): 
+                            <span id="priceValue" class="fw-bold" style="color: var(--orange);">100.000</span>
+                        </label>
+                        <input type="range" id="priceRange" class="form-range"  name="range_price"
+                            min="100000" max="1000000" step="50000" 
+                            value="{{ request.args.get('range_price', 100000) }}"
+                        >
+                        <div class="d-flex justify-content-between text-muted small">
+                            <span>100.000 VND</span>
+                            <span>1.000.000 VND</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn w-100 text-white" style="background: var(--blue);">Áp dụng lọc</button>
+                </div>
+            </form>
+
+            <div class="col-lg-8 ms-3">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                    <h5 class="fw-bold mb-0">Tìm thấy <span style="color: var(--orange);">{{ field_length }}</span> sân phù hợp</h5>
+
+                    <select class="form-select w-auto" name="order">
+                        <option value="newest">Mới nhất</option>
+                        <option value="price_desc">Giá thấp đến cao</option>
+                        <option value="re_asc">Đánh giá cao nhất</option>
+                    </select>
+                </div>
+
+                <div class="row g-4">
+                    {% for f in fields %}
+                    <div class="col-lg-6 col-md-6 col-12 mb-5">
+                        <div class="card border shadow-sm rounded h-100">
+                            <img class="card-img-top fixed-img" src={% if f.image %} {{f.image}} {% else %}"https://i.pinimg.com/1200x/69/bf/f5/69bff57dd7df19bf4d8a8304ac0e567b.jpg" {%endif%} alt="Sân 2">
+                            <div class="card-body">
+                                <div>
+                                    <h5 class="fw-bold mb-2">{{ f.name }}</h5>
+
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fa-solid fa-star text-warning me-2"></i>
+                                        <span>4.5 (120 đánh giá)</span>
+                                    </div>
+
+                                    <div class="d-flex align-items-center mb-3">
+                                        <i class="fa-solid fa-location-dot text-danger me-2"></i>
+                                        <span>{{ f.location.name }}</span>
+                                    </div>
+                                </div>
+                                <a href="{{url_for('field.field_detail', field_id= f.id)}}" class="btn w-100" style="background-color: var(--orange); color: var(--white);">Xem chi tiết</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <nav class="mt-4">
+                    <ul class="pagination justify-content-center">
+
+                        {% if page > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{page-1}}">&laquo;</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">&laquo;</span>
+                        </li>
+                        {% endif %}
+
+                        {% for i in range(1, pages+1) %}
+                            <li class="page-item {% if page == i %}active{% endif %}">
+                                <a class="page-link" href="?page={{i}}">{{i}}</a>
+                            </li>
+                        {% endfor %}
+
+                        {% if page < pages %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{page+1}}">&raquo;</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">&raquo;</span>
+                        </li>
+                        {% endif %}
+
+                    </ul>
+                </nav>
+
+            </div>
+
+
+        </div>
+    </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const selectedCity = "{{ request.args.get('city_code', '') }}";
+        getCity(selectedCity)
+
+        
+        const selectedDistrict = "{{ request.args.get('district_code', '') }}";
+        if (selectedDistrict && selectedCity){
+            getDistrict(selectedCity, selectedDistrict)
+        }
+
+        const cityDropdown = document.getElementById("citySearch")
+        if (cityDropdown) {
+            cityDropdown.addEventListener("change", function () {
+                const cityCode = this.value
+                if (!cityCode) {
+                    document.getElementById("districtsSearch").innerHTML = '<option value="">Chọn Quận/Huyện</option>'
+                    return
+                }
+                getDistrict(cityCode, null)
+            });
+        }
+
+        const range = document.getElementById("priceRange")
+        const price = document.getElementById("priceValue")
+
+        range.addEventListener("change", function() {
+            price.innerText = this.value
+        })
+    })
+</script>
+
+{% endblock %}

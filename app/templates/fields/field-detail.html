@@ -1,0 +1,252 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}{{ field.name }}{% endblock %}
+
+{% block body %}
+<div>
+    <div class="position-relative mb-5">
+        <img src="{% if field.image %}{{ field.image }}{% else %}https://i.pinimg.com/1200x/69/bf/f5/69bff57dd7df19bf4d8a8304ac0e567b.jpg{% endif %}" 
+            class="object-fit-cover w-100" style="height: 500px;" alt="{{ field.name }}">
+
+        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-end p-4">
+            <div style="color: var(--white);">
+                <span class="badge mb-2 p-2" style="background-color: var(--orange);">{{ field.field_type.name }}</span>
+                <h1 class="fw-bolder">{{ field.name }}</h1>
+                <div class="d-flex flex-wrap align-items-center small">
+                    <span class="me-3">
+                        <i class="fa-solid fa-location-dot"></i>
+                        {{ field.location.address.street }},
+                        {{ field.location.address.district }},
+                        {{ field.location.address.city }}
+                    </span>
+                    <span>
+                        <i class="fa-solid fa-star text-warning"></i>
+                        4.5 ({{ field.reviews | length }} đánh giá)
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <ul class="nav nav-underline border-bottom mb-4 gap-lg-5">
+                    <li class="nav-item"><button data-bs-toggle="tab" data-bs-target="#tab-info" class="nav-link active" style="color: var(--orange)">Thông tin</button></li>
+                    <li class="nav-item"><button data-bs-toggle="tab" data-bs-target="#tab-images" class="nav-link" style="color: var(--orange)">Hình ảnh</button></li>
+                    <li class="nav-item"><button data-bs-toggle="tab" data-bs-target="#tab-services" class="nav-link" style="color: var(--orange)">Vị trí</button></li>
+                    <li class="nav-item"><button data-bs-toggle="tab" data-bs-target="#tab-reviews" class="nav-link" style="color: var(--orange)">Đánh giá</button></li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="tab-info">
+                        <div class="mb-5">
+                            <h5 class="fw-bold mb-2" style="color:var(--blue)">Giới thiệu</h5>
+                            <p class="text-muted">
+                                {% if field.description %} {{field.description}} {% else %} <strong>{{ field.name }}</strong> là một trong những sân {{ field.field_type.name | lower }}
+                                chất lượng cao tại {{ field.location.address.district }}, {{ field.location.address.city }} {% endif %}
+                            </p>
+                        </div>
+
+                        <div class="mb-5">
+                            <h5 class="fw-bold mb-3" style="color:var(--blue)">Tiện ích</h5>
+                            <div class="d-flex flex-wrap gap-3">
+                                <span class="badge rounded-pill p-2 border" style="color: var(--orange);"><i class="fa-solid fa-parking"></i> Bãi đỗ xe</span>
+                                <span class="badge rounded-pill p-2 border" style="color: var(--orange);"><i class="fa-solid fa-shower"></i> Phòng tắm</span>
+                                <span class="badge rounded-pill p-2 border" style="color: var(--orange);"><i class="fa-solid fa-lightbulb"></i> Đèn chiếu sáng</span>
+                                <span class="badge rounded-pill p-2 border" style="color: var(--orange);"><i class="fa-solid fa-wifi"></i> WiFi miễn phí</span>
+                                <span class="badge rounded-pill p-2 border" style="color: var(--orange);"><i class="fa-solid fa-bottle-water"></i> Căn tin</span>
+                                <span class="badge rounded-pill p-2 border" style="color: var(--orange);"><i class="fa-solid fa-shirt"></i> Cho thuê dụng cụ</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-3" style="color:var(--blue)">Nội quy sân</h5>
+                            <ul class="text-muted ps-3 gap-3">
+                                <li class="mb-2">Mặc trang phục thể thao phù hợp khi vào sân</li>
+                                <li class="mb-2">Không hút thuốc, không mang thức ăn ngoài vào khu vực sân</li>
+                                <li class="mb-2">Giữ gìn vệ sinh chung, bỏ rác đúng nơi quy định</li>
+                                <li class="mb-2">Hủy đặt sân trước ít nhất <strong style="color: var(--orange);">2 tiếng</strong> để được hoàn tiền</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tab-reviews">
+                        <h5 class="fw-bold my-4" style="color:var(--blue)">Đánh giá sân</h5>
+                        {% for rv in field.reviews %}
+                        <div class="review-card">
+                            <div class="d-flex gap-3 align-items-start mb-3">
+                                <div class="col-1">
+                                    <img class="object-fit-cover rounded-circle h-auto" style="width: 40px"
+                                    src="{% if rv.user.avatar %}{{ rv.user.avatar }}{% else %}https://res.cloudinary.com/dvfuzolim/image/upload/v1768406079/avatar_trang_1_cd729c335b_kitzwg.jpg{% endif %}">
+                                </div>
+                                <div class="col-11">
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-1">
+                                        <div class="fw-bold" style="font-size:.95rem">{{ rv.user.username }}</div>
+                                        <small class="text-muted">{{ rv.created_at.strftime('%d/%m/%Y') }}</small>
+                                    </div>
+                                    <div class="mb-1">
+                                        {% for i in range(rv.rating) %}<i class="fa-solid fa-star star-filled text-warning"></i>{% endfor %}
+                                        {% for i in range(5 - rv.rating) %}<i class="fa-solid fa-star star-empty"></i>{% endfor %}
+                                    </div>
+                                    <p class="mb-0 text-muted" style="font-size:.9rem;line-height:1.6">
+                                        {{ rv.content if rv.content else 'Người dùng không để lại nhận xét.' }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="text-center text-muted py-4">
+                            <i class="fa-regular fa-comment-dots mb-2"></i>
+                            <p>Chưa có đánh giá nào. Hãy là người đầu tiên!</p>
+                        </div>
+                        {% endfor %}
+
+                        {% if current_user %}
+                        <div>
+                            <h6 class="fw-bold mb-3" style="color:var(--blue)">Viết đánh giá của bạn</h6>
+                            <form action="#" method="POST">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" style="font-size:.9rem">Đánh giá sao</label>
+                                    <div class="star-select d-flex gap-1" id="starSelect">
+                                        {% for i in range(1,6) %}
+                                        <i class="fa-solid fa-star" data-val="{{ i }}"></i>
+                                        {% endfor %}
+                                    </div>
+                                    <input type="hidden" name="rating" id="ratingInput" value="0">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bolder">Nhận xét</label>
+                                    <textarea class="form-control" name="content" rows="3"
+                                            placeholder="Chia sẻ trải nghiệm của bạn tại sân này..."></textarea>
+                                </div>
+                                <button type="submit" class="btn fw-bolder px-4 rounded-3 float-end"
+                                        style="background:var(--blue); color: var(--white);">
+                                    Gửi đánh giá
+                                </button>
+                            </form>
+                        </div>
+                        {% else %}
+                        <hr>
+                        <div class="text-center py-3" style="color: var(--gray)">
+                            <a href="{{ url_for('auth.login') }}" style="color:var(--orange)">Đăng nhập</a> để viết đánh giá.
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="tab-pane fade" id="tab-images">
+                        
+                    </div>
+
+                    <div class="tab-pane fade" id="tab-services">
+                        <div class="mb-3">
+                            <h5 class="fw-bold mb-1" style="color:var(--blue)">Địa chỉ</h5>
+                            <p class="text-muted mb-3">
+                                <i class="fa-solid fa-location-dot text-danger me-1"></i>
+                                {{ field.location.address.street }},
+                                {{ field.location.address.district }},
+                                {{ field.location.address.city }}
+                            </p>
+                        </div>
+                        <div class="m-3 p-3">
+                            <div class="text-center">
+                                <a href="https://maps.google.com/?q={{ field.location.address.street }},{{ field.location.address.city }}"
+                                target="_blank" class="btn btn-sm mt-2 text-white fw-bold p-2"
+                                style="background:var(--orange); border-radius:6px;">
+                                    <i class="fa-solid fa-arrow-up-right-from-square me-1"></i>Mở Google Maps
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="border rounded-3 shadow-sm p-2 position-sticky" style="top: 20px;">
+                    <div class="card-header text-center text-uppercase fw-bolder my-3" style="color: var(--blue);">
+                        <i class="fa-solid fa-calendar-check me-2" style="color: var(--blue);"></i> Thông tin đặt sân
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small" style="color: var(--blue);">Chọn ngày</label>
+                            <input type="date" class="form-control border rounded fs-6" min="{{ today }}" style="color: var(--gray);">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small" style="color: var(--blue);">Khung giờ</label>
+                            <div class="row g-2">
+                                {% if time_frames %}
+                                {% for tf in time_frames %}
+                                <div class="col-6">
+                                    <button class="btn border {% if tf.booking %}unavailable{% endif %}" 
+                                        style="border-color: var(--blue) !important;" onclick="">
+                                        {{ tf.start_time }} - {{tf.end_time}}
+                                    </button>
+                                </div>
+                                {% endfor %}
+                                {% else %}
+                                <div class="col-12 small text-muted">Hiện sân chưa được phân khung giờ hoạt động. Vui lòng quay lại sau!</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small" style="color: var(--blue);">Thời lượng</label>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3 p-3 rounded-3" 
+                            style="background-color:#fff8f2; border:1px dashed var(--orange)">
+                            <span class="fw-semibold text-muted" style="color: var(--gray-light);">Tổng tiền</span>
+                            <span class="fw-bolder fs-5" style="color:var(--orange);" id="totalPrice">0 VNĐ</span>
+                        </div>
+                        <form action="#" method="POST">
+                            <input type="hidden" name="field_id" value="{{ field.id }}">
+                            <input type="hidden" name="book_date" id="formDate">
+                            <input type="hidden" name="time_slot" id="formTime">
+                            <input type="hidden" name="duration" id="formDuration">
+                            <button type="submit" class="btn w-100 fw-bolder" style="background-color: var(--orange); color: var(--white);">
+                                <i class="fa-solid fa-bolt me-2"></i>Đặt sân ngay
+                            </button>
+                        </form>
+
+                        <div class="text-center mt-3 text-muted small">
+                            <i class="fa-solid fa-shield-halved me-1" style="color:var(--blue);"></i>
+                            Thanh toán an toàn - Hủy miễn phí trước 2 tiếng
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="mt-5">
+            <h5 class="fw-bold mb-4" style="color:var(--blue)">Sân tương tự</h5>
+            <div class="row">
+                {% for f in related_fields %}
+                <div class="col-lg-3 col-md-6 col-12 mb-4">
+                    <div class="card border shadow-sm rounded h-100">
+                        <img class="card-img-top fixed-img"
+                            src="{% if f.image %}{{ f.image }}{% else %}https://i.pinimg.com/1200x/69/bf/f5/69bff57dd7df19bf4d8a8304ac0e567b.jpg{% endif %}">
+                        <div class="card-body">
+                            <h5 class="fw-bold mb-2">{{ f.name }}</h5>
+                            <div class="mb-2">
+                                <i class="fa-solid fa-star text-warning me-2"></i>
+                                <span>4.5 (120 đánh giá)</span>
+                            </div>
+
+                            <div class="mb-3">
+                                <i class="fa-solid fa-location-dot text-danger me-2"></i>
+                                <span>{{ f.location.name }}</span>
+                            </div>
+
+                            <a href="{{url_for('field.field_detail', field_id=f.id)}}"
+                            class="btn w-100" style="background-color: var(--orange); color: var(--white);">Xem sân</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+{% endblock %}

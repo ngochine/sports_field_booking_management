@@ -1,0 +1,90 @@
+[
+  {
+    "id": 1,
+    "content": "Đèn chiếu sáng sân 5A bị hỏng 2 bóng, ảnh hưởng đến tầm nhìn khi chơi tối.",
+    "status": "resolved",
+    "tag": "infrastructure",
+    "booking_id": 1,
+    "user_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901"
+  },
+  {
+    "id": 2,
+    "content": "Nhà vệ sinh khu sân 7A rất bẩn, mùi khó chịu. Cần vệ sinh thường xuyên hơn.",
+    "status": "pending",
+    "tag": "facilities",
+    "booking_id": 2,
+    "user_id": "c3d4e5f6-a7b8-9012-cdef-123456789012"
+  },
+  {
+    "id": 3,
+    "content": "Nhân viên tại quầy lễ tân thái độ không tốt, nói chuyện thiếu lịch sự.",
+    "status": "pending",
+    "tag": "service",
+    "booking_id": 5,
+    "user_id": "a7b8c9d0-e1f2-3456-abcd-567890123456"
+  },
+  {
+    "id": 4,
+    "content": "Lưới cầu lông bị rách ở sân 01, cần thay mới gấp.",
+    "status": "resolved",
+    "tag": "facilities",
+    "booking_id": 10,
+    "user_id": "e1f2a3b4-c5d6-7890-efab-901234567890"
+  },
+  {
+    "id": 5,
+    "content": "Cỏ nhân tạo sân 5B bị bong ở góc sân, dễ gây vấp ngã khi chạy.",
+    "status": "pending",
+    "tag": "infrastructure",
+    "booking_id": 6,
+    "user_id": "b8c9d0e1-f2a3-4567-bcde-678901234567"
+  },
+  {
+    "id": 6,
+    "content": "Hệ thống tưới cỏ tự động bị rò rỉ làm ướt khu vực khán giả.",
+    "status": "resolved",
+    "tag": "infrastructure",
+    "booking_id": 8,
+    "user_id": "d0e1f2a3-b4c5-6789-defa-890123456789"
+  },
+  {
+    "id": 7,
+    "content": "Máy lạnh khu vực chờ bị hỏng, thời tiết nóng rất khó chịu khi ngồi chờ.",
+    "status": "denied",
+    "tag": "facilities",
+    "booking_id": 7,
+    "user_id": "c9d0e1f2-a3b4-5678-cdef-789012345678"
+  },
+  {
+    "id": 8,
+    "content": "Bãi đậu xe quá nhỏ, không đủ chỗ vào buổi tối cuối tuần.",
+    "status": "pending",
+    "tag": "orther",
+    "booking_id": 11,
+    "user_id": "c3d4e5f6-a7b8-9012-cdef-123456789012"
+  },
+  {
+    "id": 9,
+    "content": "Bình nước uống miễn phí tại sân cầu lông thường xuyên hết, không có ai châm thêm.",
+    "status": "resolved",
+    "tag": "service",
+    "booking_id": 3,
+    "user_id": "e5f6a7b8-c9d0-1234-efab-345678901234"
+  },
+  {
+    "id": 10,
+    "content": "Mặt sân tennis bị nứt dọc đường biên, ảnh hưởng đến nảy bóng.",
+    "status": "pending",
+    "tag": "infrastructure",
+    "booking_id": 7,
+    "user_id": "c9d0e1f2-a3b4-5678-cdef-789012345678"
+  },
+  {
+    "id": 11,
+    "content": "Khóa phòng thay đồ bị hỏng, không khóa được. Lo ngại về an toàn tài sản.",
+    "status": "resolved",
+    "tag": "facilities",
+    "booking_id": 9,
+    "user_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901"
+  }
+]
