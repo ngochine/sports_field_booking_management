@@ -2,8 +2,8 @@ from flask import request, jsonify
 from . import schemas, services
 from marshmallow import ValidationError
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, \
-    get_jwt_identity, set_access_cookies, unset_jwt_cookies, set_refresh_cookies
-
+    get_jwt_identity, set_access_cookies, unset_jwt_cookies, set_refresh_cookies, get_jwt
+from app.extension import jwt
 
 def register_api():
     try:
@@ -67,12 +67,21 @@ def refresh_api():
     return resp, 200
 
 
-@jwt_required(locations=["cookie"])
-def logout_api():
-    resp = jsonify({'logout': True})
-    unset_jwt_cookies(resp)
+revoked_tokens = set()
 
-    return resp, 200 
+@jwt.token_in_blocklist_loader
+def check_if_token_revoked(jwt_header, jwt_payload):
+    jti = jwt_payload["jti"]
+    return jti in revoked_tokens
+
+
+@jwt_required()
+def logout_api():
+    jti = get_jwt()["jti"]
+    revoked_tokens.add(jti)
+    resp = jsonify({"msg": "logout successful"})
+    unset_jwt_cookies(resp)
+    return resp, 200
 
 
 @jwt_required(locations=["cookie"])

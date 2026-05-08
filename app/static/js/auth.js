@@ -88,3 +88,24 @@ function login() {
         handleMessages(container, err)
     })
 }
+
+
+function logout() {
+    fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include"
+    })
+    .then(res => {
+        if (!res.ok) {
+            return res.json().then(err => { throw err })
+        }
+        return res.json()
+    })
+    .then(() => {
+        window.location.href = "/"
+    })
+    .catch(err => {
+        container.innerHTML = ""
+        handleMessages(container, err)
+    })
+}

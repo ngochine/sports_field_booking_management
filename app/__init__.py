@@ -4,6 +4,8 @@ from instance.config import Config
 import cloudinary
 from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
 from app.modules.auth import dao
+from werkzeug.exceptions import Unauthorized
+from flask import jsonify
 
 
 def create_app():
@@ -32,6 +34,13 @@ def create_app():
             print(e)
 
         return dict(current_user=None)
+    
+    @flask_app.errorhandler(Unauthorized)
+    def handle_unauthorized(e):
+        return jsonify({
+            "success": False,
+            "message": e.description
+        }), 401
     
     import app.modules.auth.models
     import app.modules.fields.models

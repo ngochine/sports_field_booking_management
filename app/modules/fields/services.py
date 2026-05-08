@@ -2,6 +2,7 @@ from . import dao
 from app.modules.bookings import dao as booking_dao
 import math
 from flask import current_app
+from datetime import datetime
 
 
 def get_list_field_service(filters: dict):
@@ -21,13 +22,20 @@ def get_list_field_service(filters: dict):
     }
 
 
-def get_field_detail_service(field_id: int):
-    field = dao.get_field_by_id(field_id = field_id)
-    related_fields = dao.get_related_fields(field = field)
-    time_frames = booking_dao.get_list_time_frames_by_field_id(field_id=field_id)
-
+def get_field_detail_service(field_id: int, date_selected: datetime):
+    field = dao.get_field_by_id(field_id=field_id)
+    related_fields = dao.get_related_fields(field=field)
+    field_prices = booking_dao.get_field_prices(field=field, date_selected=date_selected)
+    
     return {
         'field': field,
         'related_fields': related_fields,
-        'time_frames' : time_frames
+        'field_prices' : field_prices
     }
+
+
+def get_field_prices(field_id: int, date_selected: datetime):
+    field = dao.get_field_by_id(field_id=field_id)
+    field_prices = booking_dao.get_field_prices(field=field, date_selected=date_selected)
+    
+    return field_prices

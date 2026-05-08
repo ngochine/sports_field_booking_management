@@ -17,10 +17,10 @@ def get_fields():
 
 
 def get_field_detail(field_id:int):
-    res = services.get_field_detail_service(field_id=field_id)
+    res = services.get_field_detail_service(field_id=field_id, date_selected= date.today())
     
     field = res.get('field', None)
     related_fields = res.get('related_fields', None)
-    time_frames = res.get('time_frames', None)
+    field_prices = res.get('field_prices', None)
 
-    return render_template('fields/field-detail.html', field=field, related_fields=related_fields, time_frames= time_frames, today=date.today().isoformat())
+    return render_template('fields/field-detail.html', field=field, field_prices = field_prices, related_fields=related_fields, today=date.today().isoformat())

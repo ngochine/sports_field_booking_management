@@ -44,7 +44,7 @@
                     Xin chào, {{ current_user.username }}
                 </a>
 
-                <a href="{{ url_for('auth.login') }}" class="btn px-4" style="background-color: var(--orange); color: var(--white) !important">
+                <a class="btn px-4" style="background-color: var(--orange); color: var(--white) !important" onclick="logout()">
                     Đăng xuất
                 </a>
             </div>

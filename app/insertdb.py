@@ -29,7 +29,7 @@ if __name__ == "__main__":
         load_data("app/fixtures/address.json", Address)
         load_data("app/fixtures/location.json", Location)
         load_data("app/fixtures/field.json", Field)
-        load_data("app/fixtures/time_frame.json", TimeFrame)
+        load_data("app/fixtures/field_price.json", FieldPrice)
         load_data("app/fixtures/booking.json", Booking)
         load_data("app/fixtures/review.json", Review)
         load_data("app/fixtures/report.json", Report)
