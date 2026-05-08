@@ -1,6 +1,6 @@
 from flask import Flask
 from app.extension import db, migrate, jwt
-from instance.config import Config
+from instances.config import Config
 import cloudinary
 from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
 from app.modules.auth import dao
