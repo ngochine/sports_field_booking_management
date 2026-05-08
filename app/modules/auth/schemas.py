@@ -45,3 +45,9 @@ class UserOutputSchema(Schema):
     status = fields.Enum(UserStatusEnum, by_value=True)
     role = fields.Enum(UserRoleEnum, by_value=True)
     created_at = fields.DateTime()
+
+
+class UserOutputBookingSchema(Schema):
+    email = fields.Str()
+    first_name = fields.Str()
+    last_name = fields.Str()

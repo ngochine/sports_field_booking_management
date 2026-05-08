@@ -2,13 +2,13 @@ from flask import render_template
 from . import dao
 from app.modules.fields import dao as field_dao
 from app.common import decorators
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import get_jwt_identity
 
 
 def index():
-    fields = field_dao.get_hot_field()
+    hot_fields = field_dao.get_hot_field()
     field_types = field_dao.get_list_field_type()
-    return render_template("index.html", fields = fields, field_types=field_types)
+    return render_template("index.html", hot_fields = hot_fields, field_types=field_types)
 
 
 def register():
@@ -19,8 +19,7 @@ def login():
     return render_template("auth/login.html")
 
 
-@jwt_required()
-@decorators.login_required
+@decorators.login_required_render
 def profile():
     current_user_id = get_jwt_identity()
     user = dao.get_user_by_id(current_user_id)

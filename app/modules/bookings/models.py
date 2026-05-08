@@ -17,41 +17,45 @@ class ReportStatusEnum(Enum):
     RESOLVED = "resolved"
     DENIED = "denied"
 
+
 class ReportTagEnum(Enum):
     INFRASTRUCTURE = "infrastructure"
     FACILITIES = "facilities"
     SERVICE = "service"
-    ORTHER = "orther"
+    OTHER = "other"
 
 
-class TimeFrame(db.Model):
-    __tablename__ = 'time_frame'
+class FieldPrice(db.Model):
+    __tablename__ = 'field_price'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     start_time = Column(Time, nullable=False)
     end_time = Column(Time, nullable=False)
     price = Column(Numeric(15,2), nullable=False)
+    day_of_week = Column(Integer, nullable=True)
+    special_date = Column(Date, nullable=True)
 
     field_id = Column(Integer, ForeignKey('field.id'), nullable=False)
-    field = relationship('Field', backref='time_frames', lazy=True)
+    field = relationship('Field', backref='field_price', lazy=True)
 
     def __str__(self):
-        return f'{self.start_time} - {self.end_time}'
-
-
+        return f'{self.price}'
+    
+    
 class Booking(db.Model):
     __tablename__ = 'booking'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     created_at = Column(DateTime, nullable=False, default=datetime.now)
+    
+    start_time = Column(Time, nullable=False)
+    end_time = Column(Time, nullable=False)
     booking_date = Column(Date, nullable=False)
     status = Column(sqlEnum(BookingStatusEnum), nullable=False, default=BookingStatusEnum.PENDING)
-
-    time_frame_id = Column(Integer, ForeignKey('time_frame.id'), nullable=False)
+    total_price = Column(Numeric(15, 2))
     user_id = Column(String(50), ForeignKey('user.id'), nullable=False)
     field_id = Column(Integer, ForeignKey('field.id'), nullable=False)
 
-    time_frame = relationship('TimeFrame', backref='booking')
     user = relationship('User', backref='bookings')
     field = relationship('Field', backref='bookings', lazy=True)
 

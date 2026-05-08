@@ -6,13 +6,16 @@
 <div>
     <div class="position-relative">
         <div id="demo" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner" style="height: 70vh; min-height: 70%;" id="hotFieldContainer">
-                <div class="carousel-item active">
-                    <img src="https://i.pinimg.com/1200x/2c/8e/a0/2c8ea057c81d25ca92929fccb8f86058.jpg" alt="Los Angeles" class="d-block w-100 object-fit-fill ">
+            <div class="carousel-inner" style="height: 70vh; min-height: 70%;">
+                <div class="carousel-item active"> 
+                    <!-- nhớ banner của hệ thống ở đây nha-->
+                    <img src="https://i.pinimg.com/1200x/2c/8e/a0/2c8ea057c81d25ca92929fccb8f86058.jpg" alt="" class="d-block w-100 object-fit-fill ">
                 </div>
+                {% for f in hot_fields%}
                 <div class="carousel-item">
-                    <img src="https://i.pinimg.com/1200x/69/bf/f5/69bff57dd7df19bf4d8a8304ac0e567b.jpg" alt="Los Angeles" class="d-block w-100 object-fit-fill ">
+                    <img src="{{f.image}}" alt="{{f.name}}" class="d-block w-100 object-fit-fill ">
                 </div>
+                {% endfor %}
             </div>
 
             <button class="carousel-control-prev" type="button" data-bs-target="#demo" data-bs-slide="prev">
@@ -89,12 +92,12 @@
                 style="background-color: var(--gray); height: 5px;">
             </div>
             <div class="row">
-                {% if not fields %}
+                {% if not hot_fields %}
                     <div>
                         <h2 class="text-center" style="color: var(--gray);">Không có sân phù hợp</h2>
                     </div>
                 {% endif %}
-                {% for f in fields %}
+                {% for f in hot_fields %}
                 <div class="col-lg-4 col-md-6 col-12 mb-5">
                     <div class="card border shadow-lg rounded h-100">
                         <img class="card-img-top fixed-img" src={% if f.image %} {{f.image}} {% else %}"https://i.pinimg.com/1200x/69/bf/f5/69bff57dd7df19bf4d8a8304ac0e567b.jpg" {%endif%} alt="Sân 2">
@@ -120,71 +123,6 @@
             </div>
         </div>
         
-    </div>
-
-
-    <div class="container-fluid py-5" style="background-color: var(--white);">
-        <div class="container">
-            <h2 class="text-center fw-bold mb-4" style="color: var(--blue);">Dịch vụ chính</h2>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow">
-                        <div class="card-body text-center">
-                            <h5 class="fw-bold">Tìm kiếm sân nhanh chóng</h5>
-                            <p class="text-muted">Cung cấp các sân chơi thể thao uy tín với khoảng các gần bạn</p>
-                            <a href="{{url_for('field.fields')}}" class="btn btn-outline-info">Tìm kiếm sân chơi</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow">
-                        <div class="card-body text-center">
-                            <h5 class="fw-bold">Đặt sân uy tín</h5>
-                            <p class="text-muted">Là cầu nối giữa người chơi và sân chơi</p>
-                            <a href="#" class="btn btn-outline-success">Đặt sân ngay</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow">
-                        <div class="card-body text-center">
-                            <h5 class="fw-bold">Giờ chơi chất lượng</h5>
-                            <p class="text-muted">Phản hồi, đánh giá dịch vụ, nâng cao trải nghiệm người chơi</p>
-                            <a href="#" class="btn btn-outline-warning">Tìm hiểu dịch vụ</a>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-    <div id="how-it-works" style="background: var(--gray-light)">
-    <div class="container py-5">
-        <div class="text-center mb-5">
-            <h2 class="mb-2 fw-bolder" style="color: var(--orange);">Đặt Sân Chỉ 3 Bước</h2>
-            <div class="d-block mx-auto mb-4"
-                style="background-color: var(--blue); height: 5px; width: 15%;">
-            </div>
-            <div class="row g-4 text-center">
-                <div class="col-md-4">
-                    <div>Bước 01</div>
-                    <h5 class="fw-bold mt-1" style="color: var(--blue);">Chọn sân & khung giờ</h5>
-                    <p class="text-muted" style="font-size:.9rem">Lọc theo khu vực, môn thể thao và xem lịch trống theo thời gian thực.</p>
-                </div>
-                <div class="col-md-4">
-                    <div>Bước 02</div>
-                    <h5 class="fw-bold mt-1" style="color: var(--blue);">Thanh toán online</h5>
-                    <p class="text-muted" style="font-size:.9rem">Hỗ trợ Zalpay chuyển khoản ngân hàng và thanh toán tại sân.</p>
-                </div>
-                <div class="col-md-4">
-                    <div>Bước 03</div>
-                    <h5 class="fw-bold mt-1" style="color: var(--blue);">Nhận vé & ra sân</h5>
-                    <p class="text-muted" style="font-size:.9rem">Vé điện tử gửi về Zalo/Email. Check-in bằng mã QR tại cổng.</p>
-                </div>
-            </div>
-        </div>
     </div>
 
     <div class="p-5" style="background-color: var(--orange);">
