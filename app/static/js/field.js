@@ -1,22 +1,3 @@
-function showAlert(container, message, category) {
-    container.insertAdjacentHTML('beforeend', `
-        <div class="alert alert-${category} m-3 alert-dismissible fade show position-relative" style="z-index: 99999;">
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    `)
-}
-
-
-function handleMessages(container, data, type = "danger") {
-    const messages = typeof data.message === "object"
-        ? Object.values(data.message).flat()
-        : [data.message]
-
-    messages.forEach(m => showAlert(container, m, type))
-}
-
-
 function getCity(selectedCity) {
     fetch("https://provinces.open-api.vn/api/v2/?depth=1")
         .then(res => {
@@ -139,19 +120,25 @@ function loadConfirmBooking(){
 }
 
 
-function createBooking(fieldId){
-    dataSelected = document.getElementById("dateSelectedValue").value
-    startTime = document.getElementById("startTime").value
-    endTime = document.getElementById("endTime").value
-    const container = document.getElementById("flash-container")
+function caculatorTotalBooking(fieldId){
+    const bookingDate = document.getElementById("dateSelectedValue").value
+    const startTime = document.getElementById("startTime").value
+    const endTime = document.getElementById("endTime").value
 
-    fetch(`/api/fields/${fieldId}/booking`, {
+    if (!startTime || !endTime)
+        return
+
+    fetch("/api/bookings/calculate-price", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        credentials: 'include',
-        body: JSON.stringify({ dataSelected, startTime, endTime})
+        body: JSON.stringify({
+            "field_id": fieldId,
+            "booking_date": bookingDate,
+            "start_time": startTime,
+            "end_time": endTime
+        })
     })
     .then(res => {
         if (!res.ok) {
@@ -160,12 +147,49 @@ function createBooking(fieldId){
         return res.json()
     })
     .then(data => {
-        container.innerHTML = ""
-        showAlert(container, "Đặt sân thành công", "success")
-        setTimeout(() => window.location.href = "/history-booking", 500)
+        document.getElementById("totalTime").innerHTML = data.total_time
+        document.getElementById("totalPrice").innerHTML = data.total_price.toLocaleString("vi-VN")
+    })
+}
+
+
+function createBooking(fieldId){
+    dataSelected = document.getElementById("dateSelectedValue").value
+    startTime = document.getElementById("startTime").value
+    endTime = document.getElementById("endTime").value
+
+    fetch(`/api/fields/${fieldId}/booking`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: 'include',
+        body: JSON.stringify({ 
+            "booking_date": dataSelected, 
+            "start_time": startTime, 
+            "end_time": endTime
+        })
+    })
+    .then(res => {
+        if (!res.ok) {
+            return res.json().then(err => { throw err })
+        }
+        return res.json()
+    })
+    .then(data => {
+        alert("Đặt sân thành công!")
+        setTimeout(() => window.location.href = "/bookings", 500)
     })
     .catch(err => {
-        container.innerHTML = ""
-        handleMessages(container, err)
+        let messages = []
+        if (typeof err.message === "object") {
+            Object.values(err.message).forEach(msgArr => {
+                messages.push(...msgArr)
+            })
+        } else {
+            messages.push(err.message || "Có lỗi xảy ra")
+        }
+        console.log(err)
+        alert(messages.join("\n"))
     })
 }

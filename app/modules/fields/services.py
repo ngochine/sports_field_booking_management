@@ -9,8 +9,11 @@ def get_list_field_service(filters: dict):
     page = filters.get('page', None)
     q = filters.get("q", None)
     field_type_id = filters.get("field_type_id", None)
+    province_id = filters.get("province_id", None)
+    district_id = filters.get("district_id", None)
 
-    fields = dao.load_fields(q=q, field_type_id=field_type_id, page=page)
+
+    fields = dao.load_fields(q=q, field_type_id=field_type_id, district_id=district_id, province_id=province_id, page=page)
     field_length = len(fields)
     pages = math.ceil(dao.count_fields(q=q, field_type_id=field_type_id)/current_app.config["PAGE_SIZE"])
 

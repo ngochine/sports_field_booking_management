@@ -4,9 +4,13 @@ import re
 
 
 class UserInputSchema(Schema):
-    username= fields.Str(required=True, validate=validate.Length(min=3, max=30, error="Tên đăng nhập phải từ 3-30 ký tự"))
-    password= fields.Str(required=True, validate=validate.Length(min=8, max=30, error="Mật khẩu phải từ 8-30 ký tự"))
-    confirm= fields.Str(required=True)
+    username= fields.Str(required=True, validate=validate.Length(min=3, max=30, 
+                            error="Tên đăng nhập phải từ 3-30 ký tự"),
+                            error_messages={"require": "Vui lòng không để trống tên đăng nhập"})
+    password= fields.Str(required=True, validate=validate.Length(min=8, max=30, 
+                            error="Mật khẩu phải từ 8-30 ký tự"),
+                            error_messages={"require": "Vui lòng không để trống tên mật khẩu"})
+    confirm= fields.Str(required=True, error_messages={"require": "Vui lòng không để trống xác nhận"})
 
     @validates_schema
     def validate_confirm(self, data, **kwargs):

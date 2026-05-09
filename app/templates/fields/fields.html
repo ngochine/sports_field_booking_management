@@ -6,17 +6,21 @@
     <div class="container my-5">
         <div class="row">
             <form action="{{url_for('field.fields', field_type_id= request.args.get('field_type_id',''), 
-                        city_code= request.args.get('city_code',''),
-                        district_code = request.args.get('district_code',''))}}"  class="col-lg-3 me-3">
+                        province_id= request.args.get('province_id',''),
+                        district_id = request.args.get('district_id',''))}}"  class="col-lg-3 me-3">
                 <div class="filter-sidebar">
                     <div class="filter-title"><i class="bi bi-funnel-fill me-2"></i>Bộ lọc tìm kiếm</div>
-
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Tên sân</label>
+                        <br>
+                        <input class="form-control" type="text" name="q" placeholder="Nhập tên sân tìm kiếm" value="{{request.args.get('q','')}}">
+                    </div>
                     <div class="mb-4">
                         <label class="form-label fw-bold">Khu vực</label>
-                        <select class="form-select mb-2" id="citySearch" name="city_code">
+                        <select class="form-select mb-2" id="citySearch" name="province_id">
                             <option value="">Chọn Tỉnh/Thành phố</option>
                         </select>
-                        <select class="form-select" id="districtsSearch" name="district_code">
+                        <select class="form-select" id="districtsSearch" name="district_id">
                             <option value="">Chọn Quận/Huyện</option>
                         </select>
                     </div>
@@ -66,7 +70,7 @@
                     {% for f in fields %}
                     <div class="col-lg-6 col-md-6 col-12 mb-5">
                         <div class="card border shadow-sm rounded h-100">
-                            <img class="card-img-top fixed-img" src={% if f.image %} {{f.image}} {% else %}"https://i.pinimg.com/1200x/69/bf/f5/69bff57dd7df19bf4d8a8304ac0e567b.jpg" {%endif%} alt="Sân 2">
+                            <img class="card-img-top fixed-img" src={% if f.image %} {{f.image}} {% else %}"https://i.pinimg.com/1200x/69/bf/f5/69bff57dd7df19bf4d8a8304ac0e567b.jpg" {%endif%}>
                             <div class="card-body">
                                 <div>
                                     <h5 class="fw-bold mb-2">{{ f.name }}</h5>
@@ -90,10 +94,17 @@
 
                 <nav class="mt-4">
                     <ul class="pagination justify-content-center">
-
                         {% if page > 1 %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{page-1}}">&laquo;</a>
+                            <a class="page-link"
+                                href="?page={{page-1}}
+                                {% if request.args.get('q') %}&q={{ request.args.get('q') }}{% endif %}
+                                {% if request.args.get('province_id') %}&province_id={{ request.args.get('province_id') }}{% endif %}
+                                {% if request.args.get('district_id') %}&district_id={{ request.args.get('district_id') }}{% endif %}
+                                {% if request.args.get('field_type_id') %}&field_type_id={{ request.args.get('field_type_id') }}{% endif %}
+                                {% if request.args.get('range_price') %}&range_price={{ request.args.get('range_price') }}{% endif %}">
+                                &laquo;
+                            </a>
                         </li>
                         {% else %}
                         <li class="page-item disabled">
@@ -103,13 +114,26 @@
 
                         {% for i in range(1, pages+1) %}
                             <li class="page-item {% if page == i %}active{% endif %}">
-                                <a class="page-link" href="?page={{i}}">{{i}}</a>
+                                <a class="page-link"
+                                    href="?page={{i}}{% if request.args.get('q') %}&q={{ request.args.get('q') }}{% endif %}{% if request.args.get('province_id') %}&province_id={{ request.args.get('province_id') }}{% endif %}
+                                    {% if request.args.get('district_id') %}&district_id={{ request.args.get('district_id') }}{% endif %} {% if request.args.get('field_type_id') %}&field_type_id={{ request.args.get('field_type_id') }}{% endif %}
+                                    {% if request.args.get('range_price') %}&range_price={{ request.args.get('range_price') }}{% endif %}">
+                                    {{i}}
+                                </a>
                             </li>
                         {% endfor %}
 
                         {% if page < pages %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{page+1}}">&raquo;</a>
+                            <a class="page-link"
+                                href="?page={{page+1}}
+                                {% if request.args.get('q') %}&q={{ request.args.get('q') }}{% endif %}
+                                {% if request.args.get('province_id') %}&province_id={{ request.args.get('province_id') }}{% endif %}
+                                {% if request.args.get('district_id') %}&district_id={{ request.args.get('district_id') }}{% endif %}
+                                {% if request.args.get('field_type_id') %}&field_type_id={{ request.args.get('field_type_id') }}{% endif %}
+                                {% if request.args.get('range_price') %}&range_price={{ request.args.get('range_price') }}{% endif %}">
+                                &raquo;
+                            </a>
                         </li>
                         {% else %}
                         <li class="page-item disabled">
@@ -128,11 +152,11 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const selectedCity = "{{ request.args.get('city_code', '') }}";
+        const selectedCity = "{{ request.args.get('province_id', '') }}";
         getCity(selectedCity)
 
         
-        const selectedDistrict = "{{ request.args.get('district_code', '') }}";
+        const selectedDistrict = "{{ request.args.get('district_id', '') }}";
         if (selectedDistrict && selectedCity){
             getDistrict(selectedCity, selectedDistrict)
         }

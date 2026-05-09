@@ -2,78 +2,56 @@
   {
     "id": 1,
     "street": "123 Lê Văn Việt",
-    "city": "Hồ Chí Minh",
-    "district": "Quận 9",
-    "description": "Gần ngã tư Lê Văn Việt - Tăng Nhơn Phú"
+    "district_id": 769
   },
   {
     "id": 2,
     "street": "456 Nguyễn Văn Linh",
-    "city": "Hồ Chí Minh",
-    "district": "Quận 7",
-    "description": "Khu Phú Mỹ Hưng, đối diện SC VivoCity"
+    "district_id": 785
   },
   {
     "id": 3,
     "street": "789 Hoàng Diệu 2",
-    "city": "Hồ Chí Minh",
-    "district": "Thủ Đức",
-    "description": "Gần ĐHQG TP.HCM cổng chính"
+    "district_id": 769
   },
   {
     "id": 4,
     "street": "22 Trường Chinh",
-    "city": "Hồ Chí Minh",
-    "district": "Quận Tân Bình",
-    "description": "Gần sân bay Tân Sơn Nhất, dễ tìm"
+    "district_id": 776
   },
   {
     "id": 5,
     "street": "58 Đinh Tiên Hoàng",
-    "city": "Hồ Chí Minh",
-    "district": "Quận Bình Thạnh",
-    "description": "Cạnh cầu Bông, gần trung tâm thành phố"
+    "district_id": 775
   },
   {
     "id": 6,
     "street": "101 Võ Văn Ngân",
-    "city": "Hồ Chí Minh",
-    "district": "Thủ Đức",
-    "description": "Gần ĐH Sư Phạm Kỹ Thuật TP.HCM"
+    "district_id": 769
   },
   {
     "id": 7,
     "street": "300 Lý Thường Kiệt",
-    "city": "Hồ Chí Minh",
-    "district": "Quận 10",
-    "description": "Đối diện bệnh viện Chợ Rẫy"
+    "district_id": 770
   },
   {
     "id": 8,
     "street": "14 Phan Văn Hớn",
-    "city": "Hồ Chí Minh",
-    "district": "Quận 12",
-    "description": "Khu dân cư Phan Văn Hớn, gần chợ An Sương"
+    "district_id": 772
   },
   {
     "id": 9,
     "street": "77 Nguyễn Thị Định",
-    "city": "Hồ Chí Minh",
-    "district": "Quận 2",
-    "description": "Khu Thạnh Mỹ Lợi, gần UBND Quận 2"
+    "district_id": 761
   },
   {
     "id": 10,
     "street": "500 Quang Trung",
-    "city": "Hồ Chí Minh",
-    "district": "Gò Vấp",
-    "description": "Gần ngã sáu Gò Vấp, trung tâm quận"
+    "district_id": 777
   },
   {
     "id": 11,
     "street": "88 Bình Long",
-    "city": "Hồ Chí Minh",
-    "district": "Bình Tân",
-    "description": "Khu vực Bình Hưng Hòa, gần bến xe miền Tây"
+    "district_id": 783
   }
 ]

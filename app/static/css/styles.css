@@ -17,10 +17,10 @@ body {
     object-fit: cover;
 }
 
-.card{
+/* .card{
   transition: 0.5;
 }
 
 .card:hover {
     transform: scale(1.05);
-}
+} */
