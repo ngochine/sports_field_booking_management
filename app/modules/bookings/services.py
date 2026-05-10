@@ -48,6 +48,13 @@ def create_booking_service(field_id, user_id, data):
             raise ValidationError("Khung giờ này đã có người đặt")
 
         field = field_dao.get_field_by_id(field_id= field_id)
+        if field is None:
+            raise ValidationError("Sân không tồn tại")
+
+        is_limit = dao.check_booking_limit(user_id, booking_date)
+        if is_limit:
+            raise ValidationError("Tài khoản đã đạt giới hạn đặt trong ngày (3 lần/ngày)")
+
         total_price = caculator_total_price(booking_date= booking_date, start_time=start_time, end_time=end_time, field=field)
 
         booking = dao.create_booking(field_id= field_id, user_id=user_id, total_price=total_price, data=data)
@@ -59,11 +66,11 @@ def create_booking_service(field_id, user_id, data):
     
 
 def get_list_booking_service(user_id: str, filters: dict):
-    page = filters.get('page', None)
+    page = filters.get('page', 1)
     status = filters.get('status', "all")
 
     bookings = dao.get_bookings_by_user(user_id=user_id, page=page, status=status)
-    pages = math.ceil(dao.count_bookings(user_id=user_id, status=status)/current_app.config["PAGE_SIZE"])
+    pages = math.ceil(len(dao.get_bookings_by_user(user_id=user_id, status=status))/current_app.config["PAGE_SIZE"])
 
     return {
         'bookings': bookings,

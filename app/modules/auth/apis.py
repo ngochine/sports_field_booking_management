@@ -4,6 +4,7 @@ from marshmallow import ValidationError
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, \
     get_jwt_identity, set_access_cookies, unset_jwt_cookies, set_refresh_cookies, get_jwt
 from app.extension import jwt
+from app.common import decorators
 
 def register_api():
     try:
@@ -25,32 +26,40 @@ def register_api():
 
 
 def login_api():
-    data = request.get_json()
-    
-    user = services.authenticate_user(
-        data.get("username"),
-        data.get("password")
-    )
+    try:
+        data = request.get_json()
+        validated_data = schemas.UserLoginInputSchema().load(data)
 
-    if not user:
-        return jsonify({
-            "success": False,
-            "message": "Sai tài khoản hoặc mật khẩu"
-        }), 401
+        user = services.authenticate_user(
+            validated_data.get("username"),
+            validated_data.get("password")
+        )
 
-    access_token = create_access_token(identity=user.id)
-    refresh_token = create_refresh_token(identity=user.id)
-    
-    resp = jsonify({
-        "success": True,
-        "access_token": access_token,
-        "refresh_token": refresh_token,
-        "user": schemas.UserOutputSchema().dump(user)
-    })
+        if not user:
+            return jsonify({
+                "success": False,
+                "message": "Sai tài khoản hoặc mật khẩu"
+            }), 401
 
-    set_access_cookies(resp, access_token)
-    set_refresh_cookies(resp, refresh_token)
-    return resp, 200
+        access_token = create_access_token(identity=user.id)
+        refresh_token = create_refresh_token(identity=user.id)
+
+        resp = jsonify({
+            "success": True,
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+            "user": schemas.UserOutputSchema().dump(user)
+        })
+
+        set_access_cookies(resp, access_token)
+        set_refresh_cookies(resp, refresh_token)
+        return resp, 200
+
+    except ValidationError as e:
+        return jsonify({"success": False, "message": e.messages}), 400
+
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e), "message": "Lỗi hệ thống vui lòng thử lại sau"}), 500
 
 
 @jwt_required(refresh=True)
@@ -75,7 +84,7 @@ def check_if_token_revoked(jwt_header, jwt_payload):
     return jti in revoked_tokens
 
 
-@jwt_required()
+@decorators.login_required_api
 def logout_api():
     jti = get_jwt()["jti"]
     revoked_tokens.add(jti)
@@ -84,7 +93,7 @@ def logout_api():
     return resp, 200
 
 
-@jwt_required(locations=["cookie"])
+@decorators.login_required_api
 def profile_api():
     
     if request.method == 'GET':

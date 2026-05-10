@@ -5,7 +5,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import joinedload
 
 
-def load_fields(q: str, field_type_id: int, district_id: int, province_id: int, page: int) -> list[Field]:
+def load_fields(q = None, field_type_id= None, district_id= None, province_id= None, page= None) -> list[Field]:
     query = Field.query.options(
         joinedload(Field.location)
         .joinedload(Location.address)
@@ -19,32 +19,19 @@ def load_fields(q: str, field_type_id: int, district_id: int, province_id: int, 
     if field_type_id:
         query = query.filter(Field.field_type_id == field_type_id)
 
+    if province_id or district_id:
+        query = query.join(Field.location).join(Location.address).join(Address.district)
     if province_id:
-        query = query.join(Field.location).join(Location.address).join(Address.district).filter(District.province_id == province_id)
-        if district_id:
-            query = query.filter(Address.district_id == district_id)
-
-    if not page:
-        page = 1
+        query = query.filter(District.province_id == province_id)
+    if district_id:
+        query = query.filter(Address.district_id == district_id)
 
     if page:
-        size = current_app.config["PAGE_SIZE"]
-        start = (int(page)-1)*size
-        end = start+size
-        query = query.slice(start, end)
+        page = int(page)
+        start = (page - 1) * current_app.config['PAGE_SIZE']
+        query = query.slice(start, start + current_app.config['PAGE_SIZE'])
 
     return query.all()
-
-
-def count_fields(q: str, field_type_id: int) -> int:
-    query = Field.query
-    if q:
-        query = query.filter(Field.name.ilike(f"%{q}%"))
-
-    if field_type_id:
-        query = query.filter(Field.field_type_id == field_type_id)
-
-    return query.count()
 
 
 def get_list_field_type() -> list[FieldType]:
@@ -60,8 +47,7 @@ def get_hot_field() -> list[Field]:
 
 
 def get_field_by_id(field_id: int) -> Field:
-
-    return Field.query.get(field_id)
+    return Field.query.get(int(field_id))
 
 
 def get_related_fields(field: Field) -> list[Field]:

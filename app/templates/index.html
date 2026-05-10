@@ -28,8 +28,8 @@
 
 
         <form  action="{{url_for('field.fields', field_type_id= request.args.get('field_type_id',''), 
-                        city_code= request.args.get('city_code',''),
-                        district_code = request.args.get('district_code',''))}}" 
+                        province_id= request.args.get('province_id',''),
+                        district_id = request.args.get('district_id',''))}}" 
 
             class="container position-absolute start-50 translate-middle shadow-lg p-5 border d-block"
             style="background-color: var(--white); width: 80%; border-radius: 2rem;">
@@ -57,7 +57,7 @@
                         <span class="input-group-text p-3">
                             <i class="fa-regular fa-building"></i>
                         </span>
-                        <select class="form-select" id="citySearch" name="city_code">
+                        <select class="form-select" id="citySearch" name="province_id">
                             <option value="">Chọn Tỉnh/thành phố</option>
                         </select>
                     </div>
@@ -68,7 +68,7 @@
                         <span class="input-group-text p-3">
                             <i class="fa-solid fa-location-dot"></i>
                         </span>
-                        <select class="form-select" id="districtsSearch" name="district_code">
+                        <select class="form-select" id="districtsSearch" name="district_id">
                             <option value="" >Chọn Quận/Huyện</option>
                         </select>
                     </div>

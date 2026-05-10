@@ -1,8 +1,9 @@
 from functools import wraps
 from flask import redirect
-from flask_jwt_extended import verify_jwt_in_request
-from werkzeug.exceptions import Unauthorized
+from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
+from werkzeug.exceptions import Unauthorized, Forbidden
 from flask_jwt_extended.exceptions import JWTExtendedException
+from app.modules.auth.models import User, UserStatusEnum, UserRoleEnum
 
 
 def login_required_render(f):
@@ -28,3 +29,21 @@ def login_required_api(f):
             raise Unauthorized("Vui lòng đăng nhập để thực hiện chức năng này")
         
     return decorated_login_api
+
+
+def customer_required_api(f):
+    @wraps(f)
+    @login_required_api
+    def decorated_customer_api(*args, **kwargs):
+        user_id = get_jwt_identity()
+        user = User.query.get(user_id)
+
+        if user.status == UserStatusEnum.BANNED:
+            raise Forbidden("Tài khoản của bạn bị cấm nên không thể thực hiện hành động này")
+
+        if user.role != UserRoleEnum.CUSTOMER:
+            raise Forbidden("Tài khoản của bạn không đủ quyền để thực hiện hành động này")
+
+        return f(*args, **kwargs)
+
+    return decorated_customer_api

@@ -10,7 +10,7 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')
 
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
-    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=60)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=7)
     JWT_TOKEN_LOCATION = ['cookies', 'headers']
     JWT_COOKIE_CSRF_PROTECT = False

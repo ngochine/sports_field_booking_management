@@ -52,6 +52,10 @@ def check_booking_overlap(field_id: int, date_selected: date, start_time: time, 
     return query.first() is not None
 
 
+def check_booking_limit(user_id: int, booking_date: date) -> bool:
+    return Booking.query.filter_by(user_id=user_id, booking_date=booking_date).count() == 3
+
+
 def create_booking(field_id: int, user_id, total_price: float, data: dict) -> Booking:
     try:
         booking = Booking(
@@ -69,7 +73,7 @@ def create_booking(field_id: int, user_id, total_price: float, data: dict) -> Bo
         raise
 
 
-def get_bookings_by_user(user_id: str, status: str, page=int) -> list[Booking]:
+def get_bookings_by_user(user_id: int, status= None, page=None) -> list[Booking]:
     query = Booking.query.filter_by(user_id=user_id)
 
     if status:
@@ -78,14 +82,10 @@ def get_bookings_by_user(user_id: str, status: str, page=int) -> list[Booking]:
 
     query = query.order_by(Booking.id.desc())
 
-    if not page:
-        page = 1
-
     if page:
-        size = current_app.config["PAGE_SIZE"]
-        start = (int(page)-1)*size
-        end = start+size
-        query = query.slice(start, end)
+        page = int(page)
+        start = (page - 1) * current_app.config['PAGE_SIZE']
+        query = query.slice(start, start + current_app.config['PAGE_SIZE'])
     
     return query.all()
 
