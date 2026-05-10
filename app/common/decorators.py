@@ -2,6 +2,7 @@ from functools import wraps
 from flask import redirect
 from flask_jwt_extended import verify_jwt_in_request
 from werkzeug.exceptions import Unauthorized
+from flask_jwt_extended.exceptions import JWTExtendedException
 
 
 def login_required_render(f):
@@ -10,7 +11,8 @@ def login_required_render(f):
         try:
             verify_jwt_in_request(locations=['cookies'])
             return f(*args, **kwargs)
-        except Exception:
+        except Exception as e:
+            print(e)
             return redirect('/login')
     return decorated_login_render
 
@@ -22,7 +24,7 @@ def login_required_api(f):
             verify_jwt_in_request(locations=['cookies'])
             return f(*args, **kwargs)
         
-        except Exception:
+        except JWTExtendedException as e:
             raise Unauthorized("Vui lòng đăng nhập để thực hiện chức năng này")
         
     return decorated_login_api

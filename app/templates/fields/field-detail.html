@@ -16,8 +16,8 @@
                     <span class="me-3">
                         <i class="fa-solid fa-location-dot"></i>
                         {{ field.location.address.street }},
-                        {{ field.location.address.district }},
-                        {{ field.location.address.city }}
+                        {{ field.location.address.district.name }},
+                        {{ field.location.address.district.province.name }}
                     </span>
                     <span>
                         <i class="fa-solid fa-star text-warning"></i>
@@ -44,7 +44,7 @@
                             <h5 class="fw-bold mb-2" style="color:var(--blue)">Giới thiệu</h5>
                             <p class="text-muted">
                                 {% if field.description %} {{field.description}} {% else %} <strong>{{ field.name }}</strong> là một trong những sân {{ field.field_type.name | lower }}
-                                chất lượng cao tại {{ field.location.address.district }}, {{ field.location.address.city }} {% endif %}
+                                chất lượng cao tại {{ field.location.address.district.name }}, {{ field.location.address.district.province.name }} {% endif %}
                             </p>
                         </div>
 
@@ -144,13 +144,13 @@
                             <p class="text-muted mb-3">
                                 <i class="fa-solid fa-location-dot text-danger me-1"></i>
                                 {{ field.location.address.street }},
-                                {{ field.location.address.district }},
-                                {{ field.location.address.city }}
+                                {{ field.location.address.district.name }},
+                                {{ field.location.address.district.province.name }}
                             </p>
                         </div>
                         <div class="m-3 p-3">
                             <div class="text-center">
-                                <a href="https://maps.google.com/?q={{ field.location.address.street }},{{ field.location.address.city }}"
+                                <a href="https://maps.google.com/?q={{ field.location.address.street }},{{ field.location.address.district.name }},{{ field.location.address.district.province.name }}"
                                 target="_blank" class="btn btn-sm mt-2 text-white fw-bold p-2"
                                 style="background:var(--orange); border-radius:6px;">
                                     <i class="fa-solid fa-arrow-up-right-from-square me-1"></i>Mở Google Maps
@@ -172,8 +172,7 @@
                             <input type="date" id="dateSelectedValue"
                                 class="form-control border rounded fs-6" 
                                 min="{{ today }}" 
-                                value="{{ today }}" 
-                                style="color: var(--gray);" 
+                                value="{{ today }}"
                                 onchange="loadFieldPrice({{ field.id }}, this.value)">
                         </div>
                         <div class="mb-3">
@@ -215,29 +214,28 @@
                             <label class="form-label fw-semibold small" style="color: var(--blue);">Thời gian</label>
                             <div class="row g-2 align-items-center">
                                 <div class="col-5">
-                                    <input type="text"
-                                        id="startTime" class="form-control"
+                                    <input type="text" onchange="caculatorTotalBooking({{field.id}})"
+                                        id="startTime" class="form-control" 
                                         name="start_time" placeholder="Chọn giờ bắt đầu">
                                 </div>
                                 <div class="col-2 text-center fw-semibold">đến</div>
                                 <div class="col-5">
-                                    <input type="text"
-                                        id="endTime" class="form-control"
+                                    <input type="text" id="endTime" class="form-control" onchange="caculatorTotalBooking({{field.id}})"
                                         name="end_time" placeholder="Chọn giờ kết thúc">
                                 </div>
                             </div>
                         </div>
                         <div class="p-3 rounded-4 mb-3"
-                            style="background: var(--orange-light); border: 2px dashed var(--orange);">
+                            style="background: var(--gray-light); border: 0.1px solid var(--blue);">
                             <div class="row text-center align-items-center">
                                 <div class="col-6 border-end">
                                     <div class="small fw-semibold text-secondary mb-1">Tổng thời lượng</div>
-                                    <div class="fw-bold fs-4" style="color: var(--orange);">
+                                    <div class="fw-bold fs-5" style="color: var(--blue);">
                                         <span id="totalTime">0</span> Giờ
                                     </div>
                                 </div>
                                 <div class="col-6"><div class="small fw-semibold text-secondary mb-1">Tổng tiền</div>
-                                    <div class="fw-bold fs-4" style="color: var(--orange);">
+                                    <div class="fw-bold fs-5" style="color: var(--blue);">
                                         <span id="totalPrice">0</span> VNĐ
                                     </div>
                                 </div>
@@ -330,10 +328,6 @@
                         <span class="fw-semibold" id="confirmDate"></span>
                     </div>
                     <div class="d-flex justify-content-between mb-3">
-                        <span class="text-muted">Thứ</span>
-                        <span class="fw-semibold" id="confirmWeekday"></span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-3">
                         <span class="text-muted">Giờ bắt đầu</span>
                         <span class="fw-semibold" id="confirmStartTime"></span>
                     </div>
@@ -344,12 +338,6 @@
                     <div class="d-flex justify-content-between mb-3">
                         <span class="text-muted">Thời lượng</span>
                         <span class="fw-semibold" id="confirmDuration"></span>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span class="text-muted">Ghi chú</span>
-                        <span class="fw-semibold text-end" id="confirmNote">
-                            Không có
-                        </span>
                     </div>
                 </div>
                 <div class="p-3 rounded-4 border mb-3" style="background: var(--white); border: 2px dashed var(--orange);">
@@ -371,21 +359,25 @@
 
 
 <script>
-    flatpickr("#startTime", {
+    const endPicker = flatpickr("#endTime", {
         enableTime: true,
         noCalendar: true,
         dateFormat: "H:i",
         time_24hr: true,
         minuteIncrement: 30
-    });
-
-    flatpickr("#endTime", {
+    })
+    const startPicker = flatpickr("#startTime", {
         enableTime: true,
         noCalendar: true,
         dateFormat: "H:i",
         time_24hr: true,
-        minuteIncrement: 30
-    });
-
+        minuteIncrement: 30,
+        onChange: function(selectedDates, dateStr) {
+            let minEnd = new Date(selectedDates[0])
+            minEnd.setMinutes(minEnd.getMinutes() + 30)
+            endPicker.set("minTime", minEnd)
+            endPicker.setDate(minEnd)
+        }
+    })
 </script>
 {% endblock %}

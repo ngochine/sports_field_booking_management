@@ -1,17 +1,28 @@
-from .models import Field, FieldType
+from .models import Field, FieldType, Location, Address, District, Province
 from app.modules.bookings.models import Booking
 from flask import current_app
 from sqlalchemy import func
+from sqlalchemy.orm import joinedload
 
 
-def load_fields(q: str, field_type_id: int, page: int) -> list[Field]:
-    query = Field.query
+def load_fields(q: str, field_type_id: int, district_id: int, province_id: int, page: int) -> list[Field]:
+    query = Field.query.options(
+        joinedload(Field.location)
+        .joinedload(Location.address)
+        .joinedload(Address.district)
+        .joinedload(District.province)
+    )
 
     if q:
         query = query.filter(Field.name.ilike(f"%{q}%"))
 
     if field_type_id:
         query = query.filter(Field.field_type_id == field_type_id)
+
+    if province_id:
+        query = query.join(Field.location).join(Location.address).join(Address.district).filter(District.province_id == province_id)
+        if district_id:
+            query = query.filter(Address.district_id == district_id)
 
     if not page:
         page = 1

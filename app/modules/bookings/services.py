@@ -1,8 +1,18 @@
 from . import dao
 from app.modules.fields import dao as field_dao
+from app.modules.bookings.models import BookingStatusEnum
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime
+import math
+from flask import current_app
+
+
+def caculator_total_time(booking_date, start_time, end_time):
+    start = datetime.combine(booking_date, start_time)
+    end = datetime.combine(booking_date, end_time)
+
+    return (end - start).total_seconds() / 3600
 
 
 def caculator_total_price(booking_date, start_time, end_time, field):
@@ -22,7 +32,7 @@ def caculator_total_price(booking_date, start_time, end_time, field):
         seconds = (overlap_end - overlap_start).total_seconds()
         if seconds > 0:
             hours = seconds/3600
-            total_price += (hours * fp.price)
+            total_price += (float(hours) * float(fp.price))
 
     return total_price
 
@@ -46,3 +56,52 @@ def create_booking_service(field_id, user_id, data):
     
     except IntegrityError:
         raise ValidationError("Dữ liệu vi phạm ràng buộc database")
+    
+
+def get_list_booking_service(user_id: str, filters: dict):
+    page = filters.get('page', None)
+    status = filters.get('status', "all")
+
+    bookings = dao.get_bookings_by_user(user_id=user_id, page=page, status=status)
+    pages = math.ceil(dao.count_bookings(user_id=user_id, status=status)/current_app.config["PAGE_SIZE"])
+
+    return {
+        'bookings': bookings,
+        'pages': pages,
+        'page': int(page) if page else 1
+    }
+
+
+def validate_cancelled_booking(booking, user_id):
+    try: 
+        if booking is None:
+            raise ValueError
+        
+        if booking.user_id != user_id:
+            raise PermissionError("Booking này không phải của bạn, bạn không có quyền huỷ")
+        
+        if booking.status not in [BookingStatusEnum.PENDING, BookingStatusEnum.PAID]:
+            raise ValidationError("Chỉ được huỷ khi booking có trạng thái PENDING hoặc PAID")
+        
+        start_datetime = datetime.combine(booking.booking_date, booking.start_time)
+        end_datetime = datetime.combine(booking.booking_date, booking.end_time)
+
+        if start_datetime <= datetime.now() <= end_datetime:
+            raise ValidationError("Không được huỷ nếu sân đang được sử dụng")
+        
+        diff = (start_datetime - datetime.today()).total_seconds()/3600
+        if diff < 2:
+            raise ValidationError("Không được huỷ khi còn dưới 2 giờ trước giờ chơi")
+
+    except ValueError:
+        raise ValidationError("Không tồn tại booking")
+
+
+def cancelled_booking_service(booking_id, user_id, data: dict):
+    booking = dao.get_booking_by_id(booking_id=booking_id)
+    validate_cancelled_booking(booking, user_id)
+
+    status = data.get("status")
+
+    booking = dao.update_booking_status(booking, status)
+    return booking

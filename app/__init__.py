@@ -55,4 +55,8 @@ def create_app():
     flask_app.register_blueprint(field_bp)
     flask_app.register_blueprint(api_field_bp)
 
+    from app.modules.bookings.routes import booking_bp, api_booking_bp
+    flask_app.register_blueprint(booking_bp)
+    flask_app.register_blueprint(api_booking_bp)
+
     return flask_app

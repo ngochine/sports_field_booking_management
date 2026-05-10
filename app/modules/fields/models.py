@@ -15,14 +15,29 @@ class FieldType(db.Model):
         return self.name
 
 
-class Address(db.Model):
-    __tablename__ = 'address'
+class Province(db.Model):
+    __tablename__ = "province"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False)
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    street = Column(String(100), nullable=False)
-    city = Column(String(100), nullable=False)
-    district = Column(String(100), nullable=False)
-    description = Column(String(255))
+
+class District(db.Model):
+    __tablename__ = "district"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False)
+
+    province_id = Column(Integer, ForeignKey("province.id"))
+    province = relationship("Province", backref="districts")
+
+
+class Address(db.Model):
+    __tablename__ = "address"
+    id = Column(Integer, primary_key=True)
+
+    street = Column(String(255))
+    district_id = Column(Integer, ForeignKey("district.id"))
+    district = relationship("District")
 
 
 class Location(db.Model):
@@ -32,7 +47,7 @@ class Location(db.Model):
     name = Column(String(100), nullable=False)
     address_id = Column(Integer, ForeignKey('address.id'), nullable=False, unique=True)
     address = relationship(Address, backref="location", uselist=False)
-
+    description = Column(String(255))
     def __str__(self):
         return self.name
 

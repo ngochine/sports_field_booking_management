@@ -1,9 +1,11 @@
 from app.extension import db
 from .models import FieldPrice, Booking
 from app.modules.fields.models import Field
+from app.modules.auth.models import User
 from datetime import date, time
 from sqlalchemy import and_
 from sqlalchemy.exc import IntegrityError
+from flask import current_app
 
 
 def query_date_selected(query, date_selected: date):
@@ -65,3 +67,44 @@ def create_booking(field_id: int, user_id, total_price: float, data: dict) -> Bo
     except IntegrityError:
         db.session.rollback()
         raise
+
+
+def get_bookings_by_user(user_id: str, status: str, page=int) -> list[Booking]:
+    query = Booking.query.filter_by(user_id=user_id)
+
+    if status:
+        if status!="all":
+            query = query.filter_by(status=status)
+
+    query = query.order_by(Booking.id.desc())
+
+    if not page:
+        page = 1
+
+    if page:
+        size = current_app.config["PAGE_SIZE"]
+        start = (int(page)-1)*size
+        end = start+size
+        query = query.slice(start, end)
+    
+    return query.all()
+
+
+def count_bookings(user_id: str, status: str) -> int:
+    query = Booking.query.filter_by(user_id=user_id)
+    if status:
+        if status!="all":
+            query = query.filter_by(status=status)
+
+    return query.count()
+
+
+def get_booking_by_id(booking_id) -> Booking:
+    return Booking.query.get(booking_id)
+
+
+def update_booking_status(booking: Booking, status: str) -> Booking:
+    booking.status = status
+
+    db.session.commit()
+    return booking
