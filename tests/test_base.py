@@ -1,4 +1,4 @@
-import pytest
+import pytest, os
 from flask import Flask
 from instances.config import Config
 from app.extension import db, jwt
@@ -94,7 +94,10 @@ def test_auth(test_client):
 
 @pytest.fixture
 def driver():
-    service = Service(executable_path='D:\\sports_field_booking_management_team8\\venv\\chromedriver.exe')
-    driver = webdriver.Chrome(service=service)
+    if os.name == "nt":
+        service = Service(executable_path='D:\\sports_field_booking_management_team8\\venv\\chromedriver.exe')
+        driver = webdriver.Chrome(service=service)
+    else:
+        driver = webdriver.Chrome()
     yield driver
     driver.quit()
