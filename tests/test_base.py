@@ -6,6 +6,8 @@ from flask import jsonify
 from werkzeug.exceptions import Unauthorized, Forbidden
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+
 def create_app():
     app_test = Flask(__name__)
     app_test.config.from_object(Config)
@@ -94,10 +96,16 @@ def test_auth(test_client):
 
 @pytest.fixture
 def driver():
+    options = Options()
     if os.name == "nt":
         service = Service(executable_path='D:\\sports_field_booking_management_team8\\venv\\chromedriver.exe')
         driver = webdriver.Chrome(service=service)
     else:
-        driver = webdriver.Chrome()
+        options.add_argument("--headless=new")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--window-size=1920,1080")
+        driver = webdriver.Chrome(options=options)
+        
     yield driver
     driver.quit()
