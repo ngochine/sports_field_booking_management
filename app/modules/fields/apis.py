@@ -9,22 +9,25 @@ from app.common import decorators
 
 
 def get_field_price_api(field_id):
-    date_selected = request.args.get('date')
-  
-    if not date_selected:
-        return jsonify({'success': False, 'message': 'Thiếu ngày để tìm kiếm'}), 400
-
-    if isinstance(date_selected, str):
-        date_selected = datetime.strptime(date_selected,"%Y-%m-%d").date()
-
     try:
-        field_prices = services.get_field_prices(
+        date_selected = request.args.get('date', None)
+
+        if not date_selected:
+            return jsonify({'success': False, 'message': 'Thiếu ngày để tìm kiếm'}), 400
+
+        if isinstance(date_selected, str):
+            date_selected = datetime.strptime(date_selected,"%Y-%m-%d").date()
+
+        field_prices = services.get_field_prices_service(
             field_id=field_id,
             date_selected=date_selected
         )
 
     except ValueError:
         return jsonify({'success': False, 'message': 'Vui lòng nhập đúng định dạng YYYY-MM-DD'}), 400
+
+    except ValidationError as e:
+        return jsonify({"success": False, "message": e.messages}), 400
 
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
@@ -35,7 +38,7 @@ def get_field_price_api(field_id):
     }), 200
 
 
-@decorators.login_required_api
+@decorators.customer_required_api
 def create_booking_api(field_id):
     try: 
         data = request.get_json()

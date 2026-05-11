@@ -6,9 +6,9 @@ from app.modules.fields import schemas as field_schemas
 
 
 class BookingInputSchema(Schema):
-    booking_date= fields.Date(required=True, error_messages={"require": "Vui lòng chọn ngày đặt sân"})
-    start_time = fields.Time(required=True, error_messages={"require": "Vui lòng chọn giờ bắt đầu", "invalid": "Giờ bắt đầu không hợp lệ"})
-    end_time = fields.Time(required=True, error_messages={"require": "Vui lòng chọn giờ kết thúc", "invalid": "Giờ kết thúc không hợp lệ"})
+    booking_date= fields.Date(required=True, error_messages={"required": "Vui lòng chọn ngày đặt sân", "invalid": "Ngày đặt không hợp lệ"})
+    start_time = fields.Time(required=True, error_messages={"required": "Vui lòng chọn giờ bắt đầu", "invalid": "Giờ bắt đầu không hợp lệ"})
+    end_time = fields.Time(required=True, error_messages={"required": "Vui lòng chọn giờ kết thúc", "invalid": "Giờ kết thúc không hợp lệ"})
 
     @validates_schema
     def validate_date(self, data, **kwargs):
@@ -44,9 +44,14 @@ class BookingOutputSchema(Schema):
 
 class BookingInputTotalSchema(Schema):
     field_id = fields.Integer(required=True)
-    booking_date = fields.Date(required=True, error_messages={"required": "Vui lòng chọn ngày đặt"})
+    booking_date = fields.Date(required=True, error_messages={"required": "Vui lòng chọn ngày đặt", "invalid": "Ngày đặt không hợp lệ"})
     start_time = fields.Time(required=True,error_messages={"required": "Vui lòng chọn giờ bắt đầu", "invalid": "Giờ bắt đầu không hợp lệ"})
     end_time = fields.Time(required=True, error_messages={"required": "Vui lòng chọn giờ kết thúc", "invalid": "Giờ kết thúc không hợp lệ"})
+
+    @validates_schema
+    def validate_date(self, data, **kwargs):
+        if data.get("start_time")  >= data.get("end_time"):
+            raise ValidationError("Giờ bắt đầu phải sớm hơn giờ kết thúc")
 
 
 class BookingCancelledSchema(Schema):

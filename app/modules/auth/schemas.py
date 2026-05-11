@@ -6,11 +6,11 @@ import re
 class UserInputSchema(Schema):
     username= fields.Str(required=True, validate=validate.Length(min=3, max=30, 
                             error="Tên đăng nhập phải từ 3-30 ký tự"),
-                            error_messages={"require": "Vui lòng không để trống tên đăng nhập"})
+                            error_messages={"required": "Vui lòng không để trống tên đăng nhập"})
     password= fields.Str(required=True, validate=validate.Length(min=8, max=30, 
                             error="Mật khẩu phải từ 8-30 ký tự"),
-                            error_messages={"require": "Vui lòng không để trống tên mật khẩu"})
-    confirm= fields.Str(required=True, error_messages={"require": "Vui lòng không để trống xác nhận"})
+                            error_messages={"required": "Vui lòng không để trống tên mật khẩu"})
+    confirm= fields.Str(required=True, error_messages={"required": "Vui lòng không để trống xác nhận"})
 
     @validates_schema
     def validate_confirm(self, data, **kwargs):
@@ -41,7 +41,7 @@ class UserInputSchema(Schema):
 
 class UserOutputSchema(Schema):
     id = fields.Str()
-    username = fields.Str(dump_default="")
+    username = fields.Str()
     email = fields.Str()
     first_name = fields.Str()
     last_name = fields.Str()
@@ -49,6 +49,11 @@ class UserOutputSchema(Schema):
     status = fields.Enum(UserStatusEnum, by_value=True)
     role = fields.Enum(UserRoleEnum, by_value=True)
     created_at = fields.DateTime()
+
+
+class UserLoginInputSchema(Schema):
+    username = fields.Str(required=True, error_messages={"required": "Vui lòng không để trống tên đăng nhập"})
+    password = fields.Str(required=True, error_messages={"required": "Vui lòng không để trống mật khẩu"})
 
 
 class UserOutputBookingSchema(Schema):
