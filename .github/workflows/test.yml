@@ -16,6 +16,8 @@ jobs:
             python-version: '3.10'
         - name: Install dependencies
           run: pip install -r requirements.txt
+        - uses: browser-actions/setup-chrome@latest
+        - run: chrome --version
         - name: Start Flask server
           run: |
             export FLASK_APP=run.py
