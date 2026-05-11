@@ -10,6 +10,8 @@ def create_app():
     app_test = Flask(__name__)
     app_test.config.from_object(Config)
     app_test.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
+    app_test.config["SECRET_KEY"] = "test-secret-key"
+    app_test.config["JWT_SECRET_KEY"] = "test-secret-key"
     app_test.config["PAGE_SIZE"] = 2
     app_test.config["TESTING"] = True
     app_test.config["PROPAGATE_EXCEPTIONS"] = False
