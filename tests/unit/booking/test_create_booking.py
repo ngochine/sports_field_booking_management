@@ -1,6 +1,6 @@
 from app.modules.bookings.models import Booking
 from tests.test_base import test_app, test_session, test_client, test_auth
-from tests.sample_fixtures import sample_fields
+from tests.unit.sample_fixtures import sample_fields
 from app.modules.auth.models import User, UserStatusEnum, UserRoleEnum
 from datetime import date, timedelta, datetime
 

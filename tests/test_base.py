@@ -4,8 +4,8 @@ from instances.config import Config
 from app.extension import db, jwt
 from flask import jsonify
 from werkzeug.exceptions import Unauthorized, Forbidden
-
-
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 def create_app():
     app_test = Flask(__name__)
     app_test.config.from_object(Config)
@@ -91,3 +91,10 @@ def test_auth(test_client):
         }
     )
     return test_client
+
+@pytest.fixture
+def driver():
+    service = Service(executable_path='D:\\sports_field_booking_management_team8\\venv\\chromedriver.exe')
+    driver = webdriver.Chrome(service=service)
+    yield driver
+    driver.quit()
