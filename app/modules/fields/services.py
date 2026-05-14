@@ -3,7 +3,7 @@ from app.modules.bookings import dao as booking_dao
 import math
 from flask import current_app
 from datetime import datetime
-from marshmallow import ValidationError
+from werkzeug.exceptions import NotFound
 
 
 def get_list_field_service(filters: dict):
@@ -27,6 +27,8 @@ def get_list_field_service(filters: dict):
 
 def get_field_detail_service(field_id: int, date_selected: datetime):
     field = dao.get_field_by_id(field_id=field_id)
+    if field is None:
+        raise NotFound("Sân không tồn tại")
     related_fields = dao.get_related_fields(field=field)
     field_prices = booking_dao.get_field_prices(field=field, date_selected=date_selected)
     
@@ -40,7 +42,7 @@ def get_field_detail_service(field_id: int, date_selected: datetime):
 def get_field_prices_service(field_id: int, date_selected: datetime):
     field = dao.get_field_by_id(field_id=field_id)
     if field is None:
-        raise ValidationError("Sân không tồn tại")
+        raise NotFound("Sân không tồn tại")
 
     field_prices = booking_dao.get_field_prices(field=field, date_selected=date_selected)
     return field_prices

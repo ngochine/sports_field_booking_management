@@ -15,9 +15,7 @@
                 <div class="d-flex flex-wrap align-items-center small">
                     <span class="me-3">
                         <i class="fa-solid fa-location-dot"></i>
-                        {{ field.location.address.street }},
-                        {{ field.location.address.district.name }},
-                        {{ field.location.address.district.province.name }}
+                        {{ field.location.name}}
                     </span>
                     <span>
                         <i class="fa-solid fa-star text-warning"></i>
@@ -44,7 +42,7 @@
                             <h5 class="fw-bold mb-2" style="color:var(--blue)">Giới thiệu</h5>
                             <p class="text-muted">
                                 {% if field.description %} {{field.description}} {% else %} <strong>{{ field.name }}</strong> là một trong những sân {{ field.field_type.name | lower }}
-                                chất lượng cao tại {{ field.location.address.district.name }}, {{ field.location.address.district.province.name }} {% endif %}
+                                chất lượng cao tại {{ field.location.address.district_name }}, {{ field.location.address.province_name }} {% endif %}
                             </p>
                         </div>
 
@@ -144,13 +142,13 @@
                             <p class="text-muted mb-3">
                                 <i class="fa-solid fa-location-dot text-danger me-1"></i>
                                 {{ field.location.address.street }},
-                                {{ field.location.address.district.name }},
-                                {{ field.location.address.district.province.name }}
+                                {{ field.location.address.district_name }},
+                                {{ field.location.address.province_name }}
                             </p>
                         </div>
                         <div class="m-3 p-3">
                             <div class="text-center">
-                                <a href="https://maps.google.com/?q={{ field.location.address.street }},{{ field.location.address.district.name }},{{ field.location.address.district.province.name }}"
+                                <a href="https://maps.google.com/?q={{ field.location.address.street }},{{ field.location.address.district_name }},{{ field.location.address.province_name }}"
                                 target="_blank" class="btn btn-sm mt-2 text-white fw-bold p-2"
                                 style="background:var(--orange); border-radius:6px;">
                                     <i class="fa-solid fa-arrow-up-right-from-square me-1"></i>Mở Google Maps
@@ -171,9 +169,9 @@
                             <label class="form-label fw-semibold small" style="color: var(--blue);">Chọn ngày</label>
                             <input type="date" id="dateSelectedValue"
                                 class="form-control border rounded fs-6" 
-                                min="{{ today }}" 
+                                min="{{ today }}"
                                 value="{{ today }}"
-                                onchange="loadFieldPrice({{ field.id }}, this.value)">
+                                onchange="loadFieldPrice({{ field.id }}, this.value)"  onblur="validateDate(this)">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-semibold small" style="color: var(--blue);">Giá - Khung giờ</label>
@@ -186,7 +184,7 @@
                                                     <tr>
                                                         <th style="color: var(--blue);">Giờ bắt đầu</th>
                                                         <th style="color: var(--blue);">Giờ kết thúc</th>
-                                                        <th style="color: var(--blue);">Giá</th>
+                                                        <th style="color: var(--blue);">Giá/tiếng</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -241,9 +239,12 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="my-2 fst-italic" style="color: var(--orange)">
+                            <p id="errMessage"></p>
+                        </div>
                         <div>
                             <button class="btn w-100 fw-bolder" type="button" data-bs-toggle="modal" data-bs-target="#confirmBookingModal" 
-                             style="background-color: var(--orange); color: var(--white);" onclick="loadConfirmBooking()">
+                             style="background-color: var(--orange); color: var(--white);" onclick="loadConfirmBooking()" id="btnCreateBooking">
                                 Đặt sân ngay
                             </button>
                         </div>
@@ -364,7 +365,7 @@
         noCalendar: true,
         dateFormat: "H:i",
         time_24hr: true,
-        minuteIncrement: 30
+        minuteIncrement: 30,
     })
     const startPicker = flatpickr("#startTime", {
         enableTime: true,
@@ -374,10 +375,11 @@
         minuteIncrement: 30,
         onChange: function(selectedDates, dateStr) {
             let minEnd = new Date(selectedDates[0])
-            minEnd.setMinutes(minEnd.getMinutes() + 30)
+            minEnd.setMinutes(minEnd.getMinutes() + 60)
             endPicker.set("minTime", minEnd)
             endPicker.setDate(minEnd)
         }
     })
+
 </script>
 {% endblock %}

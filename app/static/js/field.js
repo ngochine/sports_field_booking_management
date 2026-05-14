@@ -56,6 +56,19 @@ function getDistrict(cityCode, selectedDistrict) {
 
 
 //detail
+function validateDate(input) {
+    if (!input.value) return;
+    const selectedDate = new Date(input.value);
+    const minDate = new Date(input.min);
+    selectedDate.setHours(0, 0, 0, 0);
+    minDate.setHours(0, 0, 0, 0);
+    if (selectedDate < minDate) {
+        alert("Không được chọn ngày ở quá khứ");
+        input.value = input.min;
+    }
+}
+
+
 function loadFieldPrice(fieldId, dateSelected){
     fetch(`/api/fields/${fieldId}/field-price?date=${dateSelected}`)
         .then(res => {
@@ -121,12 +134,15 @@ function loadConfirmBooking(){
 
 
 function caculatorTotalBooking(fieldId){
+    document.getElementById("errMessage").innerHTML = ""
     const bookingDate = document.getElementById("dateSelectedValue").value
     const startTime = document.getElementById("startTime").value
     const endTime = document.getElementById("endTime").value
 
-    if (!startTime || !endTime)
+    if (!startTime || !endTime){
+        document.getElementById("btnCreateBooking").disabled = true
         return
+    }
 
     fetch("/api/bookings/calculate-price", {
         method: "POST",
@@ -149,6 +165,13 @@ function caculatorTotalBooking(fieldId){
     .then(data => {
         document.getElementById("totalTime").innerHTML = data.total_time
         document.getElementById("totalPrice").innerHTML = data.total_price.toLocaleString("vi-VN")
+        document.getElementById("btnCreateBooking").disabled = false
+    })
+    .catch(err => {
+        document.getElementById("totalTime").innerHTML = 0
+        document.getElementById("totalPrice").innerHTML = 0
+        document.getElementById("btnCreateBooking").disabled = true
+        document.getElementById("errMessage").innerHTML = "Sân hiện không phục vụ trong khung giờ bạn chọn. Vui lòng chọn khung giờ khác."
     })
 }
 
@@ -181,15 +204,22 @@ function createBooking(fieldId){
         setTimeout(() => window.location.href = "/bookings", 500)
     })
     .catch(err => {
+        console.log(err)
         let messages = []
         if (typeof err.message === "object") {
-            Object.values(err.message).forEach(msgArr => {
-                messages.push(...msgArr)
-            })
+            Object.values(err.message)
+                .forEach(msgArr => {
+                    if (Array.isArray(msgArr)) {
+                        messages.push(...msgArr)
+                    } else {
+                        messages.push(msgArr)
+                    }
+                })
         } else {
-            messages.push(err.message || "Có lỗi xảy ra")
+            messages.push(
+                err.message || "Có lỗi xảy ra"
+            )
         }
-        console.log(err)
         alert(messages.join("\n"))
     })
 }

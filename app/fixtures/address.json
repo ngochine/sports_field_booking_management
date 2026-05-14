@@ -1,57 +1,90 @@
 [
   {
     "id": 1,
-    "street": "123 Lê Văn Việt",
-    "district_id": 769
+    "province_id": 79,
+    "province_name": "Thành phố Hồ Chí Minh",
+    "district_id": 769,
+    "district_name": "Thành phố Thủ Đức",
+    "street": "123 Lê Văn Việt"
   },
   {
     "id": 2,
-    "street": "456 Nguyễn Văn Linh",
-    "district_id": 785
+    "province_id": 79,
+    "province_name": "Thành phố Hồ Chí Minh",
+    "district_id": 785,
+    "district_name": "Quận 7",
+    "street": "456 Nguyễn Văn Linh"
   },
   {
     "id": 3,
-    "street": "789 Hoàng Diệu 2",
-    "district_id": 769
+    "province_id": 79,
+    "province_name": "Thành phố Hồ Chí Minh",
+    "district_id": 769,
+    "district_name": "Thành phố Thủ Đức",
+    "street": "789 Hoàng Diệu 2"
   },
   {
     "id": 4,
-    "street": "22 Trường Chinh",
-    "district_id": 776
+    "province_id": 79,
+    "province_name": "Thành phố Hồ Chí Minh",
+    "district_id": 776,
+    "district_name": "Quận Tân Bình",
+    "street": "22 Trường Chinh"
   },
   {
     "id": 5,
-    "street": "58 Đinh Tiên Hoàng",
-    "district_id": 775
+    "province_id": 79,
+    "province_name": "Thành phố Hồ Chí Minh",
+    "district_id": 775,
+    "district_name": "Quận Bình Thạnh",
+    "street": "58 Đinh Tiên Hoàng"
   },
   {
     "id": 6,
-    "street": "101 Võ Văn Ngân",
-    "district_id": 769
+    "province_id": 79,
+    "province_name": "Thành phố Hồ Chí Minh",
+    "district_id": 769,
+    "district_name": "Thành phố Thủ Đức",
+    "street": "101 Võ Văn Ngân"
   },
   {
     "id": 7,
-    "street": "300 Lý Thường Kiệt",
-    "district_id": 770
+    "province_id": 79,
+    "province_name": "Thành phố Hồ Chí Minh",
+    "district_id": 770,
+    "district_name": "Quận 10",
+    "street": "300 Lý Thường Kiệt"
   },
   {
     "id": 8,
-    "street": "14 Phan Văn Hớn",
-    "district_id": 772
+    "province_id": 79,
+    "province_name": "Thành phố Hồ Chí Minh",
+    "district_id": 772,
+    "district_name": "Quận 12",
+    "street": "14 Phan Văn Hớn"
   },
   {
     "id": 9,
-    "street": "77 Nguyễn Thị Định",
-    "district_id": 761
+    "province_id": 79,
+    "province_name": "Thành phố Hồ Chí Minh",
+    "district_id": 761,
+    "district_name": "Quận 2",
+    "street": "77 Nguyễn Thị Định"
   },
   {
     "id": 10,
-    "street": "500 Quang Trung",
-    "district_id": 777
+    "province_id": 79,
+    "province_name": "Thành phố Hồ Chí Minh",
+    "district_id": 777,
+    "district_name": "Quận Tân Phú",
+    "street": "500 Quang Trung"
   },
   {
     "id": 11,
-    "street": "88 Bình Long",
-    "district_id": 783
+    "province_id": 79,
+    "province_name": "Thành phố Hồ Chí Minh",
+    "district_id": 783,
+    "district_name": "Quận Bình Tân",
+    "street": "88 Bình Long"
   }
 ]

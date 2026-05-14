@@ -14,21 +14,32 @@
 
             <form id="registerForm">
                 <div class="form-floating mb-3 mt-3">
-                    <input type="text" class="form-control" id="username" placeholder="Nhập tên người dùng" name="username" required>
+                    <input type="text" class="form-control" id="username" placeholder="Nhập tên người dùng" name="username" 
+                    minlength="3" maxlength="30" pattern="^\S{3,30}$"
+                    title="Tên đăng nhập phải từ 3-30 ký tự và không chứa khoảng trắng" required>
                     <label for="username">Tên người dùng</label>
                     <sub> <sup class="text-danger">(*) </sup>Tên người dùng không được chứa khoảng trắng</sub>
                 </div>
 
-                <div class="form-floating mt-3 mb-3">
+                <div class="form-floating mt-3">
                     <input type="password" class="form-control" id="password" placeholder="Nhập mật khẩu" name="password"
-                           pattern=".{8,}" required>
+                        pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,30}$"
+                        title="Mật khẩu phải có 8-30 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt" required>
                     <label for="password">Mật khẩu</label>
-                    <sub> <sup class="text-danger">(*) </sup>Mật khẩu có 8-30 ký tự, không chứa khoảng trắng, phải có số, chữ thường, chữ hoa, kí tự đặc biệt</sub>
+                    <button type="button" onclick="togglePassword('password', this)"
+                        class="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent">
+                        <i class="fa-regular fa-eye"></i>
+                    </button>
                 </div>
+                <sub class="mb-3"> <sup class="text-danger">(*) </sup>Mật khẩu có 8-30 ký tự, không chứa khoảng trắng, phải có số, chữ thường, chữ hoa, kí tự đặc biệt</sub>
 
                 <div class="form-floating mt-3 mb-3">
                     <input type="password" class="form-control" id="confirm" placeholder="Nhập lại mật khẩu" name="confirm" required>
                     <label for="confirm">Nhập lại mật khẩu</label>
+                    <button type="button" onclick="togglePassword('confirm', this)"
+                        class="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent">
+                        <i class="fa-regular fa-eye"></i>
+                    </button>
                 </div>
 
                 <button type="button" class="btn w-100" style="background-color: var(--orange) ;color: var(--white)" onclick="register()">

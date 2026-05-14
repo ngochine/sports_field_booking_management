@@ -6,6 +6,7 @@ from app.modules.bookings import services as booking_service
 from marshmallow import ValidationError
 from flask_jwt_extended import get_jwt_identity
 from app.common import decorators
+from werkzeug.exceptions import NotFound
 
 
 def get_field_price_api(field_id):
@@ -29,6 +30,9 @@ def get_field_price_api(field_id):
     except ValidationError as e:
         return jsonify({"success": False, "message": e.messages}), 400
 
+    except NotFound as e:
+        return jsonify({"success": False, "message": str(e.description)}), 404
+
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
 
@@ -38,7 +42,7 @@ def get_field_price_api(field_id):
     }), 200
 
 
-@decorators.customer_required_api
+
 def create_booking_api(field_id):
     try: 
         data = request.get_json()
@@ -53,6 +57,9 @@ def create_booking_api(field_id):
     
     except ValidationError as e:
         return jsonify({"success": False, "message": e.messages}), 400
+
+    except NotFound as e:
+        return jsonify({"success": False, "message": str(e)}), 404
 
     except Exception as e:
         return jsonify({"success": False, "error": str(e), "message": "Lỗi hệ thống vui lòng thử lại sau"}), 500

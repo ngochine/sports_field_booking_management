@@ -18,7 +18,7 @@ def get_fields():
 
 def get_field_detail(field_id:int):
     res = services.get_field_detail_service(field_id=field_id, date_selected= date.today())
-    
+
     field = res.get('field', None)
     related_fields = res.get('related_fields', None)
     field_prices = res.get('field_prices', None)

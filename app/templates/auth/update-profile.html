@@ -1,0 +1,110 @@
+{%extends 'layout/base.html'%}
+
+{%block title%}Chỉnh sửa thông tin tài khoản{%endblock%}
+
+{%block body%}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h3 class="fw-bolder mb-1">Chỉnh sửa thông tin tài khoản</h3>
+                    <p class="text-muted mb-0">Cập nhật thông tin cá nhân của bạn</p>
+                </div>
+            </div>
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4 col-12">
+                    <div class="row align-items-center mb-3">
+                        <div class="col-md-3 text-center mx-auto mb-5">
+                            <div class="position-relative d-inline-block">
+                                <img id="avatar"
+                                    src="{% if current_user.avatar %}{{ current_user.avatar }}{% else %}https://res.cloudinary.com/dvfuzolim/image/upload/v1768406079/avatar_trang_1_cd729c335b_kitzwg.jpg{% endif %}"
+                                    class="rounded-circle border border-4 border-white object-fit-cover shadow-sm"
+                                    width="130" height="130">
+
+                                <input type="file" id="avatarInput" accept="image/*" hidden>
+
+                                <button type="button" onclick="changeAvatar()"
+                                    class="btn rounded-circle position-absolute d-flex align-items-center justify-content-center"
+                                    style="width: 38px; height: 38px; bottom: 5px; right: 5px; background-color: var(--blue);">
+                                    <i class="fa-solid fa-camera" style="color: white; font-size: 14px;"></i>
+                                </button>
+
+                            </div>
+                            <h4 class="fw-bolder mb-1">{{ current_user.username }}</h4>
+                            {% if current_user.status.name == "ACTIVE" %}
+                            <div class="fw-bolder text-bg-success badge">
+                                {{current_user.status.name}} - Đang hoạt động
+                            </div>
+                            {% else %}
+                            <div class="fw-bolder text-bg-danger badge">
+                                {{current_user.status.name}} - Tài khoản bị cấm
+                            </div>
+                            {%endif%}
+                        </div>
+                        <form id="updateProfileForm" onsubmit="updateInfoUser(event)">
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label fw-bold">Email</label>
+                                    <input type="email" id="email" class="form-control p-2"
+                                        value="{{ current_user.email if current_user.email else '' }}" placeholder="Nhập email">
+                                </div>
+
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label fw-bold">Số điện thoại</label>
+                                    <input type="tel" id="phone" class="form-control p-2" minlength="10" maxlength="10"
+                                           inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                        value="{{ current_user.phone if current_user.phone else '' }}"
+                                        placeholder="Nhập số điện thoại"
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label fw-bold">Họ</label>
+                                    <input type="text" id="lastName" class="form-control p-2" maxlength="50"
+                                        value="{{ current_user.last_name if current_user.last_name else '' }}" placeholder="Nhập họ">
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label fw-bold">Tên</label>
+                                    <input type="text" id="firstName" class="form-control p-2" maxlength="50"
+                                        value="{{ current_user.first_name if current_user.first_name else '' }}" placeholder="Nhập tên">
+                                </div>
+
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-3">
+                                <a href="{{url_for('auth.profile')}}" class="btn px-4"
+                                    style="border: 2px solid var(--gray);">Quay lại</a>
+                                <button type="submit" class="btn px-4"
+                                    style="background-color: var(--blue); color: var(--white);">
+                                    <i class="bi bi-floppy me-2"></i>Lưu thay đổi
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    function changeAvatar() {
+        document.getElementById("avatarInput").click()
+    }
+
+    const avatarInput =document.getElementById("avatarInput")
+    const avatar =document.getElementById("avatar")
+
+    avatarInput.addEventListener("change",
+        function(event) {
+            const file = event.target.files[0]
+            if (file) {
+                avatar.src =URL.createObjectURL(file)
+            }
+        }
+    )
+</script>
+{% endblock %}

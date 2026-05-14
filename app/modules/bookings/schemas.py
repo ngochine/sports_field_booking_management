@@ -12,7 +12,7 @@ class BookingInputSchema(Schema):
 
     @validates_schema
     def validate_date(self, data, **kwargs):
-        if data.get("start_time")  >= data.get("end_time"):
+        if data.get("start_time") >= data.get("end_time"):
             raise ValidationError("Giờ bắt đầu phải sớm hơn giờ kết thúc")
         
         if data.get("booking_date") == date.today():
@@ -33,6 +33,7 @@ class BookingInputSchema(Schema):
     
 
 class BookingOutputSchema(Schema):
+    id = fields.Integer()
     start_time = fields.Time()
     end_time = fields.Time()
     status = fields.Enum(BookingStatusEnum)
@@ -55,10 +56,13 @@ class BookingInputTotalSchema(Schema):
 
 
 class BookingCancelledSchema(Schema):
-    status = fields.Enum(BookingStatusEnum)
+    status = fields.Str(required=True, error_messages={"required": "Vui lòng cung cấp trạng thái"})
 
     @validates("status")
     def validate_status(self, value, **kwargs):
-        if value != BookingStatusEnum.CANCELLED:
+        valid_status = [e.name for e in BookingStatusEnum]
+
+        if value not in valid_status:
             raise ValidationError("Trạng thái huỷ không hợp lệ")
+
         return value

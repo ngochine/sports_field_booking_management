@@ -1,9 +1,9 @@
 from flask import request, jsonify
 from . import services, schemas
 from app.modules.fields import dao as field_dao
-from app.common import decorators
 from marshmallow import ValidationError
 from flask_jwt_extended import get_jwt_identity
+from werkzeug.exceptions import Forbidden, NotFound
 
 
 def calculate_price_api():
@@ -30,7 +30,6 @@ def calculate_price_api():
         return jsonify({"success": False, "message": e.messages}), 400
 
 
-@decorators.customer_required_api
 def cancelled_booking_api(booking_id):
     try:
         data = request.get_json()
@@ -46,8 +45,13 @@ def cancelled_booking_api(booking_id):
     except ValidationError as e:
         return jsonify({"success": False, "message": e.messages}), 400
 
+    except NotFound as e:
+        return jsonify({"success": False, "message": e.description}), 404
+
+    except Forbidden:
+        raise
+
     except Exception as e:
-        print(e)
         return jsonify({"success": False, "error": str(e), "message": "Lỗi hệ thống vui lòng thử lại sau"}), 500
     
 

@@ -1,5 +1,7 @@
 from flask import Blueprint
 from . import views, apis
+from app.common import decorators
+
 
 field_bp = Blueprint('field', __name__)
 
@@ -22,5 +24,6 @@ def field_schema_api(field_id):
 
 
 @api_field_bp.route('/fields/<int:field_id>/booking', methods=['POST'])
+@decorators.customer_required_api
 def create_booking_api(field_id):
     return apis.create_booking_api(field_id)

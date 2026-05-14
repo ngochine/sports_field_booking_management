@@ -1,5 +1,5 @@
 from flask import render_template
-from . import dao
+from app.modules.bookings import dao as booking_dao
 from app.modules.fields import dao as field_dao
 from app.common import decorators
 from flask_jwt_extended import get_jwt_identity
@@ -19,11 +19,12 @@ def login():
     return render_template("auth/login.html")
 
 
-@decorators.login_required_render
 def profile():
-    current_user_id = get_jwt_identity()
-    user = dao.get_user_by_id(current_user_id)
+    user_id = get_jwt_identity()
+    bookings = booking_dao.get_bookings_by_user(user_id=user_id)
+    total_bookings = len(bookings)
+    return render_template("auth/profile.html", bookings=bookings[:2], total_bookings=total_bookings)
 
-    #flash ra nữa
-    
-    return render_template("auth/profile.html", user=user)
+
+def update_profile():
+    return render_template("auth/update-profile.html")

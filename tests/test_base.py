@@ -19,8 +19,9 @@ def create_app():
     db.init_app(app_test)
     jwt.init_app(app_test)
 
-    from app.modules.auth.routes import api_auth_bp
+    from app.modules.auth.routes import api_auth_bp, auth_bp
     app_test.register_blueprint(api_auth_bp)
+    app_test.register_blueprint(auth_bp)
 
     from app.modules.fields.routes import api_field_bp
     app_test.register_blueprint(api_field_bp)

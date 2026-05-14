@@ -6,6 +6,7 @@ from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
 from app.modules.auth import dao
 from werkzeug.exceptions import Unauthorized, Forbidden
 from flask import jsonify
+from app.admin.setup import init_admin
 
 
 def create_app():
@@ -21,6 +22,7 @@ def create_app():
     db.init_app(flask_app)
     migrate.init_app(flask_app, db)
     jwt.init_app(flask_app)
+    init_admin(flask_app)
 
     @flask_app.context_processor
     def inject_user():
@@ -30,13 +32,13 @@ def create_app():
             if user_id:
                 user = dao.get_user_by_id(user_id)
                 return dict(current_user=user)
-        except Exception as e:
-            print(e)
+        except Exception:
+            pass
 
         return dict(current_user=None)
     
     @flask_app.errorhandler(Unauthorized)
-    def handle_unauthorized(e):
+    def handle_unauthenticated(e):
         return jsonify({
             "success": False,
             "message": e.description
