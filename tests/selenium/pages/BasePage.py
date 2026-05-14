@@ -1,3 +1,5 @@
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from instances.config import Config
 import os
 
@@ -7,6 +9,9 @@ class BasePage:
 
     def open(self, path=""):
         self.driver.get(Config.BASE_URL + path)
+
+    def open_not_base(self,path=""):
+        self.driver.get(path)
 
     def find(self,by,value):
         return self.driver.find_element(by,value)
@@ -25,3 +30,20 @@ class BasePage:
     def screen(self, SCREENSHOT_DIR ,name):
         os.makedirs(SCREENSHOT_DIR, exist_ok=True)
         self.driver.save_screenshot(os.path.join(SCREENSHOT_DIR, name))
+
+    def get_url(self):
+        return self.driver.current_url
+
+    def scroll(self, f=1000):
+        self.driver.execute_script(f"window.scrollTo(0, {f});")
+
+    def get_text_alert(self, timeout=5):
+        try:
+            alert = WebDriverWait(self.driver, timeout).until(
+                EC.alert_is_present(),
+            )
+            text = alert.text
+            alert.accept()
+            return text
+        except:
+            return None

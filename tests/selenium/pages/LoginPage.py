@@ -1,3 +1,5 @@
+import time
+
 from selenium.webdriver.common.by import By
 from tests.selenium.pages.BasePage import BasePage
 
@@ -15,6 +17,7 @@ class LoginPage(BasePage):
     def login(self, username, password):
         self.typing(*self.USERNAME_INPUT,username)
         self.typing(*self.PASSWORD_INPUT,password)
+        time.sleep(1)
         self.click(*self.BUTTON)
 
     def result(self):
