@@ -30,9 +30,9 @@ def test_field_not_found(test_client):
         f"/api/fields/10000/field-price?date={date.today().isoformat()}",
     )
     data = response.get_json()
-    assert response.status_code == 400
+    assert response.status_code == 404
     assert data["success"] == False
-    assert data["message"] == ["Sân không tồn tại"]
+    assert data["message"] == 'Sân không tồn tại'
 
 
 def test_get_field_price_success(test_client, sample_fields):

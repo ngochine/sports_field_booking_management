@@ -12,7 +12,7 @@ class BookingInputSchema(Schema):
 
     @validates_schema
     def validate_date(self, data, **kwargs):
-        if data.get("start_time")  >= data.get("end_time"):
+        if data.get("start_time") >= data.get("end_time"):
             raise ValidationError("Giờ bắt đầu phải sớm hơn giờ kết thúc")
         
         if data.get("booking_date") == date.today():

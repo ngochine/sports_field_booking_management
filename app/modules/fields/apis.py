@@ -30,6 +30,9 @@ def get_field_price_api(field_id):
     except ValidationError as e:
         return jsonify({"success": False, "message": e.messages}), 400
 
+    except NotFound as e:
+        return jsonify({"success": False, "message": str(e.description)}), 404
+
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
 

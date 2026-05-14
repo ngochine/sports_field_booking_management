@@ -282,15 +282,15 @@ def test_limit_booking(test_auth, test_session, sample_fields, sample_field_pric
         json={
             "booking_date": date.today().isoformat(),
             "start_time": (datetime.now() + timedelta(hours=2)).strftime("%H:%M"),
-            "end_time": (datetime.now() + timedelta(hours=4)).strftime("%H:%M")
+            "end_time": (datetime.now() + timedelta(hours=3)).strftime("%H:%M")
         }
     )
     response = test_auth.post(
         f"/api/fields/{sample_fields[0].id}/booking",
         json={
             "booking_date": date.today().isoformat(),
-            "start_time": (datetime.now() + timedelta(hours=4)).strftime("%H:%M"),
-            "end_time": (datetime.now() + timedelta(hours=5)).strftime("%H:%M")
+            "start_time": (datetime.now() + timedelta(hours=3)).strftime("%H:%M"),
+            "end_time": (datetime.now() + timedelta(hours=4)).strftime("%H:%M")
         }
     )
     data = response.get_json()
