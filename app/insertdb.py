@@ -26,8 +26,6 @@ if __name__ == "__main__":
 
         load_data("app/fixtures/user.json", User)
         load_data("app/fixtures/field_type.json", FieldType)
-        load_data("app/fixtures/province.json", Province)
-        load_data("app/fixtures/district.json", District)
         load_data("app/fixtures/address.json", Address)
         load_data("app/fixtures/location.json", Location)
         load_data("app/fixtures/field.json", Field)

@@ -1,9 +1,12 @@
 from flask import Blueprint
 from . import views, apis
-
+from app.common import decorators
 
 booking_bp = Blueprint('booking', __name__)
+
+
 @booking_bp.route('/bookings', methods=["GET"])
+@decorators.customer_required_render
 def bookings():
     return views.get_bookings()
 
@@ -18,5 +21,6 @@ def calculate_price():
 
 
 @api_booking_bp.route('/bookings/<int:booking_id>', methods=['PATCH'])
+@decorators.customer_required_api
 def cancelled_booking(booking_id):
     return apis.cancelled_booking_api(booking_id)

@@ -2,7 +2,10 @@ from .models import User
 from . import dao
 from werkzeug.security import generate_password_hash, check_password_hash
 from marshmallow import ValidationError
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from werkzeug.exceptions import NotFound
+import cloudinary
+import cloudinary.uploader
 
 
 def register_user(validate_data: dict) -> User:
@@ -15,7 +18,7 @@ def register_user(validate_data: dict) -> User:
 
     try:
         return dao.create_new_user(password=password, **validate_data)
-    
+
     except IntegrityError:
         raise ValidationError("Tên người dùng đã tồn tại")
 
@@ -30,3 +33,34 @@ def authenticate_user(username: str, password: str) -> User:
         return None
     except Exception as e:
         raise e
+    
+
+def update_password_service(data: dict, user_id: str):
+    try:
+        user = dao.get_user_by_id(user_id=user_id)
+        if not user:
+            raise NotFound("Không tồn tại người dùng")
+
+        current_password = data.get("current_password")
+        new_password = data.get("new_password")
+
+        if check_password_hash(user.password, current_password):
+            new_password = generate_password_hash(new_password)
+            user = dao.update_password(user= user, new_password = new_password)
+        else:
+            raise ValidationError("Mật khẩu hiện tại không đúng")
+        
+    except SQLAlchemyError:
+        raise Exception
+    
+
+def update_user_info_service(data: dict, avatar, user_id: str):
+    user = dao.get_user_by_id(user_id=user_id)
+    if not user:
+        raise NotFound("Không tồn tại người dùng")
+    if avatar:
+        result = cloudinary.uploader.upload(avatar)
+        avatar = result["secure_url"]
+
+    user = dao.update_user_info(user= user, avatar=avatar, **data)
+    return user

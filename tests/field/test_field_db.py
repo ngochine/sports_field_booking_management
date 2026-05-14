@@ -1,6 +1,7 @@
 from tests.test_base import test_app, test_session
 from tests.sample_fixtures import sample_field_type, sample_fields
 from app.modules.fields.dao import get_list_field_type, get_field_by_id, get_hot_field, get_related_fields
+from app.modules.fields.models import FieldStatusEnum
 
 
 def test_all_field_type(test_session, sample_field_type):
@@ -29,6 +30,7 @@ def test_hot_fields(test_session, sample_fields):
     assert hot_fields[0].id == 1
     assert hot_fields[2].id == 3
     assert len(hot_fields[0].bookings) >= len(hot_fields[1].bookings)
+    assert all(f.status == FieldStatusEnum.ACTIVE for f in hot_fields)
 
 
 def test_related_fields(test_session, sample_fields):
@@ -37,3 +39,4 @@ def test_related_fields(test_session, sample_fields):
 
     assert len(related_fields) <= 4
     assert all(f.field_type_id == field_test.field_type_id for f in related_fields)
+    assert all(f.status == FieldStatusEnum.ACTIVE for f in related_fields)

@@ -2,6 +2,13 @@ from app.extension import db
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Text
 from sqlalchemy.orm import relationship
 from datetime import datetime
+from enum import Enum
+from sqlalchemy import Enum as sqlEnum
+
+
+class FieldStatusEnum(Enum):
+    ACTIVE = "active"
+    DELETED = "deleted"
 
 
 class FieldType(db.Model):
@@ -15,29 +22,20 @@ class FieldType(db.Model):
         return self.name
 
 
-class Province(db.Model):
-    __tablename__ = "province"
-    id = Column(Integer, primary_key=True)
-    name = Column(String(100), nullable=False)
-
-
-class District(db.Model):
-    __tablename__ = "district"
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String(100), nullable=False)
-
-    province_id = Column(Integer, ForeignKey("province.id"))
-    province = relationship("Province", backref="districts")
-
-
 class Address(db.Model):
     __tablename__ = "address"
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
 
-    street = Column(String(255))
-    district_id = Column(Integer, ForeignKey("district.id"))
-    district = relationship("District")
+    province_id = Column(Integer, nullable=False)
+    province_name = Column(String(100), nullable=False)
+
+    district_id = Column(Integer, nullable=False)
+    district_name = Column(String(100), nullable=False)
+
+    street = Column(String(255), nullable=False)
+
+    def __str__(self):
+        return f'{self.street}, {self.district_name}, {self.province_name}'
 
 
 class Location(db.Model):
@@ -45,9 +43,10 @@ class Location(db.Model):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False)
-    address_id = Column(Integer, ForeignKey('address.id'), nullable=False, unique=True)
+    address_id = Column(Integer, ForeignKey('address.id'), nullable=False)
     address = relationship(Address, backref="location", uselist=False)
     description = Column(String(255))
+
     def __str__(self):
         return self.name
 
@@ -56,9 +55,11 @@ class Field(db.Model):
     __tablename__ = 'field'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(100), nullable=False)
+    name = Column(String(100), nullable=False, unique=True)
     image = Column(String(300))
     description = Column(Text, nullable=True)
+    status = Column(sqlEnum(FieldStatusEnum), nullable=False, default=FieldStatusEnum.ACTIVE)
+
     field_type_id = Column(Integer, ForeignKey('field_type.id'), nullable=False)
     location_id = Column(Integer, ForeignKey('location.id'), nullable=False)
 

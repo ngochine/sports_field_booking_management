@@ -1,6 +1,7 @@
 from app.extension import db
 from app.modules.auth.models import User
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError
+
 
 def create_new_user(password: str, **kwargs) -> User:
     try:
@@ -24,9 +25,37 @@ def check_user(username: str) -> User:
     
 
 def get_user_by_id(user_id: int) -> User:
+    return User.query.get(user_id)
+    
+
+def update_password(user: User, new_password: str) -> User:
     try:
-        query = User.query
-        user = query.filter_by(id=user_id).first()
+        user.password = new_password
+        db.session.commit()
         return user
-    except Exception as e:
-        raise e
+    
+    except SQLAlchemyError:
+        db.session.rollback()
+        raise SQLAlchemyError()
+    
+
+def update_user_info(user: User, avatar=None, **kwargs) -> User:
+    try:
+        if avatar:
+            user.avatar = avatar
+
+        if kwargs.get("email"):
+            exist_user = User.query.filter_by(email=kwargs.get("email")).first()
+
+            if exist_user and exist_user.id != user.id:
+                raise ValueError("Email đã được đăng ký")
+
+        for key, value in kwargs.items():
+            setattr(user, key, value)
+
+        db.session.commit()
+        return user
+
+    except Exception:
+        db.session.rollback()
+        raise

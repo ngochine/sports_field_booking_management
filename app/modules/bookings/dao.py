@@ -1,11 +1,11 @@
 from app.extension import db
 from .models import FieldPrice, Booking
 from app.modules.fields.models import Field
-from app.modules.auth.models import User
 from datetime import date, time
 from sqlalchemy import and_
 from sqlalchemy.exc import IntegrityError
 from flask import current_app
+from datetime import datetime, date
 
 
 def query_date_selected(query, date_selected: date):
@@ -90,15 +90,6 @@ def get_bookings_by_user(user_id: int, status= None, page=None) -> list[Booking]
     return query.all()
 
 
-def count_bookings(user_id: str, status: str) -> int:
-    query = Booking.query.filter_by(user_id=user_id)
-    if status:
-        if status!="all":
-            query = query.filter_by(status=status)
-
-    return query.count()
-
-
 def get_booking_by_id(booking_id) -> Booking:
     return Booking.query.get(booking_id)
 
@@ -108,3 +99,13 @@ def update_booking_status(booking: Booking, status: str) -> Booking:
 
     db.session.commit()
     return booking
+
+
+def check_future_booking(field: Field) -> bool:
+    now = datetime.now()
+    query = Booking.query.filter(Booking.field_id == field.id)
+    if query:
+        query = query.filter(
+            (Booking.booking_date > now.date()) | (Booking.booking_date == now.date()) & (Booking.start_time > now.time())
+        )
+    return query.first() is not None

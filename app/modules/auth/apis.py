@@ -4,7 +4,8 @@ from marshmallow import ValidationError
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, \
     get_jwt_identity, set_access_cookies, unset_jwt_cookies, set_refresh_cookies, get_jwt
 from app.extension import jwt
-from app.common import decorators
+from werkzeug.exceptions import NotFound
+
 
 def register_api():
     try:
@@ -62,20 +63,6 @@ def login_api():
         return jsonify({"success": False, "error": str(e), "message": "Lỗi hệ thống vui lòng thử lại sau"}), 500
 
 
-@jwt_required(refresh=True)
-def refresh_api():
-    user_id = get_jwt_identity()
-
-    new_access_token = create_access_token(identity=user_id)
-    resp = jsonify({
-        "success" : True,
-        "access_token": new_access_token
-    })
-    set_access_cookies(resp, new_access_token)
-
-    return resp, 200
-
-
 revoked_tokens = set()
 
 @jwt.token_in_blocklist_loader
@@ -84,7 +71,6 @@ def check_if_token_revoked(jwt_header, jwt_payload):
     return jti in revoked_tokens
 
 
-@decorators.login_required_api
 def logout_api():
     jti = get_jwt()["jti"]
     revoked_tokens.add(jti)
@@ -93,11 +79,51 @@ def logout_api():
     return resp, 200
 
 
-@decorators.login_required_api
 def profile_api():
-    
-    if request.method == 'GET':
-        pass
+    try:
+        user_id = get_jwt_identity()
+        
+        avatar = request.files.get("avatar", None)
+        data = request.form.to_dict()
+        data.pop("avatar", None)
+        validated_data = schemas.UserUpdateInputSchema().load(data)
+        user = services.update_user_info_service(data= validated_data, avatar=avatar, user_id=user_id)
+        
+        return  jsonify({
+            "success": True,
+            "user": schemas.UserOutputSchema().dump(user)
+        })
 
-    elif request.method == 'PATCH':
-        pass
+    except ValidationError as e:
+        return jsonify({"success": False, "message": e.messages}), 400
+    
+    except NotFound as e:
+        return jsonify({"success": False, "message": e.description}), 404
+
+    except ValueError as e:
+        return jsonify({"success": False, "message": str(e)}), 400
+
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e), "message": "Lỗi hệ thống vui lòng thử lại sau"}), 500
+
+
+def change_password_api():
+    try:
+        user_id = get_jwt_identity()
+        data = request.get_json()
+        validated_data = schemas.UserUpdatePasswordInputSchema().load(data)
+        user = services.update_password_service(data= validated_data, user_id=user_id)
+        
+        return  jsonify({
+            "success": True,
+            "user": schemas.UserOutputSchema().dump(user)
+        })
+
+    except ValidationError as e:
+        return jsonify({"success": False, "message": e.messages}), 400
+    
+    except NotFound as e:
+        return jsonify({"success": False, "message": e.description}), 404
+
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e), "message": "Lỗi hệ thống vui lòng thử lại sau"}), 500

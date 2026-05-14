@@ -5,6 +5,7 @@ class FieldTypeSchema(Schema):
     id = fields.Int()
     name = fields.String()
 
+
 class LocationSchema(Schema):
     id = fields.Int()
     name = fields.String()

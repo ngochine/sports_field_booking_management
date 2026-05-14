@@ -1,6 +1,7 @@
 from app.modules.bookings.models import Booking
+from app.modules.fields.models import FieldStatusEnum
 from tests.test_base import test_app, test_session, test_client, test_auth
-from tests.sample_fixtures import sample_fields
+from tests.sample_fixtures import sample_fields, sample_field_price
 from app.modules.auth.models import User, UserStatusEnum, UserRoleEnum
 from datetime import date, timedelta, datetime
 
@@ -20,7 +21,7 @@ def test_authentication_booking_fail(test_client):
     assert data["message"] == "Vui lòng đăng nhập để thực hiện chức năng này"
 
 
-def test_authentication_booking_success(test_auth, sample_fields):
+def test_authentication_booking_success(test_auth, sample_fields, sample_field_price):
     field = sample_fields[0]
     response = test_auth.post(
         f"/api/fields/{field.id}/booking",
@@ -197,8 +198,8 @@ def test_invalid_time(test_auth, sample_fields):
         f"/api/fields/{field.id}/booking",
         json={
             "booking_date": date.today().isoformat(),
-            "start_time": "18:00",
-            "end_time": "18:30"
+            "start_time": (datetime.now() + timedelta(hours=1)).strftime("%H:%M"),
+            "end_time": (datetime.now() + timedelta(hours=1.5)).strftime("%H:%M")
         }
     )
     data = response.get_json()
@@ -220,7 +221,7 @@ def test_invalid_time(test_auth, sample_fields):
     assert data["message"] == {'_schema': ['Giờ bắt đầu phải lớn hơn thời gian hiện tại']}
 
 
-def test_overlap_schedule(test_auth, sample_fields):
+def test_overlap_schedule(test_auth, sample_fields, sample_field_price):
     field = sample_fields[0]
     test_auth.post(
         f"/api/fields/{field.id}/booking",
@@ -245,17 +246,39 @@ def test_overlap_schedule(test_auth, sample_fields):
     assert data["message"] == ['Khung giờ này đã có người đặt']
 
 
-def test_limit_booking(test_auth, test_session, sample_fields):
+def next_weekday():
+    d = date.today()
+    while d.weekday() >= 5:
+        d += timedelta(days=1)
+    return d + timedelta(days=1)
+
+def test_invalid_field_price(test_auth, sample_fields, sample_field_price):
+    field = sample_fields[1]
+    response = test_auth.post(
+        f"/api/fields/{field.id}/booking",
+        json={
+            "booking_date": (next_weekday()).isoformat(),
+            "start_time": "07:00",
+            "end_time": "11:00"
+        }
+    )
+    data = response.get_json()
+    assert response.status_code == 400
+    assert data["success"] == False
+    assert data["message"]== ['Khung giờ này chưa được cấu hình giá']
+
+
+def test_limit_booking(test_auth, test_session, sample_fields, sample_field_price):
     test_auth.post(
         f"/api/fields/{sample_fields[0].id}/booking",
         json={
             "booking_date": date.today().isoformat(),
             "start_time": (datetime.now() + timedelta(hours=1)).strftime("%H:%M"),
-            "end_time": (datetime.now() + timedelta(hours=3)).strftime("%H:%M")
+            "end_time": (datetime.now() + timedelta(hours=2)).strftime("%H:%M")
         }
     )
     test_auth.post(
-        f"/api/fields/{sample_fields[5].id}/booking",
+        f"/api/fields/{sample_fields[0].id}/booking",
         json={
             "booking_date": date.today().isoformat(),
             "start_time": (datetime.now() + timedelta(hours=2)).strftime("%H:%M"),
@@ -263,11 +286,11 @@ def test_limit_booking(test_auth, test_session, sample_fields):
         }
     )
     response = test_auth.post(
-        f"/api/fields/{sample_fields[1].id}/booking",
+        f"/api/fields/{sample_fields[0].id}/booking",
         json={
             "booking_date": date.today().isoformat(),
-            "start_time": (datetime.now() + timedelta(hours=2)).strftime("%H:%M"),
-            "end_time": (datetime.now() + timedelta(hours=4)).strftime("%H:%M")
+            "start_time": (datetime.now() + timedelta(hours=4)).strftime("%H:%M"),
+            "end_time": (datetime.now() + timedelta(hours=5)).strftime("%H:%M")
         }
     )
     data = response.get_json()
@@ -290,7 +313,38 @@ def test_limit_booking(test_auth, test_session, sample_fields):
     assert Booking.query.count() == 3
 
 
-def test_create_booking_success(test_auth, test_session, sample_fields):
+def test_invalid_field(test_auth, test_session, sample_fields):
+    response = test_auth.post(
+        f"/api/fields/10000/booking",
+        json={
+            "booking_date": date.today().isoformat(),
+            "start_time": (datetime.now() + timedelta(hours=1)).strftime("%H:%M"),
+            "end_time": (datetime.now() + timedelta(hours=2)).strftime("%H:%M")
+        }
+    )
+    data = response.get_json()
+    assert response.status_code == 404
+    assert data["success"] == False
+    assert data["message"] != "Sân không tồn tại"
+
+    field = sample_fields[0]
+    field.status = FieldStatusEnum.DELETED
+    test_session.commit()
+    response = test_auth.post(
+        f"/api/fields/{field.id}/booking",
+        json={
+            "booking_date": date.today().isoformat(),
+            "start_time": (datetime.now() + timedelta(hours=3)).strftime("%H:%M"),
+            "end_time": (datetime.now() + timedelta(hours=4)).strftime("%H:%M")
+        }
+    )
+    data = response.get_json()
+    assert response.status_code == 404
+    assert data["success"] == False
+    assert data["message"] != "Sân không tồn tại"
+
+
+def test_create_booking_success(test_auth, test_session, sample_fields, sample_field_price):
     field = sample_fields[0]
     test_auth.post(
         f"/api/fields/{field.id}/booking",

@@ -154,7 +154,7 @@ def test_calculate_price_success(test_client, sample_fields, sample_field_price)
     assert response.status_code == 200
     assert data["success"] == True
     assert data["total_time"] == 2
-    assert data["total_price"] == 500000
+    assert data["total_price"] == 370000
 
 
     response = test_client.post(
@@ -201,4 +201,4 @@ def test_calculate_price_success(test_client, sample_fields, sample_field_price)
     assert response.status_code == 200
     assert data["success"] == True
     assert data["total_time"] == 2.5
-    assert data["total_price"] == 495000
+    assert data["total_price"] == 300000

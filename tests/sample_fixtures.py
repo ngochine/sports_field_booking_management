@@ -1,42 +1,16 @@
 import pytest
 from tests.test_base import test_session
-from app.modules.fields.models import Field, Location, FieldType, Province, District, Address
+from app.modules.fields.models import Field, Location, FieldType, Address, FieldStatusEnum
 from app.modules.bookings.models import Booking, FieldPrice
 from datetime import date, time
 
 
 @pytest.fixture
-def sample_province(test_session):
-    p1 = Province(id=1, name="Hà Nội")
-    p2 = Province(id=2, name="Bình Thuận")
-    p3 = Province(id=3, name="Thành phố Hồ Chí Minh")
-
-    test_session.add_all([p1, p2, p3])
-    test_session.commit()
-
-    return [p1, p2, p3]
-
-
-@pytest.fixture
-def sample_district(test_session):
-    d1 = District(id=1, name="Ba Đình", province_id=1)
-    d2 = District(id=2, name="Đống Đa", province_id=1)
-    d3 = District(id=3, name="Thủ Đức", province_id=3)
-    d4 = District(id=4, name="Nhà Bè", province_id=3)
-    d5 = District(id=5, name="Quận 2", province_id=3)
-
-    test_session.add_all([d1, d2, d3, d4, d5])
-    test_session.commit()
-
-    return [d1, d2, d3, d4, d5]
-
-
-@pytest.fixture
 def sample_address(test_session):
-    a1 = Address(street="Đường 1A", district_id=1)
-    a2 = Address(street="Đường 2A", district_id=2)
-    a3 = Address(street="Đường 3A", district_id=3)
-    a4 = Address(street="Đường 4A", district_id=3)
+    a1 = Address(street="Đường 1A", district_id=1, district_name="Ba Đình", province_id=1, province_name="Hà Nội")
+    a2 = Address(street="Đường 2A", district_id=2, district_name="Ba Đình", province_id=1, province_name="Hà Nội")
+    a3 = Address(street="Đường 3A", district_id=3, district_name="Ba Đình", province_id=3, province_name="Hà Nội")
+    a4 = Address(street="Đường 4A", district_id=3, district_name="Ba Đình", province_id=3, province_name="Hà Nội")
 
     test_session.add_all([a1, a2, a3, a4])
     test_session.commit()
@@ -75,8 +49,8 @@ def sample_fields(test_session):
     f1 = Field(name="Sân bóng chuyền", field_type_id=1, location_id=1)
     f2 = Field(name="Sân tennis 2A", field_type_id=2, location_id=1)
     f3 = Field(name="Sân Vận động quốc gia", field_type_id=2, location_id=2)
-    f4 = Field(name="Sân bóng đá 4A", field_type_id=3, location_id=2)
-    f5 = Field(name="Sân tennis 5A", field_type_id=1, location_id=3)
+    f4 = Field(name="Sân bóng đá 4A", field_type_id=3, location_id=2, status=FieldStatusEnum.DELETED)
+    f5 = Field(name="Sân tennis 5A", field_type_id=1, location_id=3, status=FieldStatusEnum.DELETED)
     f6 = Field(name="Sân vận động Phú Thọ", field_type_id=1, location_id=3)
     f7 = Field(name="Sân bóng đá 7A", field_type_id=1, location_id=3)
 
@@ -124,25 +98,34 @@ def sample_booking(test_session):
 
 @pytest.fixture
 def sample_field_price(test_session):
-    fp1 = FieldPrice(start_time=time(6, 0), end_time=time(9, 0), price=150000,
+    fp1 = FieldPrice(start_time=time(6, 0), end_time=time(12, 0), price=150000,
                      day_of_week=None, special_date=None, field_id=1)
 
-    fp2 = FieldPrice(start_time=time(9, 0), end_time=time(17, 0), price=120000,
+    fp2 = FieldPrice(start_time=time(12, 0), end_time=time(19, 0), price=120000,
                      day_of_week=None, special_date=None, field_id=1)
 
-    fp3 = FieldPrice(start_time=time(17, 0), end_time=time(22, 0), price=250000,
+    fp3 = FieldPrice(start_time=time(19, 0), end_time=time(23, 59), price=250000,
                      day_of_week=None, special_date=None, field_id=1)
 
-    fp4 = FieldPrice(start_time=time(6, 0), end_time=time(22, 0), price=300000,
+    fp4 = FieldPrice(start_time=time(0, 0), end_time=time(6, 0), price=250000,
+                     day_of_week=None, special_date=None, field_id=1)
+
+    fp5 = FieldPrice(start_time=time(0, 0), end_time=time(23, 59), price=300000,
                      day_of_week=5, special_date=None, field_id=1)
 
-    fp5 = FieldPrice(start_time=time(6, 0), end_time=time(22, 0), price=350000,
+    fp6 = FieldPrice(start_time=time(0, 0), end_time=time(23, 59), price=350000,
                      day_of_week=6, special_date=None, field_id=1)
 
-    fp6 = FieldPrice(start_time=time(6, 0), end_time=time(22, 0), price=500000,
+    fp7 = FieldPrice(start_time=time(0, 0), end_time=time(23, 59), price=500000,
                      day_of_week=None, special_date=date(2026, 4, 30), field_id=1)
 
-    test_session.add_all([fp1, fp2, fp3, fp4, fp5, fp6])
+    fp8 = FieldPrice(start_time=time(6, 0), end_time=time(8, 0), price=150000,
+                     day_of_week=None, special_date=None, field_id=2)
+
+    fp9 = FieldPrice(start_time=time(11, 0), end_time=time(17, 0), price=120000,
+                     day_of_week=None, special_date=None, field_id=2)
+
+    test_session.add_all([fp1, fp2, fp3, fp4, fp5, fp6, fp7, fp8, fp9])
     test_session.commit()
 
-    return [fp1, fp2, fp3, fp4, fp5, fp6]
+    return [fp1, fp2, fp3, fp4, fp5, fp6, fp7, fp8, fp9]

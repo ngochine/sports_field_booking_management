@@ -1,0 +1,67 @@
+{% extends 'admin/master.html' %}
+{% block head %}
+    {{ super() }}
+    <link rel="icon" href="https://res.cloudinary.com/dsfv5nawc/image/upload/v1775031389/Logo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+    <script src="../../static/js/auth.js"></script>
+
+    <style>
+        .navbar {
+            background-color: var(--blue) !important;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    {% if not current_user %}
+    <div class="text-center mb-4">
+        <h3 class="fw-bold" style="color: var(--blue);">ĐĂNG NHẬP VÀO TRANG QUẢN TRỊ SPFM</h3>
+        <p class="text-muted">Chỉ dành cho quản lý hệ thống</p>
+    </div>
+
+    <div id="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, msg in messages %}
+                <div class="alert alert-{{ category }} m-3 alert-dismissible fade show position-relative" style="z-index: 9999;">
+                    {{ msg }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endwith %}
+    </div>
+
+    <form onsubmit="login(event)" id="loginForm">
+        <div class="form-group">
+            <label for="username">Tên đăng nhập</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Nhập tên đăng nhập" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Mật khẩu</label>
+            <div class="position-relative">
+                <input type="password" class="form-control mb-4" id="password" name="password" placeholder="Nhập mật khẩu" required>
+                <button type="button" onclick="togglePassword('password', this)"
+                    class="btn position-absolute border-0 bg-transparent"
+                    style="top: 50%; right: 10px; transform: translateY(-50%);">
+                    <i class="fa-regular fa-eye"></i>
+                </button>
+            </div>
+        </div>
+        <button type="submit" class="btn col-12 mb-3" style="background-color: var(--orange); color: var(--white)">Đăng nhập</button>
+    </form>
+    {%else%}
+    <div class="text-center mb-5">
+        <p class="fst-italic">Chào mừng {{current_user.username}} đã đến với</p>
+        <h2 class="fw-bold" style="color: var(--orange);">HỆ THỐNG QUẢN TRỊ SPFM</h2>
+        <p class="text-muted fs-6">Tìm kiếm sân chơi - Đặt sân chất lượng - Huỷ sân an toàn</p>
+        <hr class="w-50 mx-auto">
+    </div>
+    {% endif %}
+
+    <div class="mt-5">
+        {% include "layout/footer.html" %}
+    </div>
+</div>
+{% endblock %}

@@ -1,7 +1,8 @@
 from flask import render_template, request
-from . import services, dao
+from . import services
 from app.common import decorators
 from flask_jwt_extended import get_jwt_identity
+
 
 @decorators.login_required_render
 def get_bookings():

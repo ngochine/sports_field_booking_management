@@ -1,7 +1,242 @@
-{%extends 'layout/base.html'%}
+{% extends 'layout/base.html' %}
 
-{%block title%}Thông tin người dùng{%endblock%}
+{% block title %}Thông tin cá nhân{% endblock %}
 
-{%block body%}
+{% block body %}
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="{% if current_user and current_user.role.name == 'CUSTOMER' %}col-lg-4{%else%} col-12 {%endif%}">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="text-center p-4" style="background-color: var(--gray-light);">
+                    <img src="{% if current_user.avatar %}{{ current_user.avatar }}{% else %}https://res.cloudinary.com/dvfuzolim/image/upload/v1768406079/avatar_trang_1_cd729c335b_kitzwg.jpg{% endif %}"
+                        class="rounded-circle border border-4 border-white object-fit-cover mb-3" width="130"
+                        height="130">
+                    <h4 class="fw-bolder mb-1">{{ current_user.username }}</h4>
 
-{%endblock%}
+                    {% if current_user.status.name == "ACTIVE" %}
+                    <div class="fw-bolder text-bg-success badge">Đang hoạt động</div>
+                    {% else %}
+                    <div class="fw-bolder text-bg-danger badge">Tài khoản bị cấm</div>
+                    {%endif%}
+                </div>
+
+                <div class="card-body p-4">
+                    <div class="mb-4 col-12 row">
+                        <div class="col-6">
+                            <div class="small text-muted mb-1">Họ</div>
+                            <div class="fw-bolder">
+                                {{ current_user.last_name if current_user.last_name else 'Chưa cập nhật' }}
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="small text-muted mb-1">Tên</div>
+                            <div class="fw-bolder">
+                                {{ current_user.first_name if current_user.first_name else 'Chưa cập nhật' }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="small text-muted mb-1">Email</div>
+                        <div class="fw-bolder">
+                            {{ current_user.email if current_user.email else 'Chưa cập nhật' }}
+                        </div>
+                    </div>
+
+                    <div class="mb-4 col-12 row">
+                    <div class="col-6">
+                        <div class="small text-muted mb-1">Số điện thoại</div>
+                        <div class="fw-bolder">
+                            {{ current_user.phone if current_user.phone else 'Chưa cập nhật' }}
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="small text-muted mb-1">Ngày tham gia</div>
+                        <div class="fw-bolder">
+                            {{ current_user.created_at.strftime('%d/%m/%Y')}}
+                        </div>
+                    </div>
+                    </div>
+
+                    <div class="d-flex flex-column justify-content-between">
+                        <a class="btn fw-bolder mb-2" style="background: var(--orange); color: var(--white);"
+                            href="{{url_for('auth.update_profile')}}" >
+                            <i class="fa-solid fa-pen-to-square me-2"></i>Chỉnh sửa thông tin
+                        </a>
+
+                        <button class="btn border fw-bold" tyle="color: var(--blue); border-color: var(--blue);"
+                            data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                            <i class="fa-solid fa-lock me-2"></i>Đổi mật khẩu
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        {% if current_user and current_user.role.name == "CUSTOMER" %}
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                        <div>
+                            <h5 class="fw-bolder mb-1" style="color: var(--blue);">Tổng quan tài khoản</h5>
+                            <p class="text-muted mb-0 small">Thống kê hoạt động đặt sân của bạn</p>
+                        </div>
+                        <a href="{{ url_for('field.fields') }}" class="btn px-3 py-2"
+                            style="background-color: var(--orange); color: var(--white);">
+                            <i class="fa-solid fa-plus me-2"></i>Đặt sân mới
+                        </a>
+
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="border rounded-4 p-4 text-center h-100">
+                                <div class="mb-2">
+                                    <i class="fa-solid fa-calendar-check fs-3" style="color: var(--orange);"></i>
+                                </div>
+                                <div class="fs-2 fw-bolder" style="color: var(--orange);">{{total_bookings}}</div>
+                                <div class="text-muted small">Lượt đặt sân</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="border rounded-4 p-4 text-center h-100">
+                                <div class="mb-2">
+                                    <i class="fa-solid fa-wallet fs-3" style="color: var(--blue);"></i>
+                                </div>
+                                <div class="fs-2 fw-bolder" style="color: var(--blue);">
+                                    0
+                                </div>
+                                <div class="text-muted small">Tổng chi tiêu</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h5 class="fw-bolder mb-1" style="color: var(--blue);">
+                                Các lượt đặt sân gần nhất
+                            </h5>
+                        </div>
+                        <a href="{{url_for('booking.bookings')}}" class="text-decoration-none fw-semibold" style="color: var(--orange);">
+                            Xem tất cả
+                        </a>
+
+                    </div>
+                    {% if bookings%}
+                    {% for booking in bookings%}
+                    <div class="border rounded-4 p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+                            <div>
+                                <h6 class="fw-bolder mb-2">
+                                    {{booking.field.name}}
+                                </h6>
+                                <div class="small text-muted mb-1">
+                                    <i class="fa-regular fa-calendar me-2 text-info"></i>
+                                    {{booking.booking_date.strftime('%d/%m/%Y')}}
+                                </div>
+                                <div class="small text-muted mb-1">
+                                    <i class="fa-regular fa-clock me-2 text-warning"></i>
+                                    {{booking.start_time}} - {{booking.end_time}}
+                                </div>
+                                <div class="small text-muted">
+                                    <i class="fa-solid fa-location-dot me-2 text-danger"></i>
+                                    {{booking.field.location}}
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge px-3 py-2" style="background-color: var(--blue); color: var(--white);">
+                                    {{booking.status.name}}
+                                </span>
+                                <div class="fw-bolder fs-5 mt-3" style="color: var(--orange);">
+                                    {{"{:,.0f}".format(booking.total_price)}} VND
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {%endfor%}
+                    {%endif%}
+                </div>
+            </div>
+        </div>
+        {%endif%}
+    </div>
+</div>
+
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changPasswordModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="background-color: var(--gray-light);">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5 fw-bolder text-uppercase" id="exampleModalLabel">Đổi mật khẩu</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form onsubmit="changePassword(event)">
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <p class="text-muted mb-0" style="color: var(--orange);">Vui lòng nhập mật khẩu hiện tại và mật
+                            khẩu mới để tiếp tục.</p>
+                    </div>
+                    <div class="p-2 mb-3">
+                        <div class="mb-3">
+                            <label class="form-label fw-bolder">Mật khẩu hiện tại</label>
+                            <div class="position-relative">
+                                <input type="password" id="currentPassword" class="form-control rounded-3 p-2 pe-5"
+                                    placeholder="Nhập mật khẩu hiện tại" required>
+
+                                <button type="button" onclick="togglePassword('currentPassword', this)"
+                                    class="btn border-0 bg-transparent position-absolute top-50 end-0 translate-middle-y me-2">
+                                    <i class="fa-regular fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Mật khẩu mới</label>
+                            <div class="position-relative">
+                                <input type="password" id="newPassword" class="form-control rounded-3 p-2 pe-5"
+                                    placeholder="Nhập mật khẩu mới" minlength="3" maxlength="30"
+                                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,30}$"
+                                    title="Mật khẩu phải có 8-30 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt" required>
+
+                                <button type="button" onclick="togglePassword('newPassword', this)"
+                                    class="btn border-0 bg-transparent position-absolute top-50 end-0 translate-middle-y me-2">
+                                    <i class="fa-regular fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="form-label fw-semibold">Xác nhận mật khẩu mới</label>
+                            <div class="position-relative">
+                                <input type="password" id="confirmPassword" class="form-control rounded-3 p-2 pe-5"
+                                    placeholder="Nhập lại mật khẩu mới" required>
+                                
+                                <button type="button" onclick="togglePassword('confirmPassword', this)"
+                                    class="btn border-0 bg-transparent position-absolute top-50 end-0 translate-middle-y me-2">
+                                    <i class="fa-regular fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <small class="fst-italic" style="color: var(--orange);">Mật khẩu mới phải có 8-30 ký tự, bao gồm chữ
+                        hoa, chữ thường, số và ký tự đặc biệt để tăng độ an toàn</small>
+                </div>
+                <div class="modal-footer ">
+                    <button type="button" class="btn p-2 col-3"
+                        style="background-color: var(--gray-light); border: 2px solid var(--gray)"
+                        data-bs-dismiss="modal">Quay lại</button>
+                    <button type="submit" class="btn p-2 col-3"
+                        style="background-color: var(--blue); color: var(--white);">Đổi mật khẩu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
