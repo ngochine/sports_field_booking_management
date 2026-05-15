@@ -1,10 +1,12 @@
-import pytest
+import pytest, os
 from flask import Flask
 from instances.config import Config
 from app.extension import db, jwt
 from flask import jsonify
 from werkzeug.exceptions import Unauthorized, Forbidden
-
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 
 def create_app():
     app_test = Flask(__name__)
@@ -92,3 +94,13 @@ def test_auth(test_client):
         }
     )
     return test_client
+
+@pytest.fixture
+def driver():
+    options = Options()
+    service = Service(executable_path='D:\\sports_field_booking_management_team8\\venv\\chromedriver.exe')
+    options.add_argument("--headless=new")
+    options.add_argument("--window-size=1920,1080")
+    driver = webdriver.Chrome(service=service, options=options)
+    yield driver
+    driver.quit()
