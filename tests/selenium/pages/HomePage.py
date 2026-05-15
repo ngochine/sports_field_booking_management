@@ -5,10 +5,4 @@ class HomePage(BasePage):
     PATH = "/"
     def open_page(self):
         self.open(self.PATH)
-
-class SearchComponent(HomePage):
-
-    pass
-
-class ListComponent(HomePage):
     LINK_BUTTON = (By.CSS_SELECTOR,'body > div:nth-child(3) > div:nth-child(2) > div > div.row > div:nth-child(2) > div > div > a')

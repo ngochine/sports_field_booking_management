@@ -6,7 +6,7 @@ from tests.test_base import driver, test_app
 from tests.selenium.fixture import booking_page, popup, detail_page,fields_page,auth_driver
 from tests.selenium.guest_fixture import guest_booking_page,guest_popup,guest_detail_page,guest_fields_page
 
-SCREENSHOT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "screenshots", "booking")
+SCREENSHOT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),  "booking")
 
 
 def test_tc1_valid_booking_not_logged_in(guest_booking_page, guest_popup):

@@ -4,35 +4,19 @@ from selenium.webdriver.common.by import By
 
 from tests.selenium.data.booking_data import BOOKING_CASES
 from tests.selenium.pages.BasePage import BasePage
+from tests.selenium.locators.DetailFieldLocators import DetailFieldLocators,BookingInfoLocators,PopupLocator
 
 
 class DetailFieldPage(BasePage):
-    FIELD_NAME = (By.CSS_SELECTOR, "body > div:nth-child(3) > div.position-relative.mb-5  h1")
-    ADDRESS = (By.CSS_SELECTOR, "body > div:nth-child(3) > div.position-relative.mb-5  span.me-3")
 
     def open_page(self, link):
         self.open_not_base(link)
 
     def get_field_name(self):
-        return self.find(*self.FIELD_NAME).text
+        return self.get_text(*DetailFieldLocators.FIELD_NAME)
 
     def get_address(self):
-        return self.find(*self.ADDRESS).text
-
-
-class BookingInfoComponent(DetailFieldPage):
-    DATE_INPUT = (By.ID, 'dateSelectedValue')
-    START_TIME = (By.ID, 'startTime')
-    END_TIME = (By.ID, 'endTime')
-    TOTAL_TIME = (By.ID, 'totalTime')
-    TOTAL_PRICE = (By.ID, 'totalPrice')
-    BOOK_BUTTON = (By.CSS_SELECTOR, '.col-lg-4 .card-body > div:nth-child(5) > button')
-    TABLE_PRICE = (By.CSS_SELECTOR, '#fieldPriceContainer tbody tr')
-    END_INPUT = ('body > div:nth-child(6) input.flatpickr-hour','body > div:nth-child(6) input.flatpickr-minute')
-    START_INPUT = ('body > div:nth-child(7) input.flatpickr-hour','body > div:nth-child(7) input.flatpickr-minute')
-
-    def parse_time(self, time_str: str):
-        return datetime.strptime(time_str.strip(), "%H:%M")
+        return self.get_text(*DetailFieldLocators.ADDRESS)
 
     def time_to_minutes(self, t: str):
         h, m = t.split(":")
@@ -71,38 +55,38 @@ class BookingInfoComponent(DetailFieldPage):
 
     def select_booking_info(self, date=BOOKING_CASES["default_day"], start_time="", end_time=""):
         self.scroll(800)
-        self.set_value(self.DATE_INPUT[1], date)
+        self.set_value(BookingInfoLocators.DATE_INPUT[1], date)
         if start_time:
             start_h, start_m = start_time.split(":")
-            self.set_flatpickr_time(self.START_TIME, start_h, start_m, self.START_INPUT[0], self.START_INPUT[1])
+            self.set_flatpickr_time(BookingInfoLocators.START_TIME, start_h, start_m, *BookingInfoLocators.START_INPUT)
         if end_time:
             end_h, end_m = end_time.split(":")
-            self.set_flatpickr_time(self.END_TIME, end_h, end_m, self.END_INPUT[0], self.END_INPUT[1])
+            self.set_flatpickr_time(BookingInfoLocators.END_TIME, end_h, end_m, *BookingInfoLocators.END_INPUT)
         time.sleep(2)
 
     def open_popup(self):
         time.sleep(1)
         self.scroll()
         self.driver.implicitly_wait(1)
-        self.click(*self.BOOK_BUTTON)
+        self.click(*BookingInfoLocators.BOOK_BUTTON)
 
     def get_date_value(self):
-        return self.find(*self.DATE_INPUT).get_attribute("value")
+        return self.find(*BookingInfoLocators.DATE_INPUT).get_attribute("value")
 
     def get_start_time_value(self):
-        return self.find(*self.START_TIME).get_attribute("value")
+        return self.find(*BookingInfoLocators.START_TIME).get_attribute("value")
 
     def get_end_time_value(self):
-        return self.find(*self.END_TIME).get_attribute("value")
+        return self.find(*BookingInfoLocators.END_TIME).get_attribute("value")
 
     def get_total_time(self):
-        return self.find(*self.TOTAL_TIME).text
+        return self.find(*BookingInfoLocators.TOTAL_TIME).text
 
     def get_total_price(self):
-        return self.find(*self.TOTAL_PRICE).text.replace(".", "")
+        return self.find(*BookingInfoLocators.TOTAL_PRICE).text.replace(".", "")
 
     def get_price_table(self):
-        rows = self.finds(*self.TABLE_PRICE)
+        rows = self.finds(*BookingInfoLocators.TABLE_PRICE)
         result = []
         for row in rows:
             cols = row.find_elements(By.TAG_NAME, "td")
@@ -183,53 +167,39 @@ class BookingInfoComponent(DetailFieldPage):
         time.sleep(1)
         return start, end
 
-
-class PopupComponent(DetailFieldPage):
-    CONFIRM_MODAL = (By.CSS_SELECTOR, "#confirmBookingModal .modal-content")
-    CONFIRM_FIELD_NAME = (By.CSS_SELECTOR,"#confirmBookingModal .modal-content > .modal-body > div:nth-child(2) > div:nth-child(1) > span:nth-child(2)")
-    CONFIRM_ADDRESS = (By.ID, "confirmFieldAddress")
-    DATE = (By.ID, "confirmDate")
-    START_TIME = (By.ID, "confirmStartTime")
-    END_TIME = (By.ID, "confirmEndTime")
-    DURATION = (By.ID, "confirmDuration")
-    TOTAL_PRICE = (By.ID, "confirmTotalPrice")
-    CLOSE_BTN = (By.CSS_SELECTOR, "#confirmBookingModal .btn-close")
-    CANCEL_BTN = (By.CSS_SELECTOR, "#confirmBookingModal .modal-footer > button:nth-child(1)")
-    CONFIRM_BTN = (By.CSS_SELECTOR, "#confirmBookingModal .modal-footer > button:nth-child(2)")
-
     def is_visible(self):
         time.sleep(1)
-        return self.find(*self.CONFIRM_MODAL).is_displayed()
+        return self.find(*PopupLocator.CONFIRM_MODAL).is_displayed()
 
     def close_popup(self):
-        self.click(*self.CLOSE_BTN)
+        self.click(*PopupLocator.CLOSE_BTN)
 
     def cancel_popup(self):
-        self.click(*self.CANCEL_BTN)
+        self.click(*PopupLocator.CANCEL_BTN)
 
     def confirm_booking(self):
-        self.click(*self.CONFIRM_BTN)
+        self.click(*PopupLocator.CONFIRM_BTN)
 
     def get_confirm_field_name(self):
-        return self.find(*self.CONFIRM_FIELD_NAME).text
+        return self.find(*PopupLocator.CONFIRM_FIELD_NAME).text
 
     def get_confirm_address(self):
-        return self.find(*self.CONFIRM_ADDRESS).text
+        return self.find(*PopupLocator.CONFIRM_ADDRESS).text
 
     def get_date(self):
-        return self.find(*self.DATE).text
+        return self.find(*PopupLocator.DATE).text
 
     def get_start_time(self):
-        return self.find(*self.START_TIME).text.strip()
+        return self.find(*PopupLocator.START_TIME).text.strip()
 
     def get_end_time(self):
-        return self.find(*self.END_TIME).text.strip()
+        return self.find(*PopupLocator.END_TIME).text.strip()
 
     def get_duration(self):
-        return self.find(*self.DURATION).text.replace("Giờ", "").replace(" ", "").strip()
+        return self.find(*PopupLocator.DURATION).text.replace("Giờ", "").replace(" ", "").strip()
 
-    def get_total_price(self):
-        return self.find(*self.TOTAL_PRICE).text.replace(".", "").replace(" VND", "").strip()
+    def get_total_price_popup(self):
+        return self.find(*PopupLocator.TOTAL_PRICE).text.replace(".", "").replace(" VND", "").strip()
 
     def verify_confirm_info(self, field_name, address, date, start_time, end_time, total_duration, total_price):
         errors = []
@@ -245,6 +215,8 @@ class PopupComponent(DetailFieldPage):
             errors.append(f"End time sai: {self.get_end_time()} != {end_time}")
         if int(self.get_duration()) != int(total_duration):
             errors.append(f"Total duration sai: {self.get_duration()} != {total_duration}")
-        if int(self.get_total_price()) != int(total_price):
-            errors.append(f"Total price sai: {self.get_total_price()} != {total_price}")
+        if int(self.get_total_price_popup()) != int(total_price):
+            errors.append(f"Total price sai: {self.get_total_price_popup()} != {total_price}")
         return errors
+
+    def screen_booking(self, name):

@@ -1,8 +1,7 @@
 import time, os
-from tests.selenium.guest_fixture import login_page,register_page
-from tests.test_base import driver,test_app
+from tests.selenium.guest_fixture import login_page
 from tests.selenium.data.user_data import LOGIN_USERS
-from tests.selenium.auth.test_register import test_register_valid
+
 SCREENSHOT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "screenshots", "login")
 
 def check_contains(text_list, expected):

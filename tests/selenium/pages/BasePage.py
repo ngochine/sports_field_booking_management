@@ -13,10 +13,16 @@ class BasePage:
     def open_not_base(self,path=""):
         self.driver.get(path)
 
+    def wait(self, by, value):
+        WebDriverWait(self.driver, 100).until(
+            EC.visibility_of_element_located((by, value)))
+
     def find(self,by,value):
+        self.wait(by,value)
         return self.driver.find_element(by,value)
 
     def finds(self,by,value):
+        self.wait(by,value)
         return self.driver.find_elements(by,value)
 
     def typing(self,by,value,text):
@@ -27,9 +33,14 @@ class BasePage:
         e = self.find(by, value)
         e.click()
 
-    def screen(self, SCREENSHOT_DIR ,name):
-        os.makedirs(SCREENSHOT_DIR, exist_ok=True)
-        self.driver.save_screenshot(os.path.join(SCREENSHOT_DIR, name))
+    def get_text(self,by,value):
+        e=self.find(by, value)
+        return e.text
+
+    def screen(self, folder ,name):
+        path=os.path.join("tests", "screenshot")
+        os.makedirs(path, exist_ok=True)
+        self.driver.save_screenshot(os.path.join(path, folder, name))
 
     def get_url(self):
         return self.driver.current_url
