@@ -1,5 +1,5 @@
 from app.extension import db
-from .models import FieldPrice, Booking
+from .models import FieldPrice, Booking, BookingStatusEnum
 from app.modules.fields.models import Field
 from datetime import date, time
 from sqlalchemy import and_
@@ -94,7 +94,7 @@ def get_booking_by_id(booking_id) -> Booking:
     return Booking.query.get(booking_id)
 
 
-def update_booking_status(booking: Booking, status: str) -> Booking:
+def update_booking_status(booking: Booking, status: BookingStatusEnum) -> Booking:
     booking.status = status
 
     db.session.commit()

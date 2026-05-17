@@ -1,5 +1,5 @@
 from marshmallow import Schema, fields, ValidationError, validates_schema, validates
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from .models import BookingStatusEnum
 from app.modules.auth import schemas as auth_schemas
 from app.modules.fields import schemas as field_schemas
@@ -16,8 +16,8 @@ class BookingInputSchema(Schema):
             raise ValidationError("Giờ bắt đầu phải sớm hơn giờ kết thúc")
         
         if data.get("booking_date") == date.today():
-            if data.get("start_time") <= datetime.now().time():
-                raise ValidationError("Giờ bắt đầu phải lớn hơn thời gian hiện tại")
+            if data.get("start_time") <= (datetime.now() + timedelta(hours=1)).time():
+                raise ValidationError("Phải đặt sân trước ít nhất 1 tiếng")
             
         start = datetime.combine(data.get("booking_date"), data.get("start_time"))
         end = datetime.combine(data.get("booking_date"), data.get("end_time"))

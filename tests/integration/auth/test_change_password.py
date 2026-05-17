@@ -1,5 +1,6 @@
 from tests.test_base import test_app, test_session, test_auth, test_client
 from app.modules.auth.models import User
+from app.extension import db
 from werkzeug.security import generate_password_hash, check_password_hash
 import pytest
 
@@ -31,6 +32,27 @@ def test_authentication_update_password_success(test_auth):
     data = response.get_json()
     assert response.status_code == 200
     assert data["success"] == True
+
+
+def test_not_exist_user(test_auth):
+    user = User.query.filter_by(username="test").first()
+
+    db.session.delete(user)
+    db.session.commit()
+
+    response = test_auth.patch(
+        "/api/auth/current-user/change-password",
+        json={
+            "current_password": "Abc@123456",
+            "new_password": "Abc@1234",
+            "confirm_password": "Abc@1234",
+        }
+    )
+    data = response.get_json()
+    print(data)
+    assert response.status_code == 404
+    assert data["success"] == False
+    assert data["message"] == "Không tồn tại người dùng"
 
 
 def test_invalid_input_change_password(test_auth):
@@ -105,7 +127,7 @@ def test_invalid_current_password(test_auth, test_session):
     assert data["message"] == ['Mật khẩu hiện tại không đúng']
 
 
-@pytest.mark.parametrize("new_password", ["1", "1"*8, "a"*8, "1a1"*2, " "*8, "a1A@"*9, "A@1"*3, ""])
+@pytest.mark.parametrize("new_password", ["1", "1"*8, "a"*8, "1a1"*2, " "*8, "a1A@"*9, "A@1"*3, "abc123@n", "abv123VB"])
 def test_invalid_new_password(test_auth, test_session, new_password):
     response = test_auth.patch(
         "/api/auth/current-user/change-password",

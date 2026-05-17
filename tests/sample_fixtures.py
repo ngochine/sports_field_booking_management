@@ -1,7 +1,7 @@
 import pytest
 from tests.test_base import test_session
 from app.modules.fields.models import Field, Location, FieldType, Address, FieldStatusEnum
-from app.modules.bookings.models import Booking, FieldPrice
+from app.modules.bookings.models import Booking, FieldPrice, BookingStatusEnum
 from datetime import date, time
 
 
@@ -63,31 +63,31 @@ def sample_fields(test_session):
 @pytest.fixture
 def sample_booking(test_session):
     b1 = Booking(booking_date=date(2026, 7, 5), start_time=time(18, 30),
-                 end_time=time(20, 0), status="PAID",
+                 end_time=time(20, 0), status=BookingStatusEnum.PAID,
                  total_price=250000, user_id=1, field_id=1)
 
     b2 = Booking(booking_date=date(2026, 7, 5), start_time=time(18, 30),
-                 end_time=time(20, 0), status="PAID",
+                 end_time=time(20, 0), status=BookingStatusEnum.PAID,
                  total_price=250000, user_id=1, field_id=2)
 
     b3 = Booking(booking_date=date(2026, 7, 5), start_time=time(18, 30),
-                 end_time=time(20, 0), status="PENDING",
+                 end_time=time(20, 0), status=BookingStatusEnum.PENDING,
                  total_price=250000, user_id=2, field_id=3)
 
     b4 = Booking(booking_date=date(2026, 7, 5), start_time=time(18, 30),
-                 end_time=time(20, 0), status="PENDING",
+                 end_time=time(20, 0), status=BookingStatusEnum.PENDING,
                  total_price=250000, user_id=3, field_id=1)
 
     b5 = Booking(booking_date=date(2026, 7, 5), start_time=time(18, 30),
-                 end_time=time(20, 0), status="PAID",
+                 end_time=time(20, 0), status=BookingStatusEnum.PAID,
                  total_price=250000, user_id=1, field_id=1)
 
     b6 = Booking(booking_date=date(2026, 7, 5), start_time=time(18, 30),
-                 end_time=time(20, 0), status="CANCELLED",
+                 end_time=time(20, 0), status=BookingStatusEnum.CANCELLED,
                  total_price=250000, user_id=3, field_id=2)
 
     b7 = Booking(booking_date=date(2026, 7, 5), start_time=time(18, 30),
-                 end_time=time(20, 0), status="CANCELLED",
+                 end_time=time(20, 0), status=BookingStatusEnum.CANCELLED,
                  total_price=250000, user_id=3, field_id=4)
 
     test_session.add_all([b1, b2, b3, b4, b5, b6, b7])

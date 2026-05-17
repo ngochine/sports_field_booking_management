@@ -5,7 +5,6 @@ from app.modules.bookings import schemas as booking_schema
 from app.modules.bookings import services as booking_service
 from marshmallow import ValidationError
 from flask_jwt_extended import get_jwt_identity
-from app.common import decorators
 from werkzeug.exceptions import NotFound
 
 
@@ -23,23 +22,19 @@ def get_field_price_api(field_id):
             field_id=field_id,
             date_selected=date_selected
         )
+        return jsonify({
+            "success": True,
+            "field_prices": schemas.FieldPriceSchema(many=True).dump(field_prices)
+        }), 200
 
     except ValueError:
         return jsonify({'success': False, 'message': 'Vui lòng nhập đúng định dạng YYYY-MM-DD'}), 400
-
-    except ValidationError as e:
-        return jsonify({"success": False, "message": e.messages}), 400
 
     except NotFound as e:
         return jsonify({"success": False, "message": str(e.description)}), 404
 
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
-
-    return jsonify({
-        "success": True,
-        "field_prices": schemas.FieldPriceSchema(many=True).dump(field_prices)
-    }), 200
 
 
 

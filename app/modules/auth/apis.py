@@ -36,7 +36,7 @@ def login_api():
             validated_data.get("password")
         )
 
-        if not user:
+        if user is None:
             return jsonify({
                 "success": False,
                 "message": "Sai tài khoản hoặc mật khẩu"

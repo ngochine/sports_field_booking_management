@@ -1,6 +1,6 @@
 from app.modules.bookings.models import Booking
 from tests.test_base import test_app, test_session, test_client, test_auth
-from tests.unit.sample_fixtures import sample_booking, sample_fields, sample_field_price
+from tests.sample_fixtures import sample_booking, sample_fields, sample_field_price
 from app.modules.auth.models import User, UserStatusEnum, UserRoleEnum
 from datetime import date, timedelta, datetime
 import pytest
@@ -175,17 +175,16 @@ def test_invalid_finish_time_cancel_booking(test_session, test_auth, sample_fiel
     response = test_auth.post(
         f"/api/fields/{field.id}/booking",
         json={
-            "booking_date": date.today().isoformat(),
-            "start_time": (datetime.now() + timedelta(hours=1)).strftime("%H:%M"),
-            "end_time": (datetime.now() + timedelta(hours=2)).strftime("%H:%M")
+            "booking_date": (date.today() + timedelta(days=1)).isoformat(),
+            "start_time": "07:00",
+            "end_time": "09:00"
         }
     )
     assert response.status_code == 201
 
     booking_id = response.get_json()["booking"]["id"]
     booking = Booking.query.get(booking_id)
-    booking.start_time = (datetime.now() - timedelta(hours=2)).time()
-    booking.end_time = (datetime.now() - timedelta(hours=1)).time()
+    booking.booking_date = (date.today() - timedelta(days=1))
     test_session.commit()
 
     response = test_auth.patch(
@@ -205,16 +204,18 @@ def test_invalid_usage_time_cancel_booking(test_session, test_auth, sample_field
     response = test_auth.post(
         f"/api/fields/{field.id}/booking",
         json={
-            "booking_date": date.today().isoformat(),
-            "start_time": (datetime.now() + timedelta(hours=1)).strftime("%H:%M"),
-            "end_time": (datetime.now() + timedelta(hours=3)).strftime("%H:%M")
+            "booking_date": (date.today() + timedelta(days=1)).isoformat(),
+            "start_time": "07:00",
+            "end_time": "09:00"
         }
     )
     assert response.status_code == 201
 
     booking_id = response.get_json()["booking"]["id"]
     booking = Booking.query.get(booking_id)
+    booking.booking_date = date.today()
     booking.start_time = (datetime.now()).time()
+    booking.end_time = (datetime.now() + timedelta(minutes=60)).time()
     test_session.commit()
 
     response = test_auth.patch(
@@ -234,9 +235,9 @@ def test_invalid_time_cancel_booking(test_session, test_auth, sample_fields, sam
     response = test_auth.post(
         f"/api/fields/{field.id}/booking",
         json={
-            "booking_date": date.today().isoformat(),
-            "start_time": (datetime.now() + timedelta(hours=3)).strftime("%H:%M"),
-            "end_time": (datetime.now() + timedelta(hours=4)).strftime("%H:%M")
+            "booking_date": (date.today()).isoformat(),
+            "start_time": (datetime.now()+ timedelta(hours=1.5)).strftime("%H:%M"),
+            "end_time": (datetime.now() + timedelta(hours=2.5)).strftime("%H:%M")
         }
     )
     assert response.status_code == 201
@@ -263,7 +264,7 @@ def test_cancel_booking_pending_success(test_session, test_auth, sample_fields, 
     response = test_auth.post(
         f"/api/fields/{field.id}/booking",
         json={
-            "booking_date": date.today().isoformat(),
+            "booking_date": (date.today() + timedelta(days=1)).isoformat(),
             "start_time": (datetime.now() + timedelta(hours=3)).strftime("%H:%M"),
             "end_time": (datetime.now() + timedelta(hours=4)).strftime("%H:%M")
         }
@@ -290,7 +291,7 @@ def test_cancel_booking_paid_success(test_session, test_auth, sample_fields, sam
     response = test_auth.post(
         f"/api/fields/{field.id}/booking",
         json={
-            "booking_date": date.today().isoformat(),
+            "booking_date": (date.today() + timedelta(days=1)).isoformat(),
             "start_time": (datetime.now() + timedelta(hours=3)).strftime("%H:%M"),
             "end_time": (datetime.now() + timedelta(hours=4)).strftime("%H:%M")
         }

@@ -1,14 +1,16 @@
 from . import dao
+from app.common.tasks import trigger_task, task_auto_cancelled_booking
 from app.modules.fields import dao as field_dao
 from app.modules.bookings.models import BookingStatusEnum
+from app.modules.fields.models import FieldStatusEnum
+
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
-from datetime import datetime
-import math
-from flask import current_app
 from werkzeug.exceptions import Forbidden, NotFound
 
-from app.modules.fields.models import FieldStatusEnum
+from datetime import datetime, timedelta
+import math
+from flask import current_app
 
 
 def caculator_total_time(booking_date, start_time, end_time):
@@ -52,7 +54,7 @@ def create_booking_service(field_id, user_id, data):
 
         is_overlap = dao.check_booking_overlap(field_id, booking_date, start_time, end_time)
         if is_overlap:
-            raise ValidationError("Khung giờ này đã có người đặt")
+            raise ValidationError("Khung giờ đặt bị trùng")
 
         field = field_dao.get_field_by_id(field_id= field_id)
         if field is None:
@@ -68,6 +70,7 @@ def create_booking_service(field_id, user_id, data):
         total_price = caculator_total_price(booking_date= booking_date, start_time=start_time, end_time=end_time, field=field)
 
         booking = dao.create_booking(field_id= field_id, user_id=user_id, total_price=total_price, data=data)
+        trigger_task(func = task_auto_cancelled_booking, run_date= datetime.now() + timedelta(minutes=15) , args=[booking.id])
 
         return booking
     
@@ -120,6 +123,6 @@ def cancelled_booking_service(booking_id, user_id, data: dict):
         raise NotFound("Không tồn tại booking")
 
     validate_cancelled_booking(booking, user_id)
-    booking = dao.update_booking_status(booking, status)
+    booking = dao.update_booking_status(booking = booking, status= BookingStatusEnum.CANCELLED)
 
     return booking

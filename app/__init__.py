@@ -7,6 +7,7 @@ from app.modules.auth import dao
 from werkzeug.exceptions import Unauthorized, Forbidden
 from flask import jsonify
 from app.admin.setup import init_admin
+from app.common.tasks import init_scheduler
 
 
 def create_app():
@@ -23,6 +24,7 @@ def create_app():
     migrate.init_app(flask_app, db)
     jwt.init_app(flask_app)
     init_admin(flask_app)
+    init_scheduler(flask_app)
 
     @flask_app.context_processor
     def inject_user():
@@ -67,5 +69,9 @@ def create_app():
     from app.modules.bookings.routes import booking_bp, api_booking_bp
     flask_app.register_blueprint(booking_bp)
     flask_app.register_blueprint(api_booking_bp)
+
+    from app.modules.transactions.routes import transaction_bp, api_transaction_bp
+    flask_app.register_blueprint(transaction_bp)
+    flask_app.register_blueprint(api_transaction_bp)
 
     return flask_app

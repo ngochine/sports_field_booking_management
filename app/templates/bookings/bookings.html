@@ -50,7 +50,9 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <span class="badge rounded-2 px-3 py-2" style="background-color: var(--blue); color: var(--white);">
+                                    <span class="badge rounded-2 px-3 py-2"
+                                          style="background-color: {% if booking.status.name == 'PAID' %} var(--blue) {% elif booking.status.name == 'PENDING' %} var(--orange) {% else %} var(--gray) {% endif %};
+                                          color: var(--white);">
                                         {% if booking.status.name == "PAID" %} Đã thanh toán {% elif booking.status.name == "PENDING" %} Chờ thanh toán {% else %} Đã huỷ {% endif %}
                                     </span>
                                 </div>
@@ -88,16 +90,16 @@
                                 <div class="d-flex ms-auto">
                                     <div class="col-12">
                                         {% if booking.status.name == "PENDING" %}
-                                        <a href="#" class="btn btn-light border rounded-3 px-3" style="background-color: var(--orange); color: var(--white);">
+                                        <button onclick="payBooking({{booking.id}})" class="btn btn-light border rounded-3 px-3" style="background-color: var(--orange); color: var(--white);">
                                             Thanh toán
-                                        </a>
+                                        </button>
                                         {% endif %}
                                         {% if booking.status.name != "CANCELLED" %}
                                         <a class="btn btn-light border rounded-3 px-3" style="background-color: var(--gray); color: var(--white);" data-bs-toggle="modal" data-bs-target="#confirmBookingModal-{{ booking.id }}">
                                             Huỷ đặt vé
                                         </a>
                                         {% endif %}
-                                        <a href="#" class="btn btn-light border rounded-3 px-3" style="background-color: var(--blue); color: var(--white);">
+                                        <a href="{{url_for('booking.booking_detail', booking_id=booking.id)}}" class="btn btn-light border rounded-3 px-3" style="background-color: var(--blue); color: var(--white);">
                                             Chi tiết
                                         </a>
                                     </div>

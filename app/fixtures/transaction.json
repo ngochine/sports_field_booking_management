@@ -7,12 +7,7 @@
     "paid_at": "2024-07-01T08:13:45",
     "amount": 250000.00,
     "app_trans_id": "240701_TXN_001",
-    "refund_id": null,
-    "trans_id": "ZLP_TXN_98001",
-    "trans_token": "token_zalo_001",
-    "return_code": 1,
-    "order_url": "https://zalopay.vn/order/98001",
-    "order_token": "order_token_001",
+    "payment_url": "https://zalopay.vn/order/98001",
     "booking_id": 1
   },
   {
@@ -23,12 +18,7 @@
     "paid_at": "2024-07-02T09:06:30",
     "amount": 350000.00,
     "app_trans_id": "240702_TXN_002",
-    "refund_id": null,
-    "trans_id": "VNP_TXN_77002",
-    "trans_token": "token_vnpay_002",
-    "return_code": 0,
-    "order_url": "https://vnpay.vn/order/77002",
-    "order_token": "order_token_002",
+    "payment_url": "https://vnpay.vn/order/77002",
     "booking_id": 2
   },
   {
@@ -39,12 +29,7 @@
     "paid_at": null,
     "amount": 100000.00,
     "app_trans_id": "240703_TXN_003",
-    "refund_id": null,
-    "trans_id": null,
-    "trans_token": "token_zalo_003",
-    "return_code": null,
-    "order_url": "https://zalopay.vn/order/98003",
-    "order_token": "order_token_003",
+    "payment_url": "https://zalopay.vn/order/98003",
     "booking_id": 3
   },
   {
@@ -55,12 +40,7 @@
     "paid_at": null,
     "amount": 200000.00,
     "app_trans_id": "240704_TXN_004",
-    "refund_id": null,
-    "trans_id": null,
-    "trans_token": "token_zalo_004",
-    "return_code": -1,
-    "order_url": "https://zalopay.vn/order/98004",
-    "order_token": "order_token_004",
+    "payment_url": "https://zalopay.vn/order/98004",
     "booking_id": 4
   },
   {
@@ -71,12 +51,7 @@
     "paid_at": "2024-07-05T11:04:10",
     "amount": 350000.00,
     "app_trans_id": "240705_TXN_005",
-    "refund_id": null,
-    "trans_id": "VNP_TXN_77005",
-    "trans_token": "token_vnpay_005",
-    "return_code": 0,
-    "order_url": "https://vnpay.vn/order/77005",
-    "order_token": "order_token_005",
+    "payment_url": "https://vnpay.vn/order/77005",
     "booking_id": 5
   },
   {
@@ -87,12 +62,7 @@
     "paid_at": "2024-07-06T14:23:55",
     "amount": 250000.00,
     "app_trans_id": "240706_TXN_006",
-    "refund_id": null,
-    "trans_id": "ZLP_TXN_98006",
-    "trans_token": "token_zalo_006",
-    "return_code": 1,
-    "order_url": "https://zalopay.vn/order/98006",
-    "order_token": "order_token_006",
+    "payment_url": "https://zalopay.vn/order/98006",
     "booking_id": 6
   },
   {
@@ -103,12 +73,7 @@
     "paid_at": null,
     "amount": 200000.00,
     "app_trans_id": "240707_TXN_007",
-    "refund_id": null,
-    "trans_id": null,
-    "trans_token": "token_vnpay_007",
-    "return_code": null,
-    "order_url": "https://vnpay.vn/order/77007",
-    "order_token": "order_token_007",
+    "payment_url": "https://vnpay.vn/order/77007",
     "booking_id": 7
   },
   {
@@ -119,12 +84,7 @@
     "paid_at": "2024-07-08T09:18:20",
     "amount": 150000.00,
     "app_trans_id": "240708_TXN_008",
-    "refund_id": null,
-    "trans_id": "ZLP_TXN_98008",
-    "trans_token": "token_zalo_008",
-    "return_code": 1,
-    "order_url": "https://zalopay.vn/order/98008",
-    "order_token": "order_token_008",
+    "payment_url": "https://zalopay.vn/order/98008",
     "booking_id": 8
   },
   {
@@ -135,12 +95,7 @@
     "paid_at": "2024-07-09T16:06:40",
     "amount": 250000.00,
     "app_trans_id": "240709_TXN_009",
-    "refund_id": "REF_VNP_009",
-    "trans_id": "VNP_TXN_77009",
-    "trans_token": "token_vnpay_009",
-    "return_code": 0,
-    "order_url": "https://vnpay.vn/order/77009",
-    "order_token": "order_token_009",
+    "payment_url": "https://vnpay.vn/order/77009",
     "booking_id": 9
   },
   {
@@ -151,12 +106,7 @@
     "paid_at": "2024-07-10T10:03:50",
     "amount": 80000.00,
     "app_trans_id": "240710_TXN_010",
-    "refund_id": null,
-    "trans_id": "ZLP_TXN_98010",
-    "trans_token": "token_zalo_010",
-    "return_code": 1,
-    "order_url": "https://zalopay.vn/order/98010",
-    "order_token": "order_token_010",
+    "payment_url": "https://zalopay.vn/order/98010",
     "booking_id": 10
   },
   {
@@ -167,12 +117,7 @@
     "paid_at": null,
     "amount": 150000.00,
     "app_trans_id": "240711_TXN_011",
-    "refund_id": null,
-    "trans_id": null,
-    "trans_token": "token_vnpay_011",
-    "return_code": -1,
-    "order_url": "https://vnpay.vn/order/77011",
-    "order_token": "order_token_011",
+    "payment_url": "https://vnpay.vn/order/77011",
     "booking_id": 11
   }
 ]

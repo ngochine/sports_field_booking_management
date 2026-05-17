@@ -3,7 +3,6 @@ from app.modules.bookings.models import Booking
 from flask import current_app
 from sqlalchemy import func
 from sqlalchemy.orm import joinedload
-from app.extension import db
 
 
 def load_fields(q = None, field_type_id= None, district_id= None, province_id= None, page= None) -> list[Field]:
@@ -56,8 +55,3 @@ def get_related_fields(field: Field) -> list[Field]:
         Field.id != field.id
     ).limit(4).all()
     return related_fields
-
-
-def check_field_exist(field_name: str, field: Field) -> bool:
-    return Field.query.filter(Field.status == FieldStatusEnum.ACTIVE, Field.name == field_name,
-                              Field.id != field.id).first() is not None
