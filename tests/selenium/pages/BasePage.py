@@ -37,15 +37,20 @@ class BasePage:
         e=self.find(by, value)
         return e.text
 
-    def screen(self, folder ,name):
-        path=os.path.join("tests", "screenshot")
+    def is_enabled(self,by,value):
+        e=self.find(by, value)
+        return e.is_enabled()
+
+    def screen(self, folder, name):
+        path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "screenshot", folder)
         os.makedirs(path, exist_ok=True)
-        self.driver.save_screenshot(os.path.join(path, folder, name))
+        self.driver.save_screenshot(os.path.join(path, name))
+
 
     def get_url(self):
         return self.driver.current_url
 
-    def scroll(self, f=1000):
+    def scroll(self, f=700):
         self.driver.execute_script(f"window.scrollTo(0, {f});")
 
     def get_text_alert(self, timeout=5):

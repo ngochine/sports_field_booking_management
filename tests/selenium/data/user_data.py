@@ -1,6 +1,7 @@
 LOGIN_USERS = {
     "register_user":("user02", "Aa@123456", "Aa@123456"),
-    "valid_user": ("user02", "Aa@123456"),
+    "valid_user": ("user06", "Aa@123456"),
+    "valid_user_3":("user03", "Aa@123456"),
     "not_exist_user": ("user08", "Aa@123456"),
     "wrong_password": ("user02", "Aa@678912"),
     "wrong_both": ("us", "Aa@678912"),
@@ -26,4 +27,11 @@ REGISTER_USERS = {
     "empty_confirm": ("user02", "Aa@123456", ""),
     "confirm_not_match": ("user02", "Aa@123456", "Aacde123"),
     "all_invalid": ("ue 01", "A@123456", "Aa@123"),
+
+    "valid_user": [
+        ("user03", "Aa@123456", "Aa@123456"),
+        ("user04", "Aa@123456", "Aa@123456"),
+        ("user05", "Aa@123456", "Aa@123456"),
+        ("user06", "Aa@123456", "Aa@123456"),
+    ]
 }

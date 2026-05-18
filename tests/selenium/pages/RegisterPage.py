@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
 from tests.selenium.pages.BasePage import BasePage
 from tests.selenium.locators.RegisterLocators import RegisterLocators
+
 class RegisterPage(BasePage):
     PATH = "/register"
 
@@ -16,3 +17,6 @@ class RegisterPage(BasePage):
     def result(self):
         elements = self.finds(*RegisterLocators.NOTIFICATION)
         return [e.text for e in elements]
+
+    def screen_register(self, name):
+        self.screen("register",name)

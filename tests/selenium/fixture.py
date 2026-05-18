@@ -1,27 +1,31 @@
 import time, pytest
 from tests.selenium.pages import LoginPage, DetailFieldPage, FieldsPage, RegisterPage
-from tests.test_base import driver, test_app
+from tests.test_base import driver, test_app ,driver2
 from tests.selenium.data.user_data import LOGIN_USERS
 
-@pytest.fixture
-def auth_driver(driver):
+def login(driver, username, password):
     page = LoginPage.LoginPage(driver)
     page.open_page()
-    page.login(LOGIN_USERS["valid_user"][0], LOGIN_USERS["valid_user"][1])
+    page.login(username, password)
     time.sleep(1)
     return driver
 
-# @pytest.fixture
-# def register_page(guest_driver):
-#     page = RegisterPage.RegisterPage(driver=guest_driver)
-#     page.open_page()
-#     return page
-#
-# @pytest.fixture
-# def login_page(guest_driver):
-#     page = LoginPage.LoginPage(driver=guest_driver)
-#     page.open_page()
-#     return page
+def open_detail_page(driver, username, password):
+    driver = login(driver, username, password)
+    fields_page = FieldsPage.FieldsPage(driver)
+    fields_page.open_page()
+    link = fields_page.get_link(0)
+    page = DetailFieldPage.DetailFieldPage(driver)
+    page.open_page(link)
+    return page
+
+@pytest.fixture
+def auth_driver(driver):
+    return login(driver,LOGIN_USERS["valid_user"][0],LOGIN_USERS["valid_user"][1])
+
+@pytest.fixture
+def auth_driver2(driver2):
+    return login(driver2, LOGIN_USERS["valid_user_3"][0], LOGIN_USERS["valid_user_3"][1])
 
 @pytest.fixture
 def fields_page(auth_driver):
@@ -30,30 +34,6 @@ def fields_page(auth_driver):
     return page
 
 @pytest.fixture
-def detail_page(driver,fields_page):
-    list_page = FieldsPage.ListComponent(driver=fields_page.driver)
-    time.sleep(1)
-    link = list_page.get_link(0)
-    page = DetailFieldPage.DetailFieldPage(driver=fields_page.driver)
-    page.open_page(link)
-    return page
+def detail_page(driver):
+    return open_detail_page(driver,LOGIN_USERS["valid_user"][0],LOGIN_USERS["valid_user"][1])
 
-@pytest.fixture
-def booking_page(driver,detail_page):
-    return DetailFieldPage.BookingInfoComponent(driver=detail_page.driver)
-
-@pytest.fixture
-def popup(driver,detail_page):
-    return DetailFieldPage.PopupComponent(driver=detail_page.driver)
-
-
-
-# def find_field_with_adjacent_slots(fields_page, start_id=1, max_id=10):
-#     for fid in range(start_id, max_id + 1):
-#         detail_page(fields_page,id=fid)
-#         booking_page(detail_page.driver)
-#         start, end = booking_page.get_adjacent_slots_time()
-#         if start is not None and end is not None:
-#             return booking_page, start, end, fid
-#
-#     return None, None, None, None

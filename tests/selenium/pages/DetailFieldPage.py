@@ -1,5 +1,7 @@
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
+
+from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 
 from tests.selenium.data.booking_data import BOOKING_CASES
@@ -18,6 +20,9 @@ class DetailFieldPage(BasePage):
     def get_address(self):
         return self.get_text(*DetailFieldLocators.ADDRESS)
 
+    def get_err(self):
+        return self.get_text(*BookingInfoLocators.ERR_MESSAGE)
+
     def time_to_minutes(self, t: str):
         h, m = t.split(":")
         return int(h) * 60 + int(m)
@@ -27,11 +32,24 @@ class DetailFieldPage(BasePage):
         m = minutes % 60
         return f"{h:02d}:{m:02d}"
 
+    def add_hours(self, time_str, hours):
+        total_minutes = self.time_to_minutes(time_str)
+        total_minutes += int(hours * 60)
+        total_minutes %= 24 * 60
+        return self.minutes_to_time_str(total_minutes)
+
+    def reduct_hours(self, time_str, hours=1):
+        total_minutes = self.time_to_minutes(time_str) - hours * 60
+        total_minutes %= 24 * 60
+        return self.minutes_to_time_str(total_minutes)
+
+
     def set_value(self, element_id, value):
         self.driver.execute_script("""
             let el = document.getElementById(arguments[0]); 
             el.value = arguments[1]; 
             el.dispatchEvent(new Event('change', { bubbles: true }))
+            el.dispatchEvent(new Event('blur', { bubbles: true }));
         """, element_id, value)
 
     def set_value_flat(self, element_css, value):
@@ -62,16 +80,25 @@ class DetailFieldPage(BasePage):
         if end_time:
             end_h, end_m = end_time.split(":")
             self.set_flatpickr_time(BookingInfoLocators.END_TIME, end_h, end_m, *BookingInfoLocators.END_INPUT)
-        time.sleep(2)
+        time.sleep(1)
+
 
     def open_popup(self):
-        time.sleep(1)
+        time.sleep(0.5)
         self.scroll()
-        self.driver.implicitly_wait(1)
         self.click(*BookingInfoLocators.BOOK_BUTTON)
+
+    def double_click_booking(self):
+        book_btn= self.find(*BookingInfoLocators.BOOK_BUTTON)
+        ActionChains(self.driver) \
+            .double_click(book_btn) \
+            .perform()
 
     def get_date_value(self):
         return self.find(*BookingInfoLocators.DATE_INPUT).get_attribute("value")
+
+    def get_date_min(self):
+        return self.find(*BookingInfoLocators.DATE_INPUT).get_attribute("min")
 
     def get_start_time_value(self):
         return self.find(*BookingInfoLocators.START_TIME).get_attribute("value")
@@ -160,6 +187,11 @@ class DetailFieldPage(BasePage):
                 return s1, e2
         return None, None
 
+    def space_time(self):
+        end_time = self.get_end_time_value()
+        start_time = self.get_start_time_value()
+        return self.time_to_minutes(end_time) - self.time_to_minutes(start_time)
+
     def fill_booking(self, date=BOOKING_CASES["default_day"], slot_index= BOOKING_CASES["valid_slot_index"]):
         slots = self.get_valid_slots()
         start, end = slots[slot_index]
@@ -167,8 +199,35 @@ class DetailFieldPage(BasePage):
         time.sleep(1)
         return start, end
 
-    def is_visible(self):
+    def fill_part_booking(self, date=BOOKING_CASES["default_day"], slot_index= BOOKING_CASES["valid_slot_index"]):
+        slots = self.get_valid_slots()
+        start, _ = slots[slot_index]
+        end=self.add_hours(start,0.5)
+        print(start, end)
+        self.select_booking_info(date=date, start_time=start, end_time=end)
         time.sleep(1)
+        return start, end
+
+    def part_time(self,date=BOOKING_CASES["default_day"], slot_index= 0):
+        slots = self.get_valid_slots()
+        start, end = slots[slot_index]
+        start_dt = datetime.strptime(start, "%H:%M")
+        end_dt = datetime.strptime(end, "%H:%M")
+        while end_dt - start_dt < timedelta(hours=2):
+            slot_index += 1
+            start, end = slots[slot_index]
+            start_dt = datetime.strptime(start, "%H:%M")
+            end_dt = datetime.strptime(end, "%H:%M")
+        start_str = start_dt.strftime("%H:%M")
+        end_str = (end_dt - timedelta(hours=1)).strftime("%H:%M")
+        self.select_booking_info(date=date, start_time=start_str, end_time=end_str)
+        time.sleep(1)
+        return start_str, end_str
+
+    def plus_date(self,num):
+        return (datetime.strptime(BOOKING_CASES["default_day"], "%Y-%m-%d") + timedelta(days=num)).strftime("%Y-%m-%d")
+
+    def is_visible(self):
         return self.find(*PopupLocator.CONFIRM_MODAL).is_displayed()
 
     def close_popup(self):
@@ -179,6 +238,12 @@ class DetailFieldPage(BasePage):
 
     def confirm_booking(self):
         self.click(*PopupLocator.CONFIRM_BTN)
+
+    def double_confirm_booking(self):
+        book_btn= self.find(*PopupLocator.CONFIRM_BTN)
+        ActionChains(self.driver) \
+            .double_click(book_btn) \
+            .perform()
 
     def get_confirm_field_name(self):
         return self.find(*PopupLocator.CONFIRM_FIELD_NAME).text
@@ -220,3 +285,14 @@ class DetailFieldPage(BasePage):
         return errors
 
     def screen_booking(self, name):
+        self.screen("booking",name)
+
+    def count_popup(self):
+        return len(self.finds(*PopupLocator.CONFIRM_MODAL))
+
+    def count_alert(self):
+        try:
+            self.driver.switch_to.alert
+            return 1
+        except:
+            return 0

@@ -28,4 +28,6 @@ class Config:
 
     BASE_URL = "http://127.0.0.1:5000"
 
+    URL_SELENIUM= os.getenv('URL_SELENIUM')
+
     PAGE_SIZE = 6
