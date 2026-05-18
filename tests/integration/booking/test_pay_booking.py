@@ -40,7 +40,6 @@ def test_authentication_booking_success(test_auth, sample_fields, sample_field_p
         }
     )
     data = response.get_json()
-    print(data)
     assert response.status_code == 200
     assert data["success"] == True
     assert data["payment_url"] != None

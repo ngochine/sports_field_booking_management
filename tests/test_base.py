@@ -16,6 +16,12 @@ def create_app():
     app_test.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
     app_test.config["SECRET_KEY"] = "test-secret-key"
     app_test.config["JWT_SECRET_KEY"] = "test-secret-key"
+
+    app_test.config["VNP_TMNCODE"] = "test-secret-key"
+    app_test.config["VNP_SECRET_KEY"] = "test-secret-key"
+    app_test.config["VNPAY_URL"] = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+    app_test.config["VNP_RETURN_URL"] = "http://127.0.0.1:5000/transaction/payment_return"
+
     app_test.config["PAGE_SIZE"] = 2
     app_test.config["TESTING"] = True
     app_test.config["PROPAGATE_EXCEPTIONS"] = False

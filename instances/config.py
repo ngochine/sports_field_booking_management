@@ -20,7 +20,12 @@ class Config:
     CLOUDINARY_CLOUD_NAME = os.getenv('CLOUDINARY_CLOUD_NAME')
     CLOUDINARY_API_KEY = os.getenv('CLOUDINARY_API_KEY')
     CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET')
-    
+
+    VNPAY_TMN_CODE = os.getenv("VNP_TMNCODE")
+    VNPAY_HASH_SECRET = os.getenv("VNP_SECRET_KEY")
+    VNPAY_URL = os.getenv("VNPAY_URL", "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html")
+    VNP_RETURN_URL = os.getenv("VNP_RETURN_URL", "http://127.0.0.1:5000/transaction/payment_return")
+
     BASE_URL = "http://127.0.0.1:5000"
 
     PAGE_SIZE = 6

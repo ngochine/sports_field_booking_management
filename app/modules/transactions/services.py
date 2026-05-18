@@ -1,20 +1,17 @@
 import hashlib
 import hmac
 import urllib.parse
-import os
-
+from flask import current_app
 from app.modules.bookings import dao as booking_dao
 from app.modules.bookings.models import Booking, BookingStatusEnum
 from . import dao
 from .models import TransactionStatusEnum
-
 from werkzeug.exceptions import NotFound, Forbidden
 from marshmallow.exceptions import ValidationError
-
 from datetime import datetime, timedelta, timezone
 from flask import request
-
 from app.common.tasks import trigger_task, task_auto_update_transaction_status
+
 
 def validate_create_payment_url(booking: Booking, user_id: str):
     if booking is None:
@@ -43,14 +40,14 @@ def create_payment_url(booking_id: int, user_id: str) -> str:
     params = {
         "vnp_Version": "2.1.0",
         "vnp_Command": "pay",
-        "vnp_TmnCode": os.getenv('VNP_TMNCODE'),
+        "vnp_TmnCode": current_app.config['VNP_TMNCODE'],
         "vnp_Amount": str(int(transaction.amount)*100),
         "vnp_CurrCode": "VND",
         "vnp_TxnRef": transaction.app_trans_id,
         "vnp_OrderInfo": f"Thanh toan booking {transaction.booking.id}",
         "vnp_OrderType": "other",
         "vnp_Locale": "vn",
-        "vnp_ReturnUrl": os.getenv('VNP_RETURN_URL'),
+        "vnp_ReturnUrl": current_app.config['VNP_RETURN_URL'],
         "vnp_IpAddr": request.remote_addr,
         "vnp_CreateDate": datetime.now().strftime('%Y%m%d%H%M%S'),
         "vnp_ExpireDate": (transaction.created_at + timedelta(minutes=15)).strftime('%Y%m%d%H%M%S')
@@ -69,14 +66,14 @@ def create_payment_url(booking_id: int, user_id: str) -> str:
     )
 
     secure_hash = hmac.new(
-        os.getenv("VNP_SECRET_KEY").encode("utf-8"),
+        current_app.config["VNP_SECRET_KEY"].encode("utf-8"),
         hash_data.encode("utf-8"),
         hashlib.sha512
     ).hexdigest()
 
     query_string = urllib.parse.urlencode(sorted_params)
 
-    payment_url = f"{os.getenv('VNPAY_URL')}?{query_string}&vnp_SecureHash={secure_hash}"
+    payment_url = f"{current_app.config['VNPAY_URL']}?{query_string}&vnp_SecureHash={secure_hash}"
     dao.update_transaction(transaction= transaction, payment_url= payment_url)
     return payment_url
 
