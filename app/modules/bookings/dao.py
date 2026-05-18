@@ -32,7 +32,7 @@ def query_date_selected(query, date_selected: date):
     return default_query
 
 
-def get_field_prices(field: Field, date_selected: date)-> list[FieldPrice]:
+def get_field_prices(field: Field, date_selected= None)-> list[FieldPrice]:
     query = FieldPrice.query.filter_by(field = field)
     if date_selected:
         query = query_date_selected(query, date_selected=date_selected)

@@ -5,8 +5,8 @@ import re
 
 class UserInputSchema(Schema):
     username= fields.Str(required=True, validate=validate.Length(min=3, max=30, 
-                            error="Tên đăng nhập phải từ 3-30 ký tự"),
-                            error_messages={"required": "Vui lòng không để trống tên đăng nhập"})
+                            error="Tên người dùng phải từ 3-30 ký tự"),
+                            error_messages={"required": "Vui lòng không để trống tên người dùng"})
     password= fields.Str(required=True, validate=validate.Length(min=8, max=30, 
                             error="Mật khẩu phải từ 8-30 ký tự"),
                             error_messages={"required": "Vui lòng không để trống mật khẩu"})
