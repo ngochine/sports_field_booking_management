@@ -47,6 +47,7 @@ def update_password_service(data: dict, user_id: str):
         if check_password_hash(user.password, current_password):
             new_password = generate_password_hash(new_password)
             user = dao.update_password(user= user, new_password = new_password)
+            return user
         else:
             raise ValidationError("Mật khẩu hiện tại không đúng")
         
@@ -54,7 +55,7 @@ def update_password_service(data: dict, user_id: str):
         raise Exception
     
 
-def update_user_info_service(data: dict, avatar, user_id: str):
+def update_user_info_service(data: dict, user_id: str, avatar=None):
     user = dao.get_user_by_id(user_id=user_id)
     if not user:
         raise NotFound("Không tồn tại người dùng")

@@ -1,5 +1,7 @@
 from tests.test_base import test_app, test_session, test_auth, test_client, mock_cloudinary
 from app.modules.auth import dao as auth_dao
+from app.modules.auth.models import User
+from app.extension import db
 from werkzeug.security import generate_password_hash
 import pytest
 from io import BytesIO
@@ -34,12 +36,45 @@ def test_authentication_update_password_success(test_auth):
     assert data["success"] == True
 
 
+def test_not_exist_user(test_auth):
+    user = User.query.filter_by(username="test").first()
+
+    db.session.delete(user)
+    db.session.commit()
+
+    response = test_auth.patch(
+        "/api/auth/current-user/profile",
+        data={
+            "email": "123@gmail.com",
+        },
+        content_type="multipart/form-data"
+    )
+    data = response.get_json()
+    assert response.status_code == 404
+    assert data["success"] == False
+    assert data["message"] == "Không tồn tại người dùng"
+
+
 @pytest.mark.parametrize("email", ["1@", "abc", "", "@gmail.com"])
 def test_invalid_email_update_user_profile(test_auth, email):
     response = test_auth.patch(
         "/api/auth/current-user/profile",
         data={
             "email": email,
+        },
+        content_type="multipart/form-data"
+    )
+    data = response.get_json()
+    assert response.status_code == 400
+    assert data["success"] == False
+
+
+@pytest.mark.parametrize("phone", ["090909", "", "12345678990", "abcdefghtg", "1234 56790"])
+def test_invalid_phone_update_user_profile(test_auth, phone):
+    response = test_auth.patch(
+        "/api/auth/current-user/profile",
+        data={
+            "phone": phone,
         },
         content_type="multipart/form-data"
     )
@@ -76,12 +111,12 @@ def test_change_user_profile_success(test_auth, mock_cloudinary):
                 BytesIO(b"fake image"),
                 "avatar.png"
             ),
+            "phone": "0998992077",
             "email": "abc@gmail.com",
         },
         content_type="multipart/form-data"
     )
     data = response.get_json()
-    print(data)
     assert response.status_code == 200
     assert data["success"] == True
     assert data["user"]["first_name"] == "test"

@@ -1,0 +1,143 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Chi tiết đặt sân{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    {% if is_success is not none %}
+        {% if is_success %}
+        <div class="alert alert-success mb-3 alert-dismissible fade show position-relative">
+            Thanh toán thành công. Đơn đặt sân của bạn đã được hệ thống ghi nhận.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% else %}
+        <div class="alert alert-danger mb-3 alert-dismissible fade show position-relative">
+            Thanh toán thất bại. Giao dịch bị huỷ bỏ hoặc xảy ra lỗi trong quá trình xử lý từ ngân hàng.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endif %}
+    {% endif %}
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <h2 class="fw-bolder text-uppercase mb-1" style="color: var(--blue);">Chi tiết đặt sân</h2>
+        <a href="{{ url_for('booking.bookings') }}" class="btn rounded-3 px-4" style="background-color: var(--gray); color: var(--white);">
+             Quay lại
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4">
+        <img src="{% if booking.field.image %}{{ booking.field.image }}{% else %}https://i.pinimg.com/1200x/69/bf/f5/69bff57dd7df19bf4d8a8304ac0e567b.jpg{% endif %}"
+                    class="w-100 object-fit-cover" style="height: 400px;">
+         <div class="row g-0">
+            <div class="col-lg-8">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+                        <div>
+                            <h3 class="fw-bold mb-2"> {{ booking.field.name }}</h3>
+                            <div class="text-muted mb-2">Địa điểm: 
+                                {{ booking.field.location.name }}
+                            </div>
+                            <div class="text-muted"> Địa chỉ cụ thể
+                                {{ booking.field.location.address.street }},
+                                {{ booking.field.location.address.district_name }},
+                                {{ booking.field.location.address.province_name }}
+                            </div>
+                        </div>
+
+                        <span class="badge rounded-3 px-3 py-2"
+                                style="background-color: {% if booking.status.name == 'PAID' %} var(--blue) {% elif booking.status.name == 'PENDING' %} var(--orange) {% else %} var(--gray) {% endif %}; color: var(--white);">
+                            {% if booking.status.name == "PAID" %}Đã thanh toán{% elif booking.status.name == "PENDING" %}Chờ thanh toán{% else %}Đã huỷ{% endif %}
+                        </span>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="border rounded-4 p-3 h-100">
+                                <div class="small text-muted mb-1"> Ngày đặt sân </div>
+                                <div class="fw-semibold">{{ booking.booking_date.strftime('%d/%m/%Y') }}</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="border rounded-4 p-3 h-100">
+                                <div class="small text-muted mb-1"> Thời gian</div>
+                                <div class="fw-semibold">{{ booking.start_time }} - {{ booking.end_time }}</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="border rounded-4 p-3 h-100">
+                                <div class="small text-muted mb-1">
+                                    Ngày tạo booking
+                                </div>
+
+                                <div class="fw-semibold">
+                                    {{ booking.created_at.strftime('%d/%m/%Y %H:%M') }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="border rounded-4 p-3 h-100">
+                                <div class="small text-muted mb-1">
+                                    Ngày thanh toán
+                                </div>
+                                <div class="fw-semibold">
+                                    {% if booking.transactions %} {{booking.transactions.created_at.strftime('%d/%m/%Y %H:%M')}} {%else%} Chưa thanh toán {%endif%}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold mb-4" style="color: var(--blue);">Thông tin thanh toán</h4>
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <span class="fw-bold fs-5">Tổng tiền</span>
+                        <span class="fw-bold fs-4"style="color: var(--orange);">
+                            {{ "{:,.0f}".format(booking.total_price) }} VNĐ
+                        </span>
+                    </div>
+
+                    {% if booking.status.name == "PENDING" %}
+                    <button onclick="payBooking({{ booking.id }})" class="btn w-100 py-3 my-2 rounded-3"
+                        style="background-color: var(--orange); color: var(--white);">
+                        Thanh toán ngay với VNPAY
+                    </button>
+                    <button onclick="cancelBooking({{ booking.id }})" class="btn w-100 py-3 my-2 rounded-3"
+                        style="background-color: var(--gray); color: var(--white);" >
+                        Huỷ đơn đặt
+                    </button>
+                    {% elif booking.status.name == "PAID" %}
+                    <button class="btn w-100 py-3 my-3 rounded-3"
+                        style="background-color: var(--blue); color: var(--white);" disabled>
+                        Đã thanh toán
+                    </button>
+                    <button onclick="cancelBooking({{ booking.id }})" class="btn w-100 py-3 my-2 rounded-3"
+                        style="background-color: var(--gray); color: var(--white);" >
+                        Huỷ đơn đặt
+                    </button>
+                    {% elif booking.status.name == "CANCELLED" %}
+                    <button class="btn w-100 py-3 my-2 rounded-3"
+                        style="background-color: var(--gray); color: var(--white);" disabled>
+                        Đơn đặt sân đã bị huỷ
+                    </button>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    if (window.location.search.includes('vnp_')) {
+        const cleanUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+    }
+</script>
+
+{% endblock %}

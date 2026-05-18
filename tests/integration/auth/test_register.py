@@ -45,7 +45,7 @@ def test_invalid_username(test_client, username):
     assert data["success"] == False
 
 
-@pytest.mark.parametrize("password", ["1", "1"*8, "a"*8, "1a1"*2, " "*8, "a1A@"*9, "A@1"*3, ""])
+@pytest.mark.parametrize("password", ["1", "1"*8, "a"*8, "1a1"*2, " "*8, "a1A@"*9, "A@1"*3, "abc123@n", "abv123VB"])
 def test_invalid_password(test_client, password):
     response = test_client.post(
         "/api/auth/register",

@@ -2,11 +2,13 @@ import pytest, os
 from flask import Flask
 from instances.config import Config
 from app.extension import db, jwt
+from app.common.tasks import init_scheduler
 from flask import jsonify
 from werkzeug.exceptions import Unauthorized, Forbidden
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+
 
 def create_app():
     app_test = Flask(__name__)
@@ -14,12 +16,19 @@ def create_app():
     app_test.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
     app_test.config["SECRET_KEY"] = "test-secret-key"
     app_test.config["JWT_SECRET_KEY"] = "test-secret-key"
+
+    app_test.config["VNP_TMNCODE"] = "test-secret-key"
+    app_test.config["VNP_SECRET_KEY"] = "test-secret-key"
+    app_test.config["VNPAY_URL"] = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+    app_test.config["VNP_RETURN_URL"] = "http://127.0.0.1:5000/transaction/payment_return"
+
     app_test.config["PAGE_SIZE"] = 2
     app_test.config["TESTING"] = True
     app_test.config["PROPAGATE_EXCEPTIONS"] = False
 
     db.init_app(app_test)
     jwt.init_app(app_test)
+    init_scheduler(app_test)
 
     from app.modules.auth.routes import api_auth_bp, auth_bp
     app_test.register_blueprint(api_auth_bp)
@@ -30,6 +39,9 @@ def create_app():
 
     from app.modules.bookings.routes import api_booking_bp
     app_test.register_blueprint(api_booking_bp)
+
+    from app.modules.transactions.routes import api_transaction_bp
+    app_test.register_blueprint(api_transaction_bp)
 
     @app_test.errorhandler(Unauthorized)
     def handle_unauthorized(e):
@@ -77,6 +89,16 @@ def mock_cloudinary(monkeypatch):
 
 
 @pytest.fixture
+def mock_scheduler(monkeypatch):
+    def fake_trigger_task(*args, **kwargs):
+        return None
+
+    monkeypatch.setattr(
+        "app.common.tasks.trigger_task",
+        fake_trigger_task
+    )
+
+@pytest.fixture
 def test_auth(test_client):
     test_client.post(
         "/api/auth/register",
@@ -94,6 +116,7 @@ def test_auth(test_client):
         }
     )
     return test_client
+
 
 @pytest.fixture
 def driver():

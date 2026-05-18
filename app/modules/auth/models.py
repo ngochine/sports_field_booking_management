@@ -31,8 +31,5 @@ class User(db.Model):
     role = Column(sqlEnum(UserRoleEnum), default=UserRoleEnum.CUSTOMER)
     created_at = Column(DateTime, nullable=False, default=datetime.now)
 
-    def __repr__(self):
-        return f'<User {self.username}>'
-
     def __str__(self):
         return f'{self.last_name} {self.first_name}'

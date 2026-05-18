@@ -96,3 +96,10 @@ class UserUpdateInputSchema(Schema):
     first_name = fields.Str()
     last_name = fields.Str()
     phone = fields.Str(validate=validate.Length(min=10, max=10, error="Số điên thoại có chiều dài không hợp lệ"))
+
+    @validates("phone")
+    def validate_phone(self, value, **kwargs):
+        if " " in value:
+            raise ValidationError("Số điện thoại không được chứa khoảng trắng")
+        if not re.fullmatch(r'\d+', value):
+            raise ValidationError("Số điện thoại chỉ được chứa số")

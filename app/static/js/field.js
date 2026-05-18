@@ -200,7 +200,7 @@ function createBooking(fieldId){
         return res.json()
     })
     .then(data => {
-        alert("Đặt sân thành công!")
+        alert("Đặt sân thành công! Vui lòng vào 'Lịch sử đặt sân' để thanh toán trong 15 phút")
         setTimeout(() => window.location.href = "/bookings", 500)
     })
     .catch(err => {

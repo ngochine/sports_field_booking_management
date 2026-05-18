@@ -1,7 +1,7 @@
 from app.modules.bookings.models import Booking
 from app.modules.fields.models import FieldStatusEnum
 from tests.test_base import test_app, test_session, test_client, test_auth
-from tests.unit.sample_fixtures import sample_fields, sample_field_price
+from tests.sample_fixtures import sample_fields, sample_field_price
 from app.modules.auth.models import User, UserStatusEnum, UserRoleEnum
 from datetime import date, timedelta, datetime
 
@@ -26,9 +26,9 @@ def test_authentication_booking_success(test_auth, sample_fields, sample_field_p
     response = test_auth.post(
         f"/api/fields/{field.id}/booking",
         json={
-            "booking_date": date.today().isoformat(),
-            "start_time": (datetime.now() + timedelta(hours=1)).strftime("%H:%M"),
-            "end_time": (datetime.now() + timedelta(hours=2)).strftime("%H:%M")
+            "booking_date": (date.today() + timedelta(days=1)).isoformat(),
+            "start_time": "07:00",
+            "end_time": "09:00"
         }
     )
     data = response.get_json()
@@ -171,7 +171,7 @@ def test_invalid_time(test_auth, sample_fields):
     response = test_auth.post(
         f"/api/fields/{field.id}/booking",
         json={
-            "booking_date": date.today().isoformat(),
+            "booking_date": (date.today() + timedelta(days=1)).isoformat(),
             "start_time": "18:00",
             "end_time": "12:00"
         }
@@ -197,9 +197,9 @@ def test_invalid_time(test_auth, sample_fields):
     response = test_auth.post(
         f"/api/fields/{field.id}/booking",
         json={
-            "booking_date": date.today().isoformat(),
-            "start_time": (datetime.now() + timedelta(hours=1)).strftime("%H:%M"),
-            "end_time": (datetime.now() + timedelta(hours=1.5)).strftime("%H:%M")
+            "booking_date": (date.today() + timedelta(days=1)).isoformat(),
+            "start_time": "07:00",
+            "end_time": "07:30"
         }
     )
     data = response.get_json()
@@ -211,14 +211,14 @@ def test_invalid_time(test_auth, sample_fields):
         f"/api/fields/{field.id}/booking",
         json={
             "booking_date": date.today().isoformat(),
-            "start_time": (datetime.now() - timedelta(hours=1)).strftime("%H:%M"),
-            "end_time": (datetime.now() + timedelta(hours=2)).strftime("%H:%M")
+            "start_time": (datetime.now() + timedelta(hours=0.5)).strftime("%H:%M"),
+            "end_time": (datetime.now() + timedelta(hours=1.5)).strftime("%H:%M")
         }
     )
     data = response.get_json()
     assert response.status_code == 400
     assert data["success"] == False
-    assert data["message"] == {'_schema': ['Giờ bắt đầu phải lớn hơn thời gian hiện tại']}
+    assert data["message"] == {'_schema': ['Phải đặt sân trước ít nhất 1 tiếng']}
 
 
 def test_overlap_schedule(test_auth, sample_fields, sample_field_price):
@@ -226,24 +226,24 @@ def test_overlap_schedule(test_auth, sample_fields, sample_field_price):
     test_auth.post(
         f"/api/fields/{field.id}/booking",
         json={
-            "booking_date": date.today().isoformat(),
-            "start_time": (datetime.now() + timedelta(hours=1)).strftime("%H:%M"),
-            "end_time": (datetime.now() + timedelta(hours=3)).strftime("%H:%M")
+            "booking_date": (date.today() + timedelta(days=1)).isoformat(),
+            "start_time": "07:00",
+            "end_time": "09:00"
         }
     )
 
     response = test_auth.post(
         f"/api/fields/{field.id}/booking",
         json={
-            "booking_date": date.today().isoformat(),
-            "start_time": (datetime.now() + timedelta(hours=2)).strftime("%H:%M"),
-            "end_time": (datetime.now() + timedelta(hours=4)).strftime("%H:%M")
+            "booking_date": (date.today() + timedelta(days=1)).isoformat(),
+            "start_time": "08:00",
+            "end_time": "10:00"
         }
     )
     data = response.get_json()
     assert response.status_code == 400
     assert data["success"] == False
-    assert data["message"] == ['Khung giờ này đã có người đặt']
+    assert data["message"] == ['Khung giờ đặt bị trùng']
 
 
 def next_weekday():
@@ -272,25 +272,25 @@ def test_limit_booking(test_auth, test_session, sample_fields, sample_field_pric
     test_auth.post(
         f"/api/fields/{sample_fields[0].id}/booking",
         json={
-            "booking_date": date.today().isoformat(),
-            "start_time": (datetime.now() + timedelta(hours=1)).strftime("%H:%M"),
-            "end_time": (datetime.now() + timedelta(hours=2)).strftime("%H:%M")
+            "booking_date": (date.today() + timedelta(days=1)).isoformat(),
+            "start_time": "07:00",
+            "end_time": "08:00"
         }
     )
     test_auth.post(
         f"/api/fields/{sample_fields[0].id}/booking",
         json={
-            "booking_date": date.today().isoformat(),
-            "start_time": (datetime.now() + timedelta(hours=2)).strftime("%H:%M"),
-            "end_time": (datetime.now() + timedelta(hours=3)).strftime("%H:%M")
+            "booking_date": (date.today() + timedelta(days=1)).isoformat(),
+            "start_time": "08:00",
+            "end_time": "09:00"
         }
     )
     response = test_auth.post(
         f"/api/fields/{sample_fields[0].id}/booking",
         json={
-            "booking_date": date.today().isoformat(),
-            "start_time": (datetime.now() + timedelta(hours=3)).strftime("%H:%M"),
-            "end_time": (datetime.now() + timedelta(hours=4)).strftime("%H:%M")
+            "booking_date": (date.today() + timedelta(days=1)).isoformat(),
+            "start_time": "09:00",
+            "end_time": "10:00"
         }
     )
     data = response.get_json()
@@ -301,9 +301,9 @@ def test_limit_booking(test_auth, test_session, sample_fields, sample_field_pric
     response = test_auth.post(
         f"/api/fields/{sample_fields[2].id}/booking",
         json={
-            "booking_date": date.today().isoformat(),
-            "start_time": (datetime.now() + timedelta(hours=2)).strftime("%H:%M"),
-            "end_time": (datetime.now() + timedelta(hours=4)).strftime("%H:%M")
+            "booking_date": (date.today() + timedelta(days=1)).isoformat(),
+            "start_time": "10:00",
+            "end_time": "11:00"
         }
     )
     data = response.get_json()
@@ -317,7 +317,7 @@ def test_invalid_field(test_auth, test_session, sample_fields):
     response = test_auth.post(
         f"/api/fields/10000/booking",
         json={
-            "booking_date": date.today().isoformat(),
+            "booking_date": (date.today() + timedelta(days=1)).isoformat(),
             "start_time": (datetime.now() + timedelta(hours=1)).strftime("%H:%M"),
             "end_time": (datetime.now() + timedelta(hours=2)).strftime("%H:%M")
         }
@@ -333,7 +333,7 @@ def test_invalid_field(test_auth, test_session, sample_fields):
     response = test_auth.post(
         f"/api/fields/{field.id}/booking",
         json={
-            "booking_date": date.today().isoformat(),
+            "booking_date": (date.today() + timedelta(days=1)).isoformat(),
             "start_time": (datetime.now() + timedelta(hours=3)).strftime("%H:%M"),
             "end_time": (datetime.now() + timedelta(hours=4)).strftime("%H:%M")
         }
@@ -349,7 +349,7 @@ def test_create_booking_success(test_auth, test_session, sample_fields, sample_f
     test_auth.post(
         f"/api/fields/{field.id}/booking",
         json={
-            "booking_date": date.today().isoformat(),
+            "booking_date": (date.today() + timedelta(days=1)).isoformat(),
             "start_time": (datetime.now() + timedelta(hours=1)).strftime("%H:%M"),
             "end_time": (datetime.now() + timedelta(hours=2)).strftime("%H:%M")
         }
@@ -357,7 +357,7 @@ def test_create_booking_success(test_auth, test_session, sample_fields, sample_f
     response = test_auth.post(
         f"/api/fields/{field.id}/booking",
         json={
-            "booking_date": date.today().isoformat(),
+            "booking_date": (date.today() + timedelta(days=1)).isoformat(),
             "start_time": (datetime.now() + timedelta(hours=3)).strftime("%H:%M"),
             "end_time": (datetime.now() + timedelta(hours=4)).strftime("%H:%M")
         }

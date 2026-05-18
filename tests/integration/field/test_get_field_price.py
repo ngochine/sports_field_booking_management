@@ -1,5 +1,5 @@
 from tests.test_base import test_app, test_session, test_client
-from tests.unit.sample_fixtures import sample_fields
+from tests.sample_fixtures import sample_fields
 from datetime import date
 import pytest
 

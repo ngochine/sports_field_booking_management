@@ -52,7 +52,7 @@ function register() {
 }
 
 
-function loginBase(event, container) {
+function login(event) {
     event.preventDefault()
     
     const form = document.getElementById("loginForm")
@@ -64,6 +64,7 @@ function loginBase(event, container) {
 
     const username = document.getElementById("username").value
     const password = document.getElementById("password").value
+    const container = document.getElementById("flash-container")
 
     return fetch("/api/auth/login", {
         method: "POST",
@@ -79,6 +80,11 @@ function loginBase(event, container) {
         }
         return res.json()
     })
+    .then(data =>{
+        container.innerHTML = ""
+        showAlert(container, "Đăng nhập thành công", "success")
+        setTimeout(() => window.location.href = "/", 500)
+    })
     .catch(err => {
         console.log(err)
         container.innerHTML = ""
@@ -86,26 +92,6 @@ function loginBase(event, container) {
     })
 }
 
-
-function login(event){
-    const container = document.getElementById("flash-container")
-    loginBase(event, container).then(data =>
-    {
-        container.innerHTML = ""
-        showAlert(container, "Đăng nhập thành công", "success")
-        setTimeout(() => window.location.href = "/", 500)
-    })
-}
-
-function loginAdmin(event){
-    const container = document.getElementById("flash-container")
-    loginBase(event, container).then(data =>
-    {
-        container.innerHTML = ""
-        showAlert(container, "Đăng nhập thành công", "success")
-        setTimeout(() => window.location.href = "/admin", 500)
-    })
-}
 
 function logout() {
     fetch("/api/auth/logout", {

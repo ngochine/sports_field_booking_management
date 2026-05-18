@@ -1,5 +1,5 @@
 from tests.test_base import test_app, test_session
-from tests.unit.sample_fixtures import sample_fields, sample_location, sample_address
+from tests.sample_fixtures import sample_fields, sample_location, sample_address
 from app.modules.fields.dao import load_fields
 from app.modules.fields.models import FieldStatusEnum
 

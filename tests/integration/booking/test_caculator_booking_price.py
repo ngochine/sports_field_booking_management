@@ -1,6 +1,6 @@
 from tests.test_base import test_app, test_session, test_client
 from datetime import date
-from tests.unit.sample_fixtures import sample_fields, sample_field_price
+from tests.sample_fixtures import sample_fields, sample_field_price
 
 
 def test_invalid_time(test_client, sample_fields):

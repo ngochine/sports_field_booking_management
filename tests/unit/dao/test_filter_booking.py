@@ -1,5 +1,5 @@
 from tests.test_base import test_app, test_session
-from tests.unit.sample_fixtures import sample_booking
+from tests.sample_fixtures import sample_booking
 from app.modules.bookings.dao import get_bookings_by_user
 
 

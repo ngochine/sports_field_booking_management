@@ -1,7 +1,7 @@
 from app.extension import db
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Numeric
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Numeric, Text
 from sqlalchemy import Enum as sqlEnum
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from datetime import datetime
 from enum import Enum
 
@@ -18,7 +18,7 @@ class TransactionMethodEnum(Enum):
 
 
 class Transaction(db.Model):
-    __tablename__ = 'transaction'
+    __tablename__ = 'transactions'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     method = Column(sqlEnum(TransactionMethodEnum), nullable=False)
@@ -28,12 +28,7 @@ class Transaction(db.Model):
     paid_at = Column(DateTime, nullable=True)
     amount = Column(Numeric(15, 2), nullable=False)
     app_trans_id = Column(String(50), nullable=True)
-    refund_id = Column(String(50), nullable=True)
-    trans_id = Column(String(50), nullable=True)
-    trans_token = Column(String(50), nullable=True)
-    return_code = Column(Integer, nullable=True)
-    order_url = Column(String(255), nullable=True)
-    order_token = Column(String(255), nullable=True)
+    payment_url = Column(Text, nullable=True)
 
-    booking_id = Column(Integer, ForeignKey('booking.id'), nullable=False)
-    booking = relationship("Booking", backref="transactions", lazy=True)
+    booking_id = Column(Integer, ForeignKey('booking.id'), nullable=False, unique=True)
+    booking = relationship("Booking", backref=backref("transaction", uselist=False), lazy=True)

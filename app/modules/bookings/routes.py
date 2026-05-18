@@ -8,8 +8,13 @@ booking_bp = Blueprint('booking', __name__)
 @booking_bp.route('/bookings', methods=["GET"])
 @decorators.customer_required_render
 def bookings():
-    return views.get_bookings()
+    return views.bookings_view()
 
+
+@booking_bp.route('/bookings/<int:booking_id>', methods=["GET"])
+@decorators.customer_required_render
+def booking_detail(booking_id):
+    return views.booking_detail_view(booking_id)
 
 
 # API
