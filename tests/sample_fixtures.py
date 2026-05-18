@@ -86,7 +86,7 @@ def sample_booking(test_session):
                  end_time=time(20, 0), status=BookingStatusEnum.CANCELLED,
                  total_price=250000, user_id=3, field_id=2)
 
-    b7 = Booking(booking_date=date(2026, 7, 5), start_time=time(18, 30),
+    b7 = Booking(booking_date=date(2026, 4, 5), start_time=time(18, 30),
                  end_time=time(20, 0), status=BookingStatusEnum.CANCELLED,
                  total_price=250000, user_id=3, field_id=4)
 
