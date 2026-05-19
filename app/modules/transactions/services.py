@@ -8,7 +8,7 @@ from . import dao
 from .models import TransactionStatusEnum
 from werkzeug.exceptions import NotFound, Forbidden
 from marshmallow.exceptions import ValidationError
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from flask import request
 from app.common.tasks import trigger_task, task_auto_update_transaction_status
 
@@ -40,7 +40,7 @@ def create_payment_url(booking_id: int, user_id: str) -> str:
     params = {
         "vnp_Version": "2.1.0",
         "vnp_Command": "pay",
-        "vnp_TmnCode": current_app.config['VNP_TMNCODE'],
+        "vnp_TmnCode": current_app.config['VNP_TMN_CODE'],
         "vnp_Amount": str(int(transaction.amount)*100),
         "vnp_CurrCode": "VND",
         "vnp_TxnRef": transaction.app_trans_id,
@@ -73,7 +73,7 @@ def create_payment_url(booking_id: int, user_id: str) -> str:
 
     query_string = urllib.parse.urlencode(sorted_params)
 
-    payment_url = f"{current_app.config['VNPAY_URL']}?{query_string}&vnp_SecureHash={secure_hash}"
+    payment_url = f"{current_app.config['VNP_URL']}?{query_string}&vnp_SecureHash={secure_hash}"
     dao.update_transaction(transaction= transaction, payment_url= payment_url)
     return payment_url
 

@@ -4,7 +4,6 @@ from tests.sample_fixtures import sample_booking, sample_fields, sample_field_pr
 from app.modules.auth.models import User, UserStatusEnum, UserRoleEnum
 from app.modules.bookings.models import Booking
 from datetime import date, timedelta
-from app.extension import db
 
 
 def test_authentication_booking_fail(test_client, sample_booking):
@@ -115,7 +114,7 @@ def test_not_found_booking(test_auth):
     assert data["message"] == "Booking không tồn tại"
 
 
-def test_expired_booking(test_auth, sample_fields, sample_field_price):
+def test_expired_booking(test_session, test_auth, sample_fields, sample_field_price):
     field = sample_fields[0]
     response = test_auth.post(
         f"/api/fields/{field.id}/booking",
@@ -127,7 +126,7 @@ def test_expired_booking(test_auth, sample_fields, sample_field_price):
     )
     booking = Booking.query.get(response.get_json()["booking"]["id"])
     booking.status = BookingStatusEnum.CANCELLED
-    db.session.commit()
+    test_session.commit()
 
     response = test_auth.post(
         "/api/transaction/pay",
@@ -142,7 +141,7 @@ def test_expired_booking(test_auth, sample_fields, sample_field_price):
     assert data["message"] == ['Booking không ở trạng thái chờ thanh toán']
 
     booking.status = BookingStatusEnum.PAID
-    db.session.commit()
+    test_session.commit()
 
     response = test_auth.post(
         "/api/transaction/pay",

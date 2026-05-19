@@ -36,11 +36,11 @@ def test_authentication_update_password_success(test_auth):
     assert data["success"] == True
 
 
-def test_not_exist_user(test_auth):
+def test_not_exist_user(test_session, test_auth):
     user = User.query.filter_by(username="test").first()
 
-    db.session.delete(user)
-    db.session.commit()
+    test_session.delete(user)
+    test_session.commit()
 
     response = test_auth.patch(
         "/api/auth/current-user/profile",
@@ -95,7 +95,6 @@ def test_duplicated_email_update_user_profile(test_auth):
         content_type="multipart/form-data"
     )
     data = response.get_json()
-    print(data)
     assert response.status_code == 400
     assert data["success"] == False
     assert data["message"] == "Email đã được đăng ký"

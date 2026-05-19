@@ -241,9 +241,9 @@ def test_tc22_concurrent_booking(driver, auth_driver2):
     page2 = DetailFieldPage(auth_driver2)
     current_url = page1.get_url()
     page2.driver.get(current_url)
-    start, end = page1.fill_booking(date=page1.plus_date(77))
+    start, end = page1.fill_booking(date=page1.plus_date(57))
     page1.open_popup()
-    page2.select_booking_info(date=page2.plus_date(56), start_time=start,end_time=end)
+    page2.select_booking_info(date=page2.plus_date(57), start_time=start,end_time=end)
     page2.open_popup()
     page1.confirm_booking()
     alert1 = page1.get_text_alert()
@@ -283,9 +283,10 @@ def test_tc25_booking_fourth_time(driver):
     current_url = page.get_url()
     alert =""
     for i in range(4):
-        page.fill_booking(date=page.plus_date(i+100))
+        page.fill_booking(date=page.plus_date(i+10))
         page.open_popup()
         page.confirm_booking()
+        time.sleep(1)
         alert=page.get_text_alert()
         time.sleep(1)
         if i==3:

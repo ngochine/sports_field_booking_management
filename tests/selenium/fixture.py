@@ -2,6 +2,7 @@ import time, pytest
 from tests.selenium.pages import LoginPage, DetailFieldPage, FieldsPage, RegisterPage
 from tests.test_base import driver, test_app ,driver2
 from tests.selenium.data.user_data import LOGIN_USERS, REGISTER_USERS
+from tests.selenium.guest_fixture import register_page
 
 
 def test_register_valid(register_page):
