@@ -1,5 +1,8 @@
 import time, os
 from datetime import datetime, timedelta
+
+import pytest
+
 from tests.selenium.data.booking_data import BOOKING_CASES
 from tests.selenium.data.user_data import REGISTER_USERS
 from tests.selenium.pages.DetailFieldPage import DetailFieldPage
@@ -10,10 +13,6 @@ from tests.selenium.guest_fixture import guest_detail_page,guest_fields_page
 from tests.selenium.locators.DetailFieldLocators import DetailFieldLocators,BookingInfoLocators,PopupLocator
 
 
-def register_valid(register_page):
-    for username, password, confirm in REGISTER_USERS["valid_user"]:
-        register_page.register(username,password,confirm)
-        time.sleep(1)
 
 def test_tc1_booking_without_login(guest_detail_page):
     guest_detail_page.scroll()

@@ -1,7 +1,16 @@
 import time, pytest
 from tests.selenium.pages import LoginPage, DetailFieldPage, FieldsPage, RegisterPage
 from tests.test_base import driver, test_app ,driver2
-from tests.selenium.data.user_data import LOGIN_USERS
+from tests.selenium.data.user_data import LOGIN_USERS, REGISTER_USERS
+
+
+def test_register_valid(register_page):
+    for username, password, confirm in REGISTER_USERS["valid_user"]:
+        register_page.register(username,password,confirm)
+        time.sleep(1)
+        register_page.open_page()
+    assert True
+
 
 def login(driver, username, password):
     page = LoginPage.LoginPage(driver)
