@@ -1,4 +1,6 @@
 import time, os
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
 from  tests.test_base import driver,test_app
 from tests.selenium.guest_fixture import register_page
 from tests.selenium.data.user_data import REGISTER_USERS
@@ -9,7 +11,7 @@ def check_contains(text_list, expected):
     return any(expected in t for t in text_list)
 
 
-def test_register_valid(register_page):
+def test_tc1_register_valid(register_page):
     username, password, confirm = REGISTER_USERS["valid"]
     register_page.register(username, password, confirm)
     time.sleep(1)
@@ -18,7 +20,7 @@ def test_register_valid(register_page):
     assert check_contains(results, "Đăng ký thành công")
 
 
-def test_register_empty_username(register_page):
+def test_tc2_register_empty_username(register_page):
     username, password, confirm = REGISTER_USERS["empty_username"]
     register_page.register(username, password, confirm)
     time.sleep(1)
@@ -28,7 +30,7 @@ def test_register_empty_username(register_page):
     assert msg != ""
 
 
-def test_register_username_space(register_page):
+def test_tc3_register_username_space(register_page):
     username, password, confirm = REGISTER_USERS["username_space"]
     register_page.register(username, password, confirm)
     time.sleep(1)
@@ -37,7 +39,7 @@ def test_register_username_space(register_page):
     assert check_contains(results, "Tên người dùng không được chứa khoảng trắng")
 
 
-def test_register_username_too_long(register_page):
+def test_tc4_register_username_too_long(register_page):
     username, password, confirm = REGISTER_USERS["username_too_long"]
     register_page.register(username, password, confirm)
     time.sleep(1)
@@ -46,7 +48,7 @@ def test_register_username_too_long(register_page):
     assert check_contains(results, "Tên người dùng phải từ 3-30 ký tự")
 
 
-def test_register_username_too_short(register_page):
+def test_tc5_register_username_too_short(register_page):
     username, password, confirm = REGISTER_USERS["username_too_short"]
     register_page.register(username, password, confirm)
     time.sleep(1)
@@ -55,7 +57,7 @@ def test_register_username_too_short(register_page):
     assert check_contains(results, "Tên người dùng phải từ 3-30 ký tự")
 
 
-def test_register_duplicate_username(register_page):
+def test_tc6_register_duplicate_username(register_page):
     username, password, confirm = REGISTER_USERS["duplicate_username"]
     register_page.register(username, password, confirm)
     time.sleep(1)
@@ -64,7 +66,7 @@ def test_register_duplicate_username(register_page):
     assert check_contains(results, "Tên người dùng đã tồn tại")
 
 
-def test_register_empty_password(register_page):
+def test_tc7_register_empty_password(register_page):
     username, password, confirm = REGISTER_USERS["empty_password"]
     register_page.register(username, password, confirm)
     time.sleep(1)
@@ -74,7 +76,7 @@ def test_register_empty_password(register_page):
     assert msg != ""
 
 
-def test_register_password_missing_uppercase(register_page):
+def test_tc8_register_password_missing_uppercase(register_page):
     username, password, confirm = REGISTER_USERS["missing_uppercase"]
     register_page.register(username, password, confirm)
     time.sleep(1)
@@ -83,7 +85,7 @@ def test_register_password_missing_uppercase(register_page):
     assert check_contains(results, "Mật khẩu phải chứa ký tự hoa")
 
 
-def test_register_password_missing_lowercase(register_page):
+def test_tc9_register_password_missing_lowercase(register_page):
     username, password, confirm = REGISTER_USERS["missing_lowercase"]
     register_page.register(username, password, confirm)
     time.sleep(1)
@@ -92,7 +94,7 @@ def test_register_password_missing_lowercase(register_page):
     assert check_contains(results, "Mật khẩu phải chứa ký tự thường")
 
 
-def test_register_password_missing_number(register_page):
+def test_tc10_register_password_missing_number(register_page):
     username, password, confirm = REGISTER_USERS["missing_number"]
     register_page.register(username, password, confirm)
     time.sleep(1)
@@ -101,7 +103,7 @@ def test_register_password_missing_number(register_page):
     assert check_contains(results, "Mật khẩu phải chứa số")
 
 
-def test_register_password_missing_special(register_page):
+def test_tc11_register_password_missing_special(register_page):
     username, password, confirm = REGISTER_USERS["missing_special"]
     register_page.register(username, password, confirm)
     time.sleep(1)
@@ -110,7 +112,7 @@ def test_register_password_missing_special(register_page):
     assert check_contains(results, "Mật khẩu phải chứa ký tự đặc biệt")
 
 
-def test_register_password_space(register_page):
+def test_tc12_register_password_space(register_page):
     username, password, confirm = REGISTER_USERS["password_space"]
     register_page.register(username, password, confirm)
     time.sleep(1)
@@ -119,7 +121,7 @@ def test_register_password_space(register_page):
     assert check_contains(results, "Mật khẩu không được chứa khoảng trắng")
 
 
-def test_register_password_too_short(register_page):
+def test_tc13_register_password_too_short(register_page):
     username, password, confirm = REGISTER_USERS["password_too_short"]
     register_page.register(username, password, confirm)
     time.sleep(1)
@@ -128,7 +130,7 @@ def test_register_password_too_short(register_page):
     assert check_contains(results, "Mật khẩu phải từ 8-30 ký tự")
 
 
-def test_register_password_too_long(register_page):
+def test_tc14_register_password_too_long(register_page):
     username, password, confirm = REGISTER_USERS["password_too_long"]
     register_page.register(username, password, confirm)
     time.sleep(1)
@@ -137,7 +139,7 @@ def test_register_password_too_long(register_page):
     assert check_contains(results, "Mật khẩu phải từ 8-30 ký tự")
 
 
-def test_register_empty_confirm(register_page):
+def test_tc15_register_empty_confirm(register_page):
     username, password, confirm = REGISTER_USERS["empty_confirm"]
     register_page.register(username, password, confirm)
     time.sleep(1)
@@ -147,7 +149,7 @@ def test_register_empty_confirm(register_page):
     assert msg != ""
 
 
-def test_register_confirm_not_match(register_page):
+def test_tc16_register_confirm_not_match(register_page):
     username, password, confirm = REGISTER_USERS["confirm_not_match"]
     register_page.register(username, password, confirm)
     time.sleep(1)
@@ -156,7 +158,7 @@ def test_register_confirm_not_match(register_page):
     assert check_contains(results, "Mật khẩu nhập lại không khớp")
 
 
-def test_register_all_invalid(register_page):
+def test_tc17_register_all_invalid(register_page):
     username, password, confirm = REGISTER_USERS["all_invalid"]
     register_page.register(username, password, confirm)
     time.sleep(1)
@@ -164,3 +166,38 @@ def test_register_all_invalid(register_page):
     register_page.screen_register("TC17_all_invalid.png")
     assert check_contains(results, "Mật khẩu phải chứa ký tự thường")
     assert check_contains(results, "Tên người dùng không được chứa khoảng trắng")
+
+def test_tc18_register_block_paste_confirm_password(register_page):
+    username, password, confirm = REGISTER_USERS["valid"]
+    register_page.register(username, password, confirm="")
+    confirm_input = register_page.find(*RegisterLocators.COMFIRM_INPUT)
+    confirm_input.click()
+    ActionChains(register_page.driver).key_down(Keys.CONTROL)\
+        .send_keys("v")\
+        .key_up(Keys.CONTROL)\
+        .perform()
+
+    time.sleep(1)
+    register_page.screen_register("TC18_block_paste_confirm_password.png")
+    assert confirm_input.get_attribute("value") == ""
+
+import time
+from tests.selenium.locators.RegisterLocators import RegisterLocators
+
+
+def test_tc20_register_eye(register_page):
+    username, password, confirm = REGISTER_USERS["eye"]
+    register_page.register_not_click(username, password, password)
+    password_input = register_page.find(*RegisterLocators.PASSWORD_INPUT)
+    assert password_input.get_attribute("type")== "password"
+    eye_password = register_page.find(*RegisterLocators.PASSWORD_EYE)
+    eye_password.click()
+    time.sleep(0.5)
+    assert password_input.get_attribute("type") == "text"
+    confirm_input = register_page.find(*RegisterLocators.COMFIRM_INPUT)
+    assert confirm_input.get_attribute("type") == "password"
+    eye_confirm = register_page.find(*RegisterLocators.CONFIRM_EYE)
+    eye_confirm.click()
+    time.sleep(0.5)
+    register_page.screen_register("TC20_eye.png")
+    assert confirm_input.get_attribute("type") == "text"

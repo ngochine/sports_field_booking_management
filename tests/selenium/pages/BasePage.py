@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from instances.config import Config
@@ -42,9 +44,10 @@ class BasePage:
         return e.is_enabled()
 
     def screen(self, folder, name):
-        path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "screenshot", folder)
-        os.makedirs(path, exist_ok=True)
-        self.driver.save_screenshot(os.path.join(path, name))
+        BASE_DIR = Path(__file__).resolve().parents[3]
+        path = BASE_DIR / "docs" / "screenshots" / "selenium" / folder
+        path.mkdir(parents=True, exist_ok=True)
+        self.driver.save_screenshot(str(path / name))
 
 
     def get_url(self):

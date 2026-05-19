@@ -20,5 +20,5 @@ class LoginPage(BasePage):
         elements = self.finds(*LoginLocator.NOTIFICATION)
         return [e.text for e in elements]
 
-    def screen_booking(self, name):
+    def screen_login(self, name):
         self.screen("login",name)

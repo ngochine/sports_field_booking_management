@@ -1,8 +1,14 @@
 """init
 
+<<<<<<<< HEAD:migrations/versions/988166d2024d_init.py
 Revision ID: 988166d2024d
 Revises: 
 Create Date: 2026-05-19 13:57:21.463260
+========
+Revision ID: c4696b0dee91
+Revises: 
+Create Date: 2026-05-19 13:27:29.854875
+>>>>>>>> test:migrations/versions/c4696b0dee91_init.py
 
 """
 from alembic import op
@@ -10,7 +16,11 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
+<<<<<<<< HEAD:migrations/versions/988166d2024d_init.py
 revision = '988166d2024d'
+========
+revision = 'c4696b0dee91'
+>>>>>>>> test:migrations/versions/c4696b0dee91_init.py
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -129,7 +139,8 @@ def upgrade():
     sa.Column('payment_url', sa.Text(), nullable=True),
     sa.Column('booking_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['booking_id'], ['booking.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('booking_id')
     )
     # ### end Alembic commands ###
 
