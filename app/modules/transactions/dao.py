@@ -4,12 +4,13 @@ from app.modules.bookings.models import Booking
 from datetime import datetime
 
 
-def create_transaction(booking: Booking, method = TransactionMethodEnum.VNPAY) -> Transaction:
+def create_transaction(booking: Booking, app_trans_id:str, payment_url: str, method = TransactionMethodEnum.VNPAY) -> Transaction:
     transaction = Transaction(
         booking_id=booking.id,
         amount=booking.total_price,
         method=method,
-        app_trans_id=f"BOOKING_{booking.id}"
+        app_trans_id=app_trans_id,
+        payment_url = payment_url
     )
     
     db.session.add(transaction)
@@ -29,13 +30,13 @@ def update_transaction_status(transaction: Transaction, status: TransactionStatu
     return transaction
 
 
-def update_transaction(transaction: Transaction, payment_url: str)-> Transaction:
-    transaction.payment_url = payment_url
-    
-    db.session.commit()
-
-    return transaction
+def get_transaction_by_app_trans_id(app_trans_id: str) -> Transaction:
+    return Transaction.query.filter_by(app_trans_id=app_trans_id).first()
 
 
 def get_transaction_by_id(transaction_id: int) -> Transaction:
     return Transaction.query.get(transaction_id)
+
+
+def get_latest_transaction_by_booking(booking: Booking) -> Transaction:
+    return Transaction.query.filter_by(booking_id=booking.id).order_by(Transaction.created_at.desc()).first()

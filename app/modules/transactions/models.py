@@ -27,8 +27,8 @@ class Transaction(db.Model):
 
     paid_at = Column(DateTime, nullable=True)
     amount = Column(Numeric(15, 2), nullable=False)
-    app_trans_id = Column(String(50), nullable=True)
-    payment_url = Column(Text, nullable=True)
+    app_trans_id = Column(String(50), nullable=False, unique=True)
+    payment_url = Column(Text, nullable=False)
 
-    booking_id = Column(Integer, ForeignKey('booking.id'), nullable=False, unique=True)
-    booking = relationship("Booking", backref=backref("transaction", uselist=False), lazy=True)
+    booking_id = Column(Integer, ForeignKey('booking.id'), nullable=False)
+    booking = relationship("Booking", lazy=True)

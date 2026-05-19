@@ -1,5 +1,4 @@
 from apscheduler.schedulers.background import BackgroundScheduler
-from app.extension import db
 from app.modules.bookings.models import BookingStatusEnum
 from app.modules.bookings import dao as booking_dao
 from app.modules.transactions import dao as transaction_dao

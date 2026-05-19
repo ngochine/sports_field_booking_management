@@ -7,8 +7,8 @@ import re
 from werkzeug.exceptions import NotFound, Forbidden
 from marshmallow import ValidationError
 from app.modules.bookings.models import BookingStatusEnum, Booking
-from app.modules.bookings.services import (caculator_total_time, caculator_total_price,
-                                           create_booking_service, get_list_booking_service, cancelled_booking_service)
+from app.modules.bookings.services import (caculator_total_time, caculator_total_price, create_booking_service,
+                                           get_list_booking_service, cancelled_booking_service, get_booking_detail_service)
 
 
 def test_caculator_total_time_service():
@@ -202,3 +202,32 @@ def test_cancelled_booking_service_fail(test_session, sample_fields, sample_fiel
 
 
     assert booking.status == BookingStatusEnum.PENDING
+
+
+def test_get_booking_detail_service_fail(test_session, sample_booking):
+    with pytest.raises(NotFound, match="Không tồn tại booking"):
+        get_booking_detail_service(booking_id=1000, user_id="1")
+
+    with pytest.raises(Forbidden, match="Booking này không phải của bạn, bạn không có quyền xem"):
+        get_booking_detail_service(booking_id=sample_booking[0].id, user_id="999")
+        result = get_booking_detail_service(booking_id=sample_booking[0].id, user_id="1")
+
+        assert result is not None
+        assert result["booking"] is not None
+        assert result["booking"].id == sample_booking[0].id
+        assert result["booking"].user_id == "1"
+        assert "latest_transaction" in result
+
+
+def test_get_booking_detail_service_success(test_session, sample_booking):
+    result = get_booking_detail_service(booking_id=sample_booking[0].id,user_id="1")
+
+    booking = result["booking"]
+    latest_transaction = result["latest_transaction"]
+
+    assert result is not None
+    assert booking.id == sample_booking[0].id
+    assert booking.user_id == "1"
+    assert booking.status == sample_booking[0].status
+    assert booking.total_price == sample_booking[0].total_price
+    assert latest_transaction is None

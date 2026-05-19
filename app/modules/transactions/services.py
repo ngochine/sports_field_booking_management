@@ -9,7 +9,7 @@ from .models import TransactionStatusEnum
 from werkzeug.exceptions import NotFound, Forbidden
 from marshmallow.exceptions import ValidationError
 from datetime import datetime, timedelta
-from flask import request
+import uuid
 from app.common.tasks import trigger_task, task_auto_update_transaction_status
 
 
@@ -27,30 +27,25 @@ def validate_create_payment_url(booking: Booking, user_id: str):
         raise ValidationError("Đơn hàng đã quá thời hạn 15 phút để thanh toán")
 
 
-def create_payment_url(booking_id: int, user_id: str) -> str:
+def create_payment_url(booking_id: int, user_id: str, remote_addr: str) -> str:
     booking = booking_dao.get_booking_by_id(booking_id)
     validate_create_payment_url(booking= booking, user_id=user_id)
 
-    if booking.transaction and booking.transaction.payment_url:
-        return booking.transaction.payment_url
-    
-    transaction = dao.create_transaction(booking= booking)
-    trigger_task(func= task_auto_update_transaction_status, run_date=(transaction.created_at + timedelta(minutes=15)), args=[transaction.id])
-
+    app_trans_id = f"BOOKING_{booking.id}_{uuid.uuid4().hex[:10]}"
     params = {
         "vnp_Version": "2.1.0",
         "vnp_Command": "pay",
-        "vnp_TmnCode": current_app.config['VNP_TMNCODE'],
-        "vnp_Amount": str(int(transaction.amount)*100),
+        "vnp_TmnCode": current_app.config['VNP_TMN_CODE'],
+        "vnp_Amount": str(int(booking.total_price)*100),
         "vnp_CurrCode": "VND",
-        "vnp_TxnRef": transaction.app_trans_id,
-        "vnp_OrderInfo": f"Thanh toan booking {transaction.booking.id}",
+        "vnp_TxnRef": app_trans_id,
+        "vnp_OrderInfo": f"Thanh toan booking {booking.id}",
         "vnp_OrderType": "other",
         "vnp_Locale": "vn",
         "vnp_ReturnUrl": current_app.config['VNP_RETURN_URL'],
-        "vnp_IpAddr": request.remote_addr,
+        "vnp_IpAddr": remote_addr,
         "vnp_CreateDate": datetime.now().strftime('%Y%m%d%H%M%S'),
-        "vnp_ExpireDate": (transaction.created_at + timedelta(minutes=15)).strftime('%Y%m%d%H%M%S')
+        "vnp_ExpireDate": (booking.created_at + timedelta(minutes=15)).strftime('%Y%m%d%H%M%S')
     }
     params = {
         k: v for k, v in params.items()
@@ -73,29 +68,32 @@ def create_payment_url(booking_id: int, user_id: str) -> str:
 
     query_string = urllib.parse.urlencode(sorted_params)
 
-    payment_url = f"{current_app.config['VNPAY_URL']}?{query_string}&vnp_SecureHash={secure_hash}"
-    dao.update_transaction(transaction= transaction, payment_url= payment_url)
-    return payment_url
+    payment_url = f"{current_app.config['VNP_URL']}?{query_string}&vnp_SecureHash={secure_hash}"
+
+    transaction = dao.create_transaction(booking=booking, app_trans_id= app_trans_id, payment_url= payment_url)
+    trigger_task(func=task_auto_update_transaction_status, run_date=(transaction.created_at + timedelta(minutes=15)),
+                 args=[transaction.id])
+
+    return transaction.payment_url
 
 
 def handle_payment_callback(txn_ref, response_code) -> dict:
-    booking_id = txn_ref.replace("BOOKING_", "")
+    booking_id = txn_ref.split("_")[1]
     booking = booking_dao.get_booking_by_id(booking_id)
 
     if booking is None:
         raise NotFound("Booking không tồn tại")
 
-    if booking.status != BookingStatusEnum.PENDING:
-        raise ValidationError("Booking không ở trạng thái chờ thanh toán")
-
-    if booking is None:
-        raise NotFound("Booking không tồn tại")
+    transaction = dao.get_transaction_by_app_trans_id(app_trans_id=txn_ref)
+    if transaction is None:
+        raise NotFound("Không tồn tại giao dịch")
 
     if response_code == "00":
         booking = booking_dao.update_booking_status(booking=booking, status=BookingStatusEnum.PAID)
-        dao.update_transaction_status(transaction= booking.transaction, status=TransactionStatusEnum.SUCCESS)
+        dao.update_transaction_status(transaction= transaction, status=TransactionStatusEnum.SUCCESS)
         is_success = True
     else:
+        dao.update_transaction_status(transaction=transaction, status=TransactionStatusEnum.FAILED)
         is_success = False
         
     return {
