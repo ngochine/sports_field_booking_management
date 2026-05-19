@@ -1,4 +1,4 @@
-from .models import User
+from .models import User, UserStatusEnum
 from . import dao
 from werkzeug.security import generate_password_hash, check_password_hash
 from marshmallow import ValidationError
@@ -28,9 +28,15 @@ def authenticate_user(username: str, password: str) -> User:
         user = dao.check_user(username=username)
 
         if user and check_password_hash(user.password, password):
+            if user.status == UserStatusEnum.BANNED:
+                raise ValidationError("Tài khoản bị cấm")
             return user
         
         return None
+
+    except ValidationError:
+        raise
+
     except Exception as e:
         raise e
     
