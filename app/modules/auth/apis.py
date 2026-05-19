@@ -4,7 +4,7 @@ from marshmallow import ValidationError
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, \
     get_jwt_identity, set_access_cookies, unset_jwt_cookies, set_refresh_cookies, get_jwt
 from app.extension import jwt
-from werkzeug.exceptions import NotFound
+from werkzeug.exceptions import NotFound, Forbidden
 
 
 def register_api():
@@ -58,6 +58,9 @@ def login_api():
 
     except ValidationError as e:
         return jsonify({"success": False, "message": e.messages}), 400
+
+    except Forbidden:
+        raise
 
     except Exception as e:
         return jsonify({"success": False, "error": str(e), "message": "Lỗi hệ thống vui lòng thử lại sau"}), 500

@@ -4,6 +4,8 @@ from app.modules.fields import dao as field_dao
 from app.modules.transactions import dao as transaction_dao
 from app.modules.bookings.models import BookingStatusEnum
 from app.modules.fields.models import FieldStatusEnum
+from app.modules.auth.models import User
+from app.extension import db
 
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
@@ -64,9 +66,12 @@ def create_booking_service(field_id, user_id, data):
         if field.status == FieldStatusEnum.DELETED:
             raise NotFound("Sân không tồn tại")
 
-        is_limit = dao.check_booking_limit(user_id, created_date= datetime.now().date())
-        if is_limit:
-            raise ValidationError("Tài khoản đã đạt giới hạn đặt trong ngày (3 lần/ngày)")
+        with db.session.begin():
+            user = User.filter(User.id == user_id).with_for_update().first()
+
+            is_limit = dao.check_booking_limit(user.id, created_date= datetime.now().date())
+            if is_limit:
+                raise ValidationError("Tài khoản đã đạt giới hạn đặt trong ngày (3 lần/ngày)")
 
         total_price = caculator_total_price(booking_date= booking_date, start_time=start_time, end_time=end_time, field=field)
 

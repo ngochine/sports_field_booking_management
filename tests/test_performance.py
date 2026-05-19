@@ -1,34 +1,65 @@
 from locust import HttpUser, task, between
+from datetime import date, timedelta
+import random
 
-class MyUser(HttpUser):
+
+class GuestFlow(HttpUser):
     wait_time = between(1, 3)
 
-    @task(2)
+    @task(3)
     def get_home(self):
-        self.client.get("/")
+        self.client.get("/", name="Home")
 
-    @task(1)
-    def get_field(self):
-        self.client.get("/fields")
-
-
-    @task(1)
+    @task(3)
     def get_fields(self):
-        self.client.get("/fields/1")
+        self.client.get("/fields", name="Fields")
+
+    @task(2)
+    def get_field_detail(self):
+        self.client.get("/fields/1", name="Field Detail")
+
+
+class UserFlow(HttpUser):
+    wait_time = between(1, 3)
 
     def on_start(self):
-        response = self.client.post(
-            "/api/auth/login",
+        self.username = f"user_{random.randint(1000, 999999)}"
+        self.password = "Test@123"
+
+        self.client.post(
+            "/api/auth/register",
             json={
-                "username": "ngoctrinh",
-                "password": "Trinh2005@"
-            }
+                "username": self.username,
+                "password": self.password,
+                "confirm": self.password
+            },
+            name="Register"
         )
 
-    @task
-    def profile(self):
-        self.client.get("/profile")
+        self.client.post(
+            "/api/auth/login",
+            json={
+                "username": self.username,
+                "password": self.password
+            },
+            name="Login"
+        )
 
-    @task
+    @task(2)
+    def profile(self):
+        self.client.get("/profile", name="Profile")
+
+    @task(3)
+    def get_fields(self):
+        self.client.get("/fields", name="Fields")
+
+    @task(2)
+    def get_field_detail(self):
+        self.client.get("/fields/1", name="Field Detail")
+
+    @task(2)
     def get_bookings(self):
-        self.client.get("/bookings")
+        self.client.get("/bookings", name="Bookings")
+
+    def on_stop(self):
+        self.client.post("/api/auth/logout", name="Logout")
