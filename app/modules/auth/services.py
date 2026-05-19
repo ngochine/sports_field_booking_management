@@ -3,7 +3,7 @@ from . import dao
 from werkzeug.security import generate_password_hash, check_password_hash
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from werkzeug.exceptions import NotFound
+from werkzeug.exceptions import NotFound, Forbidden
 import cloudinary
 import cloudinary.uploader
 
@@ -29,7 +29,7 @@ def authenticate_user(username: str, password: str) -> User:
 
         if user and check_password_hash(user.password, password):
             if user.status == UserStatusEnum.BANNED:
-                raise ValidationError("Tài khoản bị cấm")
+                raise Forbidden("Tài khoản bị cấm")
             return user
         
         return None

@@ -1,6 +1,7 @@
 from . import dao
 from app.common.tasks import trigger_task, task_auto_cancelled_booking
 from app.modules.fields import dao as field_dao
+from app.modules.transactions import dao as transaction_dao
 from app.modules.bookings.models import BookingStatusEnum
 from app.modules.fields.models import FieldStatusEnum
 
@@ -126,3 +127,20 @@ def cancelled_booking_service(booking_id, user_id, data: dict):
     booking = dao.update_booking_status(booking = booking, status= BookingStatusEnum.CANCELLED)
 
     return booking
+
+
+def get_booking_detail_service(booking_id, user_id):
+    booking = dao.get_booking_by_id(booking_id=booking_id)
+
+    if booking is None:
+        raise NotFound("Không tồn tại booking")
+
+    if booking.user_id != user_id:
+        raise Forbidden("Booking này không phải của bạn, bạn không có quyền xem")
+
+    latest_transaction = transaction_dao.get_latest_transaction_by_booking(booking=booking)
+
+    return {
+        'booking': booking,
+        'latest_transaction': latest_transaction,
+    }

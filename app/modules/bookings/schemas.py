@@ -34,6 +34,7 @@ class BookingInputSchema(Schema):
 
 class BookingOutputSchema(Schema):
     id = fields.Integer()
+    booking_date = fields.Date()
     start_time = fields.Time()
     end_time = fields.Time()
     status = fields.Enum(BookingStatusEnum)

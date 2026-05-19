@@ -13,18 +13,24 @@ class UserInputSchema(Schema):
     confirm= fields.Str(required=True, error_messages={"required": "Vui lòng không để trống xác nhận"})
 
     @validates_schema
-    def validate_confirm(self, data, **kwargs):
+    def validate_match(self, data, **kwargs):
         if data.get("password")  != data.get("confirm"):
             raise ValidationError("Mật khẩu nhập lại không khớp")
         
     @validates("username")
     def validate_username(self, value, **kwargs):
+        if value is None:
+            raise ValidationError("Tên người dùng không được để trống")
+
         if " " in value:
             raise ValidationError("Tên người dùng không được chứa khoảng trắng")
         return value
-    
+
     @validates("password")
     def validate_password(self, value, **kwargs):
+        if value is None:
+            raise ValidationError("Mật khẩu không được để trống")
+
         if " " in value: 
             raise ValidationError("Mật khẩu không được chứa khoảng trắng") 
         if not re.search(r'[0-9]', value):
@@ -37,6 +43,11 @@ class UserInputSchema(Schema):
             raise ValidationError("Mật khẩu phải chứa ký tự hoa")
         if not re.search(r'[@#$%^&+=]', value):
             raise ValidationError("Mật khẩu phải chứa ký tự đặc biệt")
+
+    @validates("confirm")
+    def validate_confirm(self, value, **kwargs):
+        if value is None:
+            raise ValidationError("Mật khẩu nhập lại không được để trống")
 
 
 class UserOutputSchema(Schema):
@@ -56,8 +67,19 @@ class UserLoginInputSchema(Schema):
     username = fields.Str(required=True, error_messages={"required": "Vui lòng không để trống tên đăng nhập"})
     password = fields.Str(required=True, error_messages={"required": "Vui lòng không để trống mật khẩu"})
 
+    @validates("username")
+    def validate_username(self, value, **kwargs):
+        if value is None:
+            raise ValidationError("Tên người dùng không được để trống")
+
+    @validates("password")
+    def validate_password(self, value, **kwargs):
+        if value is None:
+            raise ValidationError("Mật khẩu không được để trống")
+
 
 class UserOutputBookingSchema(Schema):
+    username = fields.Str()
     email = fields.Str()
     first_name = fields.Str()
     last_name = fields.Str()
