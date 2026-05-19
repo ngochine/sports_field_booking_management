@@ -11,10 +11,11 @@ class BookingInfoLocators(object):
     END_TIME = (By.ID, 'endTime')
     TOTAL_TIME = (By.ID, 'totalTime')
     TOTAL_PRICE = (By.ID, 'totalPrice')
-    BOOK_BUTTON = (By.CSS_SELECTOR, '.col-lg-4 .card-body > div:nth-child(5) > button')
+    BOOK_BUTTON = (By.ID,'btnCreateBooking')
     TABLE_PRICE = (By.CSS_SELECTOR, '#fieldPriceContainer tbody tr')
     END_INPUT = ('body > div:nth-child(6) input.flatpickr-hour','body > div:nth-child(6) input.flatpickr-minute')
     START_INPUT = ('body > div:nth-child(7) input.flatpickr-hour','body > div:nth-child(7) input.flatpickr-minute')
+    ERR_MESSAGE=(By.ID,'errMessage')
 
 class PopupLocator(object):
     CONFIRM_MODAL = (By.CSS_SELECTOR, "#confirmBookingModal .modal-content")

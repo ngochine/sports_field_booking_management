@@ -23,18 +23,9 @@ def guest_fields_page(driver):
 
 @pytest.fixture
 def guest_detail_page(driver,guest_fields_page):
-    list_page = FieldsPage.ListComponent(driver=guest_fields_page.driver)
+    list_page = FieldsPage.FieldsPage(driver=guest_fields_page.driver)
     time.sleep(1)
     link = list_page.get_link(1)
     page = DetailFieldPage.DetailFieldPage(driver=guest_fields_page.driver)
     page.open_page(link)
     return page
-
-@pytest.fixture
-def guest_booking_page(driver,guest_detail_page):
-    booking = DetailFieldPage.BookingInfoComponent(driver=guest_detail_page.driver)
-    return booking
-
-@pytest.fixture
-def guest_popup(driver,guest_detail_page):
-    return DetailFieldPage.PopupComponent(driver=guest_detail_page.driver)

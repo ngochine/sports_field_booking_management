@@ -121,8 +121,18 @@ def test_auth(test_client):
 @pytest.fixture
 def driver():
     options = Options()
-    service = Service(executable_path='D:\\sports_field_booking_management_team8\\.venv\\chromedriver.exe')
-    options.add_argument("--headless=new")
+    service = Service(executable_path=Config.URL_SELENIUM)
+    # options.add_argument("--headless=new")
+    options.add_argument("--window-size=1920,1080")
+    driver = webdriver.Chrome(service=service, options=options)
+    yield driver
+    driver.quit()
+
+@pytest.fixture
+def driver2():
+    options = Options()
+    service = Service(executable_path=Config.URL_SELENIUM)
+    # options.add_argument("--headless=new")
     options.add_argument("--window-size=1920,1080")
     driver = webdriver.Chrome(service=service, options=options)
     yield driver
