@@ -3,7 +3,7 @@ from tests.sample_fixtures import sample_fields, sample_field_price, sample_book
 from app.modules.bookings.dao import (get_field_prices, check_booking_overlap, check_booking_limit, check_future_booking,
                                       get_booking_by_id, create_booking, update_booking_status)
 from app.modules.bookings.models import FieldPrice, Booking, BookingStatusEnum
-from datetime import date, time, datetime
+from datetime import date, time, datetime, timedelta
 from sqlalchemy import and_
 import pytest
 from sqlalchemy.exc import IntegrityError
@@ -47,13 +47,13 @@ def test_check_booking_overlap(test_session, sample_booking, sample_fields):
 
 
 def test_check_booking_limit(test_session, sample_booking):
-    is_limit = check_booking_limit(user_id=1, booking_date=sample_booking[0].booking_date)
+    is_limit = check_booking_limit(user_id="1", created_date=datetime.today().date())
     assert is_limit
 
-    is_limit = check_booking_limit(user_id=1000, booking_date=sample_booking[0].booking_date)
+    is_limit = check_booking_limit(user_id="1000", created_date=sample_booking[0].booking_date)
     assert not is_limit
 
-    is_limit = check_booking_limit(user_id=2, booking_date=datetime.today().date())
+    is_limit = check_booking_limit(user_id="1", created_date=(datetime.today() + timedelta(days=1)).date())
     assert not is_limit
 
 

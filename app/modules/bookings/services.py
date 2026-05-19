@@ -63,7 +63,7 @@ def create_booking_service(field_id, user_id, data):
         if field.status == FieldStatusEnum.DELETED:
             raise NotFound("Sân không tồn tại")
 
-        is_limit = dao.check_booking_limit(user_id, booking_date)
+        is_limit = dao.check_booking_limit(user_id, created_date= datetime.now().date())
         if is_limit:
             raise ValidationError("Tài khoản đã đạt giới hạn đặt trong ngày (3 lần/ngày)")
 

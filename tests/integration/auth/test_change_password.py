@@ -1,6 +1,5 @@
 from tests.test_base import test_app, test_session, test_auth, test_client
 from app.modules.auth.models import User
-from app.extension import db
 from werkzeug.security import generate_password_hash, check_password_hash
 import pytest
 
@@ -34,11 +33,11 @@ def test_authentication_update_password_success(test_auth):
     assert data["success"] == True
 
 
-def test_not_exist_user(test_auth):
+def test_not_exist_user(test_session, test_auth):
     user = User.query.filter_by(username="test").first()
 
-    db.session.delete(user)
-    db.session.commit()
+    test_session.delete(user)
+    test_session.commit()
 
     response = test_auth.patch(
         "/api/auth/current-user/change-password",
@@ -49,7 +48,6 @@ def test_not_exist_user(test_auth):
         }
     )
     data = response.get_json()
-    print(data)
     assert response.status_code == 404
     assert data["success"] == False
     assert data["message"] == "Không tồn tại người dùng"

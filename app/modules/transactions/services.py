@@ -8,7 +8,7 @@ from . import dao
 from .models import TransactionStatusEnum
 from werkzeug.exceptions import NotFound, Forbidden
 from marshmallow.exceptions import ValidationError
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from flask import request
 from app.common.tasks import trigger_task, task_auto_update_transaction_status
 

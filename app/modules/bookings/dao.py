@@ -2,7 +2,7 @@ from app.extension import db
 from .models import FieldPrice, Booking, BookingStatusEnum
 from app.modules.fields.models import Field
 from datetime import date, time
-from sqlalchemy import and_
+from sqlalchemy import and_, func
 from sqlalchemy.exc import IntegrityError
 from flask import current_app
 from datetime import datetime, date
@@ -52,8 +52,8 @@ def check_booking_overlap(field_id: int, date_selected: date, start_time: time, 
     return query.first() is not None
 
 
-def check_booking_limit(user_id: int, booking_date: date) -> bool:
-    return Booking.query.filter_by(user_id=user_id, booking_date=booking_date).count() == 3
+def check_booking_limit(user_id: str, created_date: date) -> bool:
+    return Booking.query.filter(Booking.user_id==user_id, func.date(Booking.created_at) == created_date).count() >= 3
 
 
 def create_booking(field_id: int, user_id, total_price: float, data: dict) -> Booking:
@@ -73,7 +73,7 @@ def create_booking(field_id: int, user_id, total_price: float, data: dict) -> Bo
         raise
 
 
-def get_bookings_by_user(user_id: int, status= None, page=None) -> list[Booking]:
+def get_bookings_by_user(user_id: str, status= None, page=None) -> list[Booking]:
     query = Booking.query.filter_by(user_id=user_id)
 
     if status:
