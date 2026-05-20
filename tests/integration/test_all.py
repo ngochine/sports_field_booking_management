@@ -60,7 +60,7 @@ def test_happy_path(test_client, sample_fields, sample_field_price):
 
 
     response = test_client.patch(
-        f"/api/bookings/{booking["id"]}",
+        f"/api/bookings/{booking['id']}",
         json={
             "status": "CANCELLED"
         }
