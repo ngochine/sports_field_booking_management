@@ -1,8 +1,8 @@
 [
   {
     "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    "username": "admin_nguyen",
-    "password": "123456",
+    "username": "admin",
+    "password": "Admin@123",
     "email": "admin@sportfield.vn",
     "first_name": "Văn An",
     "last_name": "Nguyễn",
@@ -121,14 +121,14 @@
   },
   {
     "id": "e1f2a3b4-c5d6-7890-efab-901234567890",
-    "username": "admin_thi",
+    "username": "customer_thi",
     "password": "123456",
-    "email": "adminthi@sportfield.vn",
+    "email": "customer@sportfield.vn",
     "first_name": "Thị Mai",
     "last_name": "Trịnh",
-    "avatar": "avatars/admin_thi.jpg",
+    "avatar": "avatars/customer.jpg",
     "status": "active",
-    "role": "admin",
+    "role": "customer",
     "created_at": "2024-01-15T08:00:00"
   }
 ]

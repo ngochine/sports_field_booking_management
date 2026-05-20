@@ -45,6 +45,7 @@ def get_field_prices(field: Field, date_selected= None)-> list[FieldPrice]:
 def check_booking_overlap(field_id: int, date_selected: date, start_time: time, end_time: time) -> bool:
     query = Booking.query.filter(
         Booking.field_id == field_id,
+        Booking.status.in_([BookingStatusEnum.PENDING, BookingStatusEnum.PAID]),
         Booking.booking_date == date_selected,
         Booking.start_time < end_time, 
         start_time < Booking.end_time)

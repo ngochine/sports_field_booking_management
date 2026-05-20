@@ -2,6 +2,8 @@ from app import create_app
 from app.extension import db
 from flask import json
 
+from werkzeug.security import generate_password_hash
+
 from app.modules.auth.models import *
 from app.modules.fields.models import *
 from app.modules.bookings.models import *
@@ -13,18 +15,21 @@ if __name__ == "__main__":
     with app.app_context():
         db.drop_all()
         db.create_all()
-        def load_data(file, model):
+
+        def load_data(file, model, is_user=False):
             with open(file, encoding="utf-8") as f:
                 try:
                     data = json.load(f)
                     for item in data:
+                        if is_user and "password" in item:
+                            item["password"] = generate_password_hash(item["password"])
                         db.session.add(model(**item))
                     db.session.commit()
                 except Exception as e:
                     db.session.rollback()
                     print("Lỗi:", e)
 
-        load_data("app/fixtures/user.json", User)
+        load_data("app/fixtures/user.json", User, is_user=True)
         load_data("app/fixtures/field_type.json", FieldType)
         load_data("app/fixtures/address.json", Address)
         load_data("app/fixtures/location.json", Location)
