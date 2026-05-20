@@ -1,14 +1,8 @@
 """init
 
-<<<<<<<< HEAD:migrations/versions/988166d2024d_init.py
-Revision ID: 988166d2024d
+Revision ID: 86f2c368a4f9
 Revises: 
-Create Date: 2026-05-19 13:57:21.463260
-========
-Revision ID: c4696b0dee91
-Revises: 
-Create Date: 2026-05-19 13:27:29.854875
->>>>>>>> test:migrations/versions/c4696b0dee91_init.py
+Create Date: 2026-05-20 16:12:24.329504
 
 """
 from alembic import op
@@ -16,11 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-<<<<<<<< HEAD:migrations/versions/988166d2024d_init.py
-revision = '988166d2024d'
-========
-revision = 'c4696b0dee91'
->>>>>>>> test:migrations/versions/c4696b0dee91_init.py
+revision = '86f2c368a4f9'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -135,12 +125,12 @@ def upgrade():
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('paid_at', sa.DateTime(), nullable=True),
     sa.Column('amount', sa.Numeric(precision=15, scale=2), nullable=False),
-    sa.Column('app_trans_id', sa.String(length=50), nullable=True),
-    sa.Column('payment_url', sa.Text(), nullable=True),
+    sa.Column('app_trans_id', sa.String(length=50), nullable=False),
+    sa.Column('payment_url', sa.Text(), nullable=False),
     sa.Column('booking_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['booking_id'], ['booking.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('booking_id')
+    sa.UniqueConstraint('app_trans_id')
     )
     # ### end Alembic commands ###
 
