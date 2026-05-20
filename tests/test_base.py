@@ -14,6 +14,7 @@ def create_app():
     app_test = Flask(__name__)
     app_test.config.from_object(Config)
     app_test.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
+    app_test.config["SQLALCHEMY_ENGINE_OPTIONS"] ={"isolation_level": "SERIALIZABLE"}
     app_test.config["SECRET_KEY"] = "test-secret-key"
     app_test.config["JWT_SECRET_KEY"] = "test-secret-key"
 

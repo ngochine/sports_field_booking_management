@@ -4,12 +4,8 @@ import re
 
 
 class UserInputSchema(Schema):
-    username= fields.Str(required=True, validate=validate.Length(min=3, max=30, 
-                            error="Tên người dùng phải từ 3-30 ký tự"),
-                            error_messages={"required": "Vui lòng không để trống tên người dùng"})
-    password= fields.Str(required=True, validate=validate.Length(min=8, max=30, 
-                            error="Mật khẩu phải từ 8-30 ký tự"),
-                            error_messages={"required": "Vui lòng không để trống mật khẩu"})
+    username= fields.Str(required=True, error_messages={"required": "Vui lòng không để trống tên người dùng"})
+    password= fields.Str(required=True, error_messages={"required": "Vui lòng không để trống mật khẩu"})
     confirm= fields.Str(required=True, error_messages={"required": "Vui lòng không để trống xác nhận"})
 
     @validates_schema
@@ -19,17 +15,24 @@ class UserInputSchema(Schema):
         
     @validates("username")
     def validate_username(self, value, **kwargs):
-        if value is None:
+        if value == "":
             raise ValidationError("Tên người dùng không được để trống")
 
         if " " in value:
             raise ValidationError("Tên người dùng không được chứa khoảng trắng")
+
+        if len(value.strip()) < 3 or len(value.strip()) > 30:
+            raise ValidationError("Tên người dùng phải từ 3-30 ký tự")
+
         return value
 
     @validates("password")
     def validate_password(self, value, **kwargs):
-        if value is None:
+        if value == "":
             raise ValidationError("Mật khẩu không được để trống")
+
+        if len(value.strip()) < 8 or len(value.strip()) > 30:
+            raise ValidationError("Mật khẩu phải từ 3-30 ký tự")
 
         if " " in value: 
             raise ValidationError("Mật khẩu không được chứa khoảng trắng") 
@@ -46,7 +49,7 @@ class UserInputSchema(Schema):
 
     @validates("confirm")
     def validate_confirm(self, value, **kwargs):
-        if value is None:
+        if value == "":
             raise ValidationError("Mật khẩu nhập lại không được để trống")
 
 
@@ -69,12 +72,12 @@ class UserLoginInputSchema(Schema):
 
     @validates("username")
     def validate_username(self, value, **kwargs):
-        if value is None:
+        if value == "":
             raise ValidationError("Tên người dùng không được để trống")
 
     @validates("password")
     def validate_password(self, value, **kwargs):
-        if value is None:
+        if value == "":
             raise ValidationError("Mật khẩu không được để trống")
 
 
