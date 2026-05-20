@@ -3,17 +3,17 @@ from app.common.tasks import trigger_task, task_auto_cancelled_booking
 from app.modules.fields import dao as field_dao
 from app.modules.transactions import dao as transaction_dao
 from app.modules.bookings.models import BookingStatusEnum
-from app.modules.fields.models import FieldStatusEnum
+from app.modules.fields.models import FieldStatusEnum, Field
 from app.modules.auth.models import User
-from app.extension import db
 
 from marshmallow import ValidationError
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, OperationalError
 from werkzeug.exceptions import Forbidden, NotFound
 
 from datetime import datetime, timedelta
 import math
 from flask import current_app
+from app.extension import db
 
 
 def caculator_total_time(booking_date, start_time, end_time):
@@ -55,34 +55,44 @@ def create_booking_service(field_id, user_id, data):
         start_time = data.get("start_time")
         end_time = data.get("end_time")
 
-        is_overlap = dao.check_booking_overlap(field_id, booking_date, start_time, end_time)
-        if is_overlap:
-            raise ValidationError("Khung giờ đặt bị trùng")
-
-        field = field_dao.get_field_by_id(field_id= field_id)
+        field = field_dao.get_field_by_id(field_id=field_id)
         if field is None:
             raise NotFound("Sân không tồn tại")
 
         if field.status == FieldStatusEnum.DELETED:
             raise NotFound("Sân không tồn tại")
 
-        with db.session.begin():
-            user = User.filter(User.id == user_id).with_for_update().first()
+        user = User.query.filter_by(id=user_id).with_for_update().first()
+        field = Field.query.filter_by(id=field_id).with_for_update().first()
 
-            is_limit = dao.check_booking_limit(user.id, created_date= datetime.now().date())
-            if is_limit:
-                raise ValidationError("Tài khoản đã đạt giới hạn đặt trong ngày (3 lần/ngày)")
+        is_overlap = dao.check_booking_overlap(field.id, booking_date, start_time, end_time)
+        if is_overlap:
+            db.session.rollback()
+            raise ValidationError("Khung giờ đặt bị trùng")
+
+        is_limit = dao.check_booking_limit(user_id, created_date= datetime.now().date())
+        if is_limit:
+            db.session.rollback()
+            raise ValidationError("Tài khoản đã đạt giới hạn đặt trong ngày (3 lần/ngày)")
 
         total_price = caculator_total_price(booking_date= booking_date, start_time=start_time, end_time=end_time, field=field)
 
-        booking = dao.create_booking(field_id= field_id, user_id=user_id, total_price=total_price, data=data)
-        trigger_task(func = task_auto_cancelled_booking, run_date= datetime.now() + timedelta(minutes=15) , args=[booking.id])
+        booking = dao.create_booking(field_id= field.id, user_id=user_id, total_price=total_price, data=data)
+        db.session.add(booking)
+        db.session.commit()
+
+        trigger_task(func=task_auto_cancelled_booking, run_date=datetime.now() + timedelta(minutes=15), args=[booking.id])
 
         return booking
-    
+
     except IntegrityError:
+        db.session.rollback()
         raise ValidationError("Dữ liệu vi phạm ràng buộc database")
-    
+
+    except OperationalError:
+        db.session.rollback()
+        raise ValidationError("Hệ thống đang xử lý nhiều yêu cầu, vui lòng thử lại")
+
 
 def get_list_booking_service(user_id: str, filters: dict):
     page = filters.get('page', 1)

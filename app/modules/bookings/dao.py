@@ -57,21 +57,14 @@ def check_booking_limit(user_id: str, created_date: date) -> bool:
     return Booking.query.filter(Booking.user_id==user_id, func.date(Booking.created_at) == created_date).count() >= 3
 
 
-def create_booking(field_id: int, user_id, total_price: float, data: dict) -> Booking:
-    try:
-        booking = Booking(
-            field_id = field_id,
-            user_id = user_id,
-            total_price= total_price,
-            **data
-        )
-        db.session.add(booking)
-        db.session.commit()
-        return booking
-    
-    except IntegrityError:
-        db.session.rollback()
-        raise
+def create_booking(field_id: int, user_id: str, total_price: float, data: dict) -> Booking:
+    booking = Booking(
+        field_id = field_id,
+        user_id = user_id,
+        total_price= total_price,
+        **data
+    )
+    return booking
 
 
 def get_bookings_by_user(user_id: str, status= None, page=None) -> list[Booking]:

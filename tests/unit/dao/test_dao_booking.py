@@ -102,14 +102,9 @@ def test_create_booking(test_session, sample_fields):
 
     assert booking is not None
     assert booking.field_id == field.id
-    assert booking.user_id == "1"
+    assert booking.user_id == 1
     assert booking.total_price == 250000
     assert booking.status == BookingStatusEnum.PENDING
     assert booking.booking_date == date(2026, 5, 18)
     assert booking.start_time == time(18, 0)
     assert booking.end_time == time(20, 0)
-
-    with pytest.raises(IntegrityError):
-        create_booking(field_id=None, user_id=1, total_price=250000, data=data)
-
-    assert Booking.query.count() == 1
