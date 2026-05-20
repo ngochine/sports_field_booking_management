@@ -32,7 +32,7 @@
 
                         <span class="badge rounded-3 px-3 py-2"
                                 style="background-color: {% if booking.status.name == 'PAID' %} var(--blue) {% elif booking.status.name == 'PENDING' %} var(--orange) {% else %} var(--gray) {% endif %}; color: var(--white);">
-                            {% if booking.status.name == "PAID" %}Đã thanh toán{% elif booking.status.name == "PENDING" %}Chờ thanh toán{% else %}Đã huỷ{% endif %}
+                            {% if booking.status.name == "PAID" %}Đã thanh toán{% elif booking.status.name == "PENDING" %}Chờ thanh toán{% else %}Đã hủy{% endif %}
                         </span>
                     </div>
 
@@ -95,7 +95,7 @@
                     </button>
                     <button onclick="cancelBooking({{ booking.id }})" class="btn w-100 py-3 my-2 rounded-3"
                         style="background-color: var(--gray); color: var(--white);" >
-                        Huỷ đơn đặt
+                        Hủy đơn đặt
                     </button>
                     {% elif booking.status.name == "PAID" %}
                     <button class="btn w-100 py-3 my-3 rounded-3"
@@ -104,12 +104,12 @@
                     </button>
                     <button onclick="cancelBooking({{ booking.id }})" class="btn w-100 py-3 my-2 rounded-3"
                         style="background-color: var(--gray); color: var(--white);" >
-                        Huỷ đơn đặt
+                        Hủy đơn đặt
                     </button>
                     {% elif booking.status.name == "CANCELLED" %}
                     <button class="btn w-100 py-3 my-2 rounded-3"
                         style="background-color: var(--gray); color: var(--white);" disabled>
-                        Đơn đặt sân đã bị huỷ
+                        Đơn đặt sân đã bị hủy
                     </button>
                     {% endif %}
 

@@ -153,13 +153,13 @@ def test_cancelled_booking_service_fail(test_session, sample_fields, sample_fiel
     with pytest.raises(ValidationError) as e:
         cancelled_booking_service(booking_id=1, user_id="1", data={"status": BookingStatusEnum.PAID.name})
     assert e.value.messages == {
-        "status": ["Chỉ được phép huỷ booking"]
+        "status": ["Chỉ được phép hủy booking"]
     }
 
     with pytest.raises(ValidationError) as e:
         cancelled_booking_service(booking_id=1, user_id="1", data={"status": BookingStatusEnum.PENDING.name})
     assert e.value.messages == {
-        "status": ["Chỉ được phép huỷ booking"]
+        "status": ["Chỉ được phép hủy booking"]
     }
 
     data = {
@@ -172,15 +172,15 @@ def test_cancelled_booking_service_fail(test_session, sample_fields, sample_fiel
     assert booking.user_id == "1"
     assert booking.id == 1
 
-    with pytest.raises(Forbidden, match="Booking này không phải của bạn, bạn không có quyền huỷ"):
+    with pytest.raises(Forbidden, match="Booking này không phải của bạn, bạn không có quyền hủy"):
         cancelled_booking_service(booking_id=1, user_id="2", data={"status": BookingStatusEnum.CANCELLED.name})
 
-    with pytest.raises(ValidationError, match="Chỉ được huỷ khi booking có trạng thái PENDING hoặc PAID"):
+    with pytest.raises(ValidationError, match="Chỉ được hủy khi booking có trạng thái PENDING hoặc PAID"):
         booking.status = BookingStatusEnum.CANCELLED
         test_session.commit()
         cancelled_booking_service(booking_id=1, user_id="1", data={"status": BookingStatusEnum.CANCELLED.name})
 
-    with pytest.raises(ValidationError, match="Không được huỷ nếu sân đang trong thời gian sử dụng"):
+    with pytest.raises(ValidationError, match="Không được hủy nếu sân đang trong thời gian sử dụng"):
         booking.status = BookingStatusEnum.PENDING
         booking.booking_date = date.today()
         booking.start_time = datetime.now().time()
@@ -188,12 +188,12 @@ def test_cancelled_booking_service_fail(test_session, sample_fields, sample_fiel
         test_session.commit()
         cancelled_booking_service(booking_id=1, user_id="1", data={"status": BookingStatusEnum.CANCELLED.name})
 
-    with pytest.raises(ValidationError, match="Không được huỷ booking đã kết thúc"):
+    with pytest.raises(ValidationError, match="Không được hủy booking đã kết thúc"):
         booking.booking_date = date.today() - timedelta(days=1)
         test_session.commit()
         cancelled_booking_service(booking_id=1, user_id="1", data={"status": BookingStatusEnum.CANCELLED.name})
 
-    with pytest.raises(ValidationError, match="Không được huỷ khi còn dưới 2 giờ trước giờ chơi"):
+    with pytest.raises(ValidationError, match="Không được hủy khi còn dưới 2 giờ trước giờ chơi"):
         booking.booking_date = date.today()
         booking.start_time = (datetime.now() + timedelta(hours=0.5)).time()
         booking.end_time = (datetime.now() + timedelta(hours=1.5)).time()

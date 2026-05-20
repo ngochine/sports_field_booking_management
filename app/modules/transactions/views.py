@@ -16,7 +16,7 @@ def payment_callback_view():
         if is_success:
             flash("Thanh toán thành công. Đơn đặt sân của bạn đã được hệ thống ghi nhận.", "success")
         else:
-            flash("Thanh toán thất bại. Giao dịch bị huỷ bỏ hoặc xảy ra lỗi trong quá trình xử lý từ ngân hàng.", "danger")
+            flash("Thanh toán thất bại. Giao dịch bị hủy bỏ hoặc xảy ra lỗi trong quá trình xử lý từ ngân hàng.", "danger")
 
         return redirect(url_for("booking.booking_detail", booking_id=booking.id))
 

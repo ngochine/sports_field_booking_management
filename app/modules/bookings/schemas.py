@@ -64,6 +64,6 @@ class BookingCancelledSchema(Schema):
         valid_status = [e.name for e in BookingStatusEnum]
 
         if value not in valid_status:
-            raise ValidationError("Trạng thái huỷ không hợp lệ")
+            raise ValidationError("Trạng thái hủy không hợp lệ")
 
         return value

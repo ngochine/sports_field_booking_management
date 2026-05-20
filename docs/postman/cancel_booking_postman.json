@@ -1,0 +1,13 @@
+{
+    "info": {
+        "_postman_id": "af51234a-40fc-4b09-95fb-50b69b7a282e",
+        "name": "SPFM - CANCEL BOOKING",
+        "description": "Collection kiểm thử API hủy đặt sân trong hệ thống quản lý đặt sân thể thao. Mục tiêu nhằm xác minh tính đúng đắn của chức năng hủy đặt sân thông qua các trường hợp kiểm thử hợp lệ và không hợp lệ, đảm bảo yêu cầu về xác thực quyền hủy, kiểm tra trạng thái đặt sân, cập nhật dữ liệu nhất quán, xử lý hoàn tiền (nếu có) và khả năng xử lý lỗi của hệ thống.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "54997124",
+        "_collection_link": "https://go.postman.co/collection/50991360-af51234a-40fc-4b09-95fb-50b69b7a282e?source=collection_link"
+    },
+    "item": [
+       
+    ]
+}
