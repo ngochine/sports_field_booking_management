@@ -12,9 +12,21 @@
     "created_at": "2024-01-10T08:00:00"
   },
   {
+    "id": "e1f2a3b4-c5d6-7890-efab-901234567890",
+    "username": "customer_thi",
+    "password": "Abc@12345",
+    "email": "customerthi@sportfield.vn",
+    "first_name": "Thị Mai",
+    "last_name": "Trịnh",
+    "avatar": "avatars/customer_thi.jpg",
+    "status": "active",
+    "role": "customer",
+    "created_at": "2024-01-15T08:00:00"
+  },
+  {
     "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
     "username": "tran_minh",
-    "password": "123456",
+    "password": "Abc@12345",
     "email": "tranminh@gmail.com",
     "first_name": "Minh",
     "last_name": "Trần",
@@ -26,7 +38,7 @@
   {
     "id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
     "username": "le_thu",
-    "password": "123456",
+    "password": "Abc@12345",
     "email": "lethu@gmail.com",
     "first_name": "Thu",
     "last_name": "Lê",
@@ -38,7 +50,7 @@
   {
     "id": "d4e5f6a7-b8c9-0123-defa-234567890123",
     "username": "pham_hung",
-    "password": "123456",
+    "password": "Abc@12345",
     "email": "phamhung@gmail.com",
     "first_name": "Hùng",
     "last_name": "Phạm",
@@ -50,7 +62,7 @@
   {
     "id": "e5f6a7b8-c9d0-1234-efab-345678901234",
     "username": "hoang_lan",
-    "password": "123456",
+    "password": "Abc@12345",
     "email": "hoanglan@gmail.com",
     "first_name": "Lan",
     "last_name": "Hoàng",
@@ -62,7 +74,7 @@
   {
     "id": "f6a7b8c9-d0e1-2345-fabc-456789012345",
     "username": "do_quang",
-    "password": "123456",
+    "password": "Abc@12345",
     "email": "doquang@gmail.com",
     "first_name": "Quang",
     "last_name": "Đỗ",
@@ -74,7 +86,7 @@
   {
     "id": "a7b8c9d0-e1f2-3456-abcd-567890123456",
     "username": "vo_thi_hoa",
-    "password": "123456",
+    "password": "Abc@12345",
     "email": "vothihoa@gmail.com",
     "first_name": "Thị Hoa",
     "last_name": "Võ",
@@ -86,7 +98,7 @@
   {
     "id": "b8c9d0e1-f2a3-4567-bcde-678901234567",
     "username": "bui_tuan",
-    "password": "123456",
+    "password": "Abc@12345",
     "email": "buituan@gmail.com",
     "first_name": "Tuấn",
     "last_name": "Bùi",
@@ -98,7 +110,7 @@
   {
     "id": "c9d0e1f2-a3b4-5678-cdef-789012345678",
     "username": "dang_khanh",
-    "password": "123456",
+    "password": "Abc@12345",
     "email": "dangkhanh@gmail.com",
     "first_name": "Khánh",
     "last_name": "Đặng",
@@ -110,7 +122,7 @@
   {
     "id": "d0e1f2a3-b4c5-6789-defa-890123456789",
     "username": "ly_thanh",
-    "password": "123456",
+    "password": "Abc@12345",
     "email": "lythanh@gmail.com",
     "first_name": "Thành",
     "last_name": "Lý",
@@ -120,15 +132,15 @@
     "created_at": "2024-07-08T08:30:00"
   },
   {
-    "id": "e1f2a3b4-c5d6-7890-efab-901234567890",
-    "username": "customer_thi",
-    "password": "123456",
-    "email": "customer@sportfield.vn",
-    "first_name": "Thị Mai",
-    "last_name": "Trịnh",
-    "avatar": "avatars/customer.jpg",
+    "id": "f1e2d3c4-b5a6-7890-fabc-012345678901",
+    "username": "test_booking",
+    "password": "Abc@12345",
+    "email": "test_booking@gmail.com",
+    "first_name": "Đức Anh",
+    "last_name": "Nguyễn",
+    "avatar":"",
     "status": "active",
     "role": "customer",
-    "created_at": "2024-01-15T08:00:00"
+    "created_at": "2024-05-10T10:00:00"
   }
 ]

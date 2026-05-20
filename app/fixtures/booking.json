@@ -119,5 +119,226 @@
     "total_price": 150000.00,
     "user_id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
     "field_id": 1
+  },
+
+  {
+    "id": 12,
+    "created_at": "2024-06-01T09:00:00",
+    "booking_date": "2024-06-03",
+    "start_time": "18:30:00",
+    "end_time": "20:00:00",
+    "status": "paid",
+    "total_price": 250000.00,
+    "user_id": "f1e2d3c4-b5a6-7890-fabc-012345678901",
+    "field_id": 1
+  },
+  {
+    "id": 13,
+    "created_at": "2024-06-05T10:00:00",
+    "booking_date": "2024-06-07",
+    "start_time": "06:00:00",
+    "end_time": "09:00:00",
+    "status": "paid",
+    "total_price": 450000.00,
+    "user_id": "f1e2d3c4-b5a6-7890-fabc-012345678901",
+    "field_id": 2
+  },
+  {
+    "id": 14,
+    "created_at": "2024-06-10T08:30:00",
+    "booking_date": "2024-06-12",
+    "start_time": "17:00:00",
+    "end_time": "18:30:00",
+    "status": "paid",
+    "total_price": 350000.00,
+    "user_id": "f1e2d3c4-b5a6-7890-fabc-012345678901",
+    "field_id": 3
+  },
+  {
+    "id": 15,
+    "created_at": "2024-06-14T11:00:00",
+    "booking_date": "2024-06-16",
+    "start_time": "19:00:00",
+    "end_time": "21:00:00",
+    "status": "cancelled",
+    "total_price": 400000.00,
+    "user_id": "f1e2d3c4-b5a6-7890-fabc-012345678901",
+    "field_id": 4
+  },
+  {
+    "id": 16,
+    "created_at": "2024-06-18T07:00:00",
+    "booking_date": "2024-06-20",
+    "start_time": "06:00:00",
+    "end_time": "08:00:00",
+    "status": "paid",
+    "total_price": 300000.00,
+    "user_id": "f1e2d3c4-b5a6-7890-fabc-012345678901",
+    "field_id": 1
+  },
+  {
+    "id": 17,
+    "created_at": "2024-06-21T09:30:00",
+    "booking_date": "2024-06-23",
+    "start_time": "18:30:00",
+    "end_time": "20:00:00",
+    "status": "paid",
+    "total_price": 250000.00,
+    "user_id": "f1e2d3c4-b5a6-7890-fabc-012345678901",
+    "field_id": 5
+  },
+  {
+    "id": 18,
+    "created_at": "2024-06-25T14:00:00",
+    "booking_date": "2024-06-27",
+    "start_time": "17:00:00",
+    "end_time": "19:00:00",
+    "status": "cancelled",
+    "total_price": 200000.00,
+    "user_id": "f1e2d3c4-b5a6-7890-fabc-012345678901",
+    "field_id": 6
+  },
+  {
+    "id": 19,
+    "created_at": "2024-07-01T08:00:00",
+    "booking_date": "2024-07-03",
+    "start_time": "06:00:00",
+    "end_time": "07:30:00",
+    "status": "paid",
+    "total_price": 150000.00,
+    "user_id": "f1e2d3c4-b5a6-7890-fabc-012345678901",
+    "field_id": 1
+  },
+  {
+    "id": 20,
+    "created_at": "2024-07-03T10:00:00",
+    "booking_date": "2024-07-05",
+    "start_time": "20:00:00",
+    "end_time": "21:30:00",
+    "status": "paid",
+    "total_price": 250000.00,
+    "user_id": "f1e2d3c4-b5a6-7890-fabc-012345678901",
+    "field_id": 2
+  },
+  {
+    "id": 21,
+    "created_at": "2024-07-06T07:30:00",
+    "booking_date": "2024-07-08",
+    "start_time": "06:00:00",
+    "end_time": "09:00:00",
+    "status": "paid",
+    "total_price": 600000.00,
+    "user_id": "f1e2d3c4-b5a6-7890-fabc-012345678901",
+    "field_id": 3
+  },
+  {
+    "id": 22,
+    "created_at": "2024-07-09T09:00:00",
+    "booking_date": "2024-07-11",
+    "start_time": "17:00:00",
+    "end_time": "18:30:00",
+    "status": "pending",
+    "total_price": 100000.00,
+    "user_id": "f1e2d3c4-b5a6-7890-fabc-012345678901",
+    "field_id": 4
+  },
+  {
+    "id": 23,
+    "created_at": "2024-07-11T15:00:00",
+    "booking_date": "2024-07-13",
+    "start_time": "18:30:00",
+    "end_time": "20:00:00",
+    "status": "paid",
+    "total_price": 250000.00,
+    "user_id": "f1e2d3c4-b5a6-7890-fabc-012345678901",
+    "field_id": 1
+  },
+  {
+    "id": 24,
+    "created_at": "2024-07-13T08:00:00",
+    "booking_date": "2024-07-15",
+    "start_time": "06:00:00",
+    "end_time": "08:00:00",
+    "status": "paid",
+    "total_price": 300000.00,
+    "user_id": "f1e2d3c4-b5a6-7890-fabc-012345678901",
+    "field_id": 5
+  },
+  {
+    "id": 25,
+    "created_at": "2024-07-15T11:00:00",
+    "booking_date": "2024-07-17",
+    "start_time": "19:00:00",
+    "end_time": "21:00:00",
+    "status": "cancelled",
+    "total_price": 400000.00,
+    "user_id": "f1e2d3c4-b5a6-7890-fabc-012345678901",
+    "field_id": 6
+  },
+  {
+    "id": 26,
+    "created_at": "2024-07-17T09:00:00",
+    "booking_date": "2024-07-19",
+    "start_time": "17:00:00",
+    "end_time": "20:00:00",
+    "status": "paid",
+    "total_price": 1050000.00,
+    "user_id": "f1e2d3c4-b5a6-7890-fabc-012345678901",
+    "field_id": 3
+  },
+  {
+    "id": 27,
+    "created_at": "2024-07-19T08:00:00",
+    "booking_date": "2024-07-21",
+    "start_time": "06:00:00",
+    "end_time": "07:30:00",
+    "status": "paid",
+    "total_price": 150000.00,
+    "user_id": "f1e2d3c4-b5a6-7890-fabc-012345678901",
+    "field_id": 2
+  },
+  {
+    "id": 28,
+    "created_at": "2024-07-21T10:00:00",
+    "booking_date": "2024-07-23",
+    "start_time": "18:30:00",
+    "end_time": "20:00:00",
+    "status": "pending",
+    "total_price": 250000.00,
+    "user_id": "f1e2d3c4-b5a6-7890-fabc-012345678901",
+    "field_id": 1
+  },
+  {
+    "id": 29,
+    "created_at": "2024-07-23T07:30:00",
+    "booking_date": "2024-07-25",
+    "start_time": "20:00:00",
+    "end_time": "21:30:00",
+    "status": "paid",
+    "total_price": 250000.00,
+    "user_id": "f1e2d3c4-b5a6-7890-fabc-012345678901",
+    "field_id": 4
+  },
+  {
+    "id": 30,
+    "created_at": "2024-07-25T09:00:00",
+    "booking_date": "2024-07-27",
+    "start_time": "06:00:00",
+    "end_time": "09:00:00",
+    "status": "paid",
+    "total_price": 600000.00,
+    "user_id": "f1e2d3c4-b5a6-7890-fabc-012345678901",
+    "field_id": 3
+  },
+  {
+    "id": 31,
+    "created_at": "2024-07-27T14:00:00",
+    "booking_date": "2024-07-29",
+    "start_time": "17:00:00",
+    "end_time": "18:30:00",
+    "status": "pending",
+    "total_price": 350000.00,
+    "user_id": "f1e2d3c4-b5a6-7890-fabc-012345678901",
+    "field_id": 5
   }
 ]
