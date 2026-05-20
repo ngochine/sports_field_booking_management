@@ -1,0 +1,1596 @@
+{
+    "info": {
+        "_postman_id": "af51234a-40fc-4b09-95fb-50b69b7a282e",
+        "name": "SPFM - BOOKING",
+        "description": "Collection kiểm thử API đặt sân trong hệ thống quản lý đặt sân thể thao. Mục tiêu nhằm xác minh tính đúng đắn của chức năng đặt sân thông qua các trường hợp kiểm thử hợp lệ và không hợp lệ, đảm bảo yêu cầu về kiểm tra thời gian đặt sân, trạng thái sân, tính nhất quán dữ liệu, xử lý xung đột lịch đặt và khả năng xử lý lỗi của hệ thống.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "54997124",
+        "_collection_link": "https://go.postman.co/collection/50991360-af51234a-40fc-4b09-95fb-50b69b7a282e?source=collection_link"
+    },
+    "item": [
+        {
+            "name": "TC1 - Không đăng nhập",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Authentication is required\", function () {\r",
+                            "    pm.expect(pm.response.code).to.be.oneOf([401]);\r",
+                            "    const jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message).to.include(\"Vui lòng đăng nhập để thực hiện chức năng này\");\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n    \"booking_date\":\"2026-05-20\",\r\n    \"start_time\":\"18:00\",\r\n    \"end_time\":\"20:00\"\r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/{{field_id}}/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "{{field_id}}",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra hệ thống xử lý khi người dùng thực hiện chức năng đặt sân mà chưa đăng nhập. API phải từ chối yêu cầu và trả về mã lỗi 401 kèm thông báo 'Vui lòng đăng nhập để thực hiện chức năng này'."
+            },
+            "response": []
+        },
+        {
+            "name": "TC2 - Đặt sân hợp lệ",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Booking created successfully\", function () {\r",
+                            "    pm.response.to.have.status(201);\r",
+                            "    const jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(true);\r",
+                            "    pm.expect(jsonData).to.have.property(\"booking\");\r",
+                            "    pm.expect(jsonData.booking).to.not.be.null;\r",
+                            "    pm.expect(jsonData.booking.booking_date).to.eql(\"2026-05-30\");\r",
+                            "    pm.expect(jsonData.booking.start_time).to.eql(\"18:00:00\");\r",
+                            "    pm.expect(jsonData.booking.end_time).to.eql(\"20:00:00\");\r",
+                            "    // username\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n    \"booking_date\":\"2026-05-30\",\r\n    \"start_time\":\"18:00\",\r\n    \"end_time\":\"20:00\"\r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/{{field_id}}/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "{{field_id}}",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra chức năng đặt sân thành công khi người dùng nhập đầy đủ và hợp lệ ngày đặt, giờ bắt đầu và giờ kết thúc. API phải tạo booking thành công, trả về mã 201, success = true và thông tin booking tương ứng."
+            },
+            "response": []
+        },
+        {
+            "name": "TC3 - Để trống ngày đặt",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Booking date is required\", function () {\r",
+                            "    pm.response.to.have.status(400);\r",
+                            "    var jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message.booking_date).to.include(\"Ngày đặt không hợp lệ\");\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n    \"booking_date\":\"\",\r\n    \"start_time\":\"18:00\",\r\n    \"end_time\":\"20:00\"\r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/{{field_id}}/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "{{field_id}}",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra hệ thống xử lý khi trường booking_date bị để trống. API phải từ chối yêu cầu đặt sân và trả về mã lỗi 400 kèm thông báo validation 'Ngày đặt không hợp lệ'."
+            },
+            "response": []
+        },
+        {
+            "name": "TC4 - Đặt ngày quá khứ",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Past booking date is invalid\", function () {\r",
+                            "    pm.response.to.have.status(400);\r",
+                            "    var jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message.booking_date[0]).to.equal(\"Ngày được đặt không được ở quá khứ\");\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n    \"booking_date\": \"2025-01-01\",\r\n    \"start_time\": \"18:00\",\r\n    \"end_time\": \"20:00\"\r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/{{field_id}}/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "{{field_id}}",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra hệ thống xử lý khi người dùng chọn ngày đặt ở quá khứ. API phải từ chối yêu cầu đặt sân và trả về mã lỗi 400 kèm thông báo 'Ngày được đặt không được ở quá khứ'."
+            },
+            "response": []
+        },
+        {
+            "name": "TC6 - Sai định dạng ngày",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Wrong date format validation\", function () {\r",
+                            "    pm.response.to.have.status(400);\r",
+                            "    var jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message.booking_date[0]).to.include(\"Ngày đặt không hợp lệ\");\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n    \"booking_date\": \"30-05-2026\",\r\n    \"start_time\": \"18:00\",\r\n    \"end_time\": \"20:00\"\r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/{{field_id}}/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "{{field_id}}",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra hệ thống xử lý khi người dùng nhập booking_date sai định dạng yêu cầu (không đúng định dạng yyyy-mm-dd). API phải từ chối yêu cầu đặt sân và trả về mã lỗi 400 kèm thông báo 'Ngày đặt không hợp lệ'."
+            },
+            "response": []
+        },
+        {
+            "name": "TC5 - Đặt ngày không hợp lệ",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Invalid booking date\", function () {\r",
+                            "    pm.response.to.have.status(400);\r",
+                            "    var jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message.booking_date[0]).to.include(\"Ngày đặt không hợp lệ\");\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n    \"booking_date\": \"2025-01-(-01)\",\r\n    \"start_time\": \"18:00\",\r\n    \"end_time\": \"20:00\"\r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/{{field_id}}/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "{{field_id}}",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra hệ thống xử lý khi booking_date chứa giá trị ngày không hợp lệ. API phải từ chối yêu cầu đặt sân và trả về mã lỗi 400 kèm thông báo validation 'Ngày đặt không hợp lệ'."
+            },
+            "response": []
+        },
+        {
+            "name": "TC7 - Để trống giờ bắt đầu",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Start time is required\", function () {\r",
+                            "    pm.response.to.have.status(400);\r",
+                            "    var jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message.start_time[0]).to.include(\"Giờ bắt đầu không được để trống\");\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n    \"booking_date\": \"2026-05-30\",\r\n    \"start_time\": \"\",\r\n    \"end_time\": \"20:00\"\r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/{{field_id}}/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "{{field_id}}",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra hệ thống xử lý khi trường start_time bị để trống. API phải từ chối yêu cầu đặt sân và trả về mã lỗi 400 kèm thông báo validation 'Giờ bắt đầu không được để trống'."
+            },
+            "response": []
+        },
+        {
+            "name": "TC8 - Để trống giờ kết thúc",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"End time is required\", function () {\r",
+                            "    pm.response.to.have.status(400);\r",
+                            "    var jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message.end_time[0]).to.include(\"Giờ kết thúc không được để trống\");\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n    \"booking_date\": \"2026-05-30\",\r\n    \"start_time\": \"18:00\",\r\n    \"end_time\": \"\"\r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/{{field_id}}/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "{{field_id}}",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra hệ thống xử lý khi trường end_time bị để trống. API phải từ chối yêu cầu đặt sân và trả về mã lỗi 400 kèm thông báo validation 'Giờ kết thúc không được để trống'."
+            },
+            "response": []
+        },
+        {
+            "name": "TC9 - Giờ kết thúc nhỏ hơn giờ bắt đầu",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"End time must be greater than start time\", function () {\r",
+                            "    pm.response.to.have.status(400);\r",
+                            "    var jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message._schema).to.include(\"Giờ bắt đầu phải sớm hơn giờ kết thúc\");\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \r\n\"booking_date\":\"2026-05-30\", \r\n\"start_time\":\"20:00\", \r\n\"end_time\":\"18:00\" \r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/{{field_id}}/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "{{field_id}}",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra hệ thống xử lý khi giờ kết thúc nhỏ hơn giờ bắt đầu. API phải từ chối yêu cầu đặt sân và trả về mã lỗi 400 kèm thông báo 'Giờ bắt đầu phải sớm hơn giờ kết thúc'."
+            },
+            "response": []
+        },
+        {
+            "name": "TC11 - Nhập giờ không hợp lệ",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Invalid time validatio\", function () {\r",
+                            "    pm.response.to.have.status(400);\r",
+                            "    var jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message.end_time[0]).to.include(\"Giờ kết thúc không hợp lệ\");\r",
+                            "    pm.expect(jsonData.message.start_time[0]).to.include(\"Giờ bắt đầu không hợp lệ\");\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \r\n\"booking_date\":\"2026-05-30\", \r\n\"start_time\":\"-18:00\", \r\n\"end_time\":\"abc\" \r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/{{field_id}}/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "{{field_id}}",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra hệ thống xử lý khi start_time hoặc end_time chứa giá trị giờ không hợp lệ. API phải từ chối yêu cầu đặt sân và trả về mã lỗi 400 kèm thông báo validation 'Giờ bắt đầu không hợp lệ' hoặc 'Giờ kết thúc không hợp lệ'."
+            },
+            "response": []
+        },
+        {
+            "name": "TC10 - Giờ bắt đầu nhỏ hơn giờ hiện tại",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(`Start time must be greater than current time`,function () {\r",
+                            "        pm.response.to.have.status(400);\r",
+                            "        var jsonData = pm.response.json();\r",
+                            "        pm.expect(jsonData.success).to.eql(false);\r",
+                            "        pm.expect(jsonData.message._schema).to.include(\"Phải đặt sân trước ít nhất 1 tiếng\");\r",
+                            "    }\r",
+                            ");"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \r\n\"booking_date\":\"2026-05-20\", \r\n\"start_time\":\"01:00\",\r\n\"end_time\":\"05:00\" \r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/{{field_id}}/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "{{field_id}}",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra hệ thống xử lý khi người dùng đặt sân với giờ bắt đầu quá gần hoặc nhỏ hơn thời gian hiện tại, không đáp ứng điều kiện đặt trước tối thiểu. API phải từ chối yêu cầu và trả về mã lỗi 400 kèm thông báo 'Phải đặt sân trước ít nhất 1 tiếng'."
+            },
+            "response": []
+        },
+        {
+            "name": "TC12 - Sai định dạng giờ",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Wrong time format validation\", function () {\r",
+                            "    pm.response.to.have.status(400);\r",
+                            "    var jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message.end_time[0]).to.include(\"Giờ kết thúc không hợp lệ\");\r",
+                            "    pm.expect(jsonData.message.start_time[0]).to.include(\"Giờ bắt đầu không hợp lệ\");\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": " { \r\n\"booking_date\":\"2026-05-30\", \r\n\"start_time\":\"6pm\", \r\n\"end_time\":\"9pm\" \r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/{{field_id}}/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "{{field_id}}",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra hệ thống xử lý khi start_time hoặc end_time chứa giá trị giờ không hợp lệ. API phải từ chối yêu cầu đặt sân và trả về mã lỗi 400 kèm thông báo validation 'Giờ bắt đầu không hợp lệ' hoặc 'Giờ kết thúc không hợp lệ'."
+            },
+            "response": []
+        },
+        {
+            "name": "TC13 - Giờ bắt đầu bằng giờ kết thúc",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Minimum booking duration validation\", function () {\r",
+                            "    pm.response.to.have.status(400);\r",
+                            "    var jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message._schema).to.include(\"Giờ bắt đầu phải sớm hơn giờ kết thúc\");\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \r\n\"booking_date\":\"2026-05-30\", \r\n\"start_time\":\"18:00\", \r\n\"end_time\":\"18:00\" \r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/{{field_id}}/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "{{field_id}}",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra hệ thống xử lý khi người dùng nhập thời gian sai định dạng yêu cầu (không đúng định dạng HH:mm). API phải từ chối yêu cầu đặt sân và trả về mã lỗi 400 kèm thông báo 'Giờ bắt đầu không hợp lệ' và 'Giờ kết thúc không hợp lệ'."
+            },
+            "response": []
+        },
+        {
+            "name": "TC14 - Đặt sân dưới 1 tiếng",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Minimum booking duration validation\", function () {\r",
+                            "    pm.response.to.have.status(400);\r",
+                            "    var jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message._schema).to.include(\"Bạn cần đặt ít nhất 1 giờ\");\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \r\n\"booking_date\":\"2026-05-30\", \r\n\"start_time\":\"18:00\", \r\n\"end_time\":\"18:30\" \r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/{{field_id}}/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "{{field_id}}",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra hệ thống xử lý khi giờ bắt đầu bằng giờ kết thúc. API phải từ chối yêu cầu đặt sân và trả về mã lỗi 400 kèm thông báo 'Giờ bắt đầu phải sớm hơn giờ kết thúc'."
+            },
+            "response": []
+        },
+        {
+            "name": "TC15 - Đặt ngoài giờ hoạt động",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Outside business hours validation\", function () {\r",
+                            "    pm.response.to.have.status(400);\r",
+                            "    var jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message).to.include(\"Khung giờ này chưa được cấu hình giá\");\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \r\n\"booking_date\":\"2026-05-30\", \r\n\"start_time\":\"01:00\", \r\n\"end_time\":\"03:30\" \r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/{{field_id}}/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "{{field_id}}",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra hệ thống xử lý khi thời lượng đặt sân nhỏ hơn mức tối thiểu cho phép (dưới 1 giờ). API phải từ chối yêu cầu đặt sân và trả về mã lỗi 400 kèm thông báo 'Bạn cần đặt ít nhất 1 giờ'."
+            },
+            "response": []
+        },
+        {
+            "name": "TC16 - Đặt trùng lịch",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(`Booking 1 success`, function () {\r",
+                            "    pm.response.to.have.status(201);\r",
+                            "});\r",
+                            "\r",
+                            "pm.sendRequest({\r",
+                            "    url: pm.request.url.toString(),\r",
+                            "    method: pm.request.method,\r",
+                            "    header: pm.request.headers.toObject(),\r",
+                            "    body: {\r",
+                            "        mode: 'raw',\r",
+                            "        raw: pm.request.body.raw\r",
+                            "    }\r",
+                            "}, function (err, res) {\r",
+                            "    pm.test(\"Duplicate booking validation\", function () {\r",
+                            "        pm.response.to.have.status(201);\r",
+                            "        pm.expect(res.code).to.eql(400);\r",
+                            "        let jsonData = res.json();\r",
+                            "        pm.expect(jsonData.message).to.include(\"Khung giờ đặt bị trùng\");\r",
+                            "    });\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \r\n\"booking_date\":\"2026-05-31\", \r\n\"start_time\":\"06:00\", \r\n\"end_time\":\"09:00\" \r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/{{field_id}}/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "{{field_id}}",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra hệ thống xử lý khi người dùng đặt sân ngoài khung giờ hoạt động hoặc khung giờ chưa được cấu hình giá. API phải từ chối yêu cầu đặt sân và trả về mã lỗi 400 kèm thông báo 'Khung giờ này chưa được cấu hình giá'."
+            },
+            "response": []
+        },
+        {
+            "name": "TC17 - Đặt sân vượt qua ngày",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "\r",
+                            "pm.test(\"Minimum booking duration validation\", function () {\r",
+                            "    pm.response.to.have.status(400);\r",
+                            "    var jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message._schema).to.include(\"Giờ bắt đầu phải sớm hơn giờ kết thúc\");\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \r\n\"booking_date\":\"2026-05-30\", \r\n\"start_time\":\"23:00\", \r\n\"end_time\":\"00:30\" \r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/{{field_id}}/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "{{field_id}}",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra hệ thống xử lý khi người dùng đặt sân với thời gian vượt qua ngày tiếp theo (giờ kết thúc nhỏ hơn giờ bắt đầu). API phải từ chối yêu cầu đặt sân và trả về mã lỗi 400 kèm thông báo 'Giờ bắt đầu phải sớm hơn giờ kết thúc'."
+            },
+            "response": []
+        },
+        {
+            "name": "TC18 - Đặt trùng một phần thời gian",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "let b = JSON.parse(pm.request.body.raw);\r",
+                            "b.start_time = \"19:00\";\r",
+                            "b.end_time = \"21:00\";\r",
+                            "pm.test(`Booking 1 success`, function () {\r",
+                            "    pm.response.to.have.status(201);\r",
+                            "});\r",
+                            "\r",
+                            "pm.sendRequest({\r",
+                            "    url: pm.request.url.toString(),\r",
+                            "    method: \"POST\",\r",
+                            "    header: {\r",
+                            "        \"Content-Type\": \"application/json\"\r",
+                            "    },\r",
+                            "    body: {\r",
+                            "        mode: \"raw\",\r",
+                            "        raw: JSON.stringify(b)\r",
+                            "    }\r",
+                            "}, function (err, res) {\r",
+                            "    pm.test(\"Partial duplicate booking validation\", function () {\r",
+                            "        pm.expect(res.code).to.eql(400);\r",
+                            "        const jsonData = res.json();\r",
+                            "        pm.expect(jsonData.message[0]).to.include(\"Khung giờ đặt bị trùng\");\r",
+                            "    });\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": " { \r\n\"booking_date\":\"2026-06-01\", \r\n\"start_time\":\"18:00\", \r\n\"end_time\":\"20:00\" \r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/{{field_id}}/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "{{field_id}}",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra hệ thống xử lý khi người dùng đặt sân có khung giờ bị trùng một phần với booking đã tồn tại. Booking đầu tiên phải thành công, booking thứ hai phải bị từ chối và trả về mã lỗi 400 kèm thông báo 'Khung giờ đặt bị trùng'."
+            },
+            "response": []
+        },
+        {
+            "name": "TC19 - Trong một ngày đặt 3 sân thành công",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "var body = JSON.parse(pm.request.body.raw);\r",
+                            "let suss=0;\r",
+                            "let index=1;\r",
+                            "\r",
+                            "pm.test(`Booking ${index} success`, function () {\r",
+                            "    pm.response.to.have.status(201);\r",
+                            "});\r",
+                            "\r",
+                            "function sendBooking(date) {\r",
+                            "    body.booking_date = date;\r",
+                            "    pm.sendRequest({\r",
+                            "        url: pm.request.url.toString(),\r",
+                            "        method: \"POST\",\r",
+                            "        header: {\r",
+                            "            \"Content-Type\": \"application/json\"\r",
+                            "        },\r",
+                            "        body: {\r",
+                            "            mode: \"raw\",\r",
+                            "            raw: JSON.stringify(body)\r",
+                            "        }\r",
+                            "    }, function (err, res) {\r",
+                            "        pm.test(`Booking ${index} success`, function () {\r",
+                            "            pm.expect(res.code).to.eql(201);\r",
+                            "        });\r",
+                            "        ++index\r",
+                            "    });\r",
+                            "}\r",
+                            "sendBooking(\"2026-06-03\");\r",
+                            "sendBooking(\"2026-06-04\");"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": " { \r\n\"booking_date\":\"2026-06-02\", \r\n\"start_time\":\"18:00\", \r\n\"end_time\":\"20:00\" \r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/{{field_id}}/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "{{field_id}}",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra giới hạn số lần đặt sân trong ngày khi người dùng thực hiện 3 booking hợp lệ trong cùng ngày. API phải xử lý thành công tất cả yêu cầu và trả về mã 201 cho cả 3 lần đặt sân."
+            },
+            "response": []
+        },
+        {
+            "name": "TC20 - Trong một ngày đặt sân thứ 4",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "let body = JSON.parse(pm.request.body.raw);\r",
+                            "\r",
+                            "pm.test(\"Booking 1 success\", function () {\r",
+                            "    pm.response.to.have.status(201);\r",
+                            "});\r",
+                            "\r",
+                            "const bookingDates = [\r",
+                            "    \"2026-06-09\",\r",
+                            "    \"2026-06-10\",\r",
+                            "    \"2026-06-11\"\r",
+                            "];\r",
+                            "\r",
+                            "function sendBooking(index) {\r",
+                            "    if (index >= bookingDates.length) {\r",
+                            "        return;\r",
+                            "    }\r",
+                            "    body.booking_date = bookingDates[index];\r",
+                            "    pm.sendRequest({\r",
+                            "        url: pm.request.url.toString(),\r",
+                            "        method: \"POST\",\r",
+                            "        header: {\r",
+                            "            \"Content-Type\": \"application/json\"\r",
+                            "        },\r",
+                            "        body: {\r",
+                            "            mode: \"raw\",\r",
+                            "            raw: JSON.stringify(body)\r",
+                            "        }\r",
+                            "    }, function (err, res) {\r",
+                            "        if (err) {\r",
+                            "            console.log(err);\r",
+                            "            return;\r",
+                            "        }\r",
+                            "        if (index < 2) {\r",
+                            "            pm.test(`Booking ${index + 2} success`, function () {\r",
+                            "                pm.expect(res.code).to.eql(201);\r",
+                            "            });\r",
+                            "        } else {\r",
+                            "            pm.test(\"Booking 4 fail booking limit\", function () {\r",
+                            "                pm.expect(res.code).to.eql(400);\r",
+                            "                const jsonData = res.json();\r",
+                            "                pm.expect(jsonData.message).to.include(\"Tài khoản đã đạt giới hạn đặt trong ngày (3 lần/ngày)\");\r",
+                            "            });\r",
+                            "        }\r",
+                            "        sendBooking(index + 1);\r",
+                            "    });\r",
+                            "}\r",
+                            "sendBooking(0);"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": " { \r\n\"booking_date\":\"2026-06-08\", \r\n\"start_time\":\"18:00\", \r\n\"end_time\":\"20:00\" \r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/{{field_id}}/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "{{field_id}}",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra hệ thống xử lý khi người dùng vượt quá giới hạn số lần đặt sân trong ngày. Sau khi đặt thành công 3 lần, booking thứ 4 phải bị từ chối và trả về mã lỗi 400 kèm thông báo 'Tài khoản đã đạt giới hạn đặt trong ngày (3 lần/ngày)'."
+            },
+            "response": []
+        },
+        {
+            "name": "TC21 - Đặt sân không tồn tại",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Field not found\", function () {\r",
+                            "    pm.response.to.have.status(404);\r",
+                            "    const jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message).to.include(\"404 Not Found: Sân không tồn tại\");\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \r\n\"booking_date\":\"2026-05-30\", \r\n\"start_time\":\"00:00\", \r\n\"end_time\":\"06:00\" \r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/99999999/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "99999999",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra hệ thống xử lý khi người dùng thực hiện đặt sân với field_id không tồn tại trong cơ sở dữ liệu. API phải từ chối yêu cầu và trả về mã lỗi 404 kèm thông báo 'Sân không tồn tại'."
+            },
+            "response": []
+        },
+        {
+            "name": "TC22 - Thiếu toàn bộ dữ liệu",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Validate required fields\", function () {\r",
+                            "    pm.response.to.have.status(400);\r",
+                            "    const jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.booking).to.not.be.null;\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/{{field_id}}/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "{{field_id}}",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra hệ thống xử lý khi người dùng gửi request đặt sân nhưng không cung cấp bất kỳ dữ liệu nào. API phải từ chối yêu cầu và trả về mã lỗi 400 cùng các thông báo validation cho các trường bắt buộc."
+            },
+            "response": []
+        },
+        {
+            "name": "TC23 - 1 user gửi đồng thời nhiều request",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "let body = JSON.parse(pm.request.body.raw);\r",
+                            "\r",
+                            "let successCount = 0;\r",
+                            "let failCount = 0;\r",
+                            "let doneCount = 0;\r",
+                            "let index=1;\r",
+                            "\r",
+                            "const totalRequests = 5;\r",
+                            "\r",
+                            "function result(name, code, responseJson = null) {\r",
+                            "    ++index;\r",
+                            "    pm.test(`${name} - ${code}`, function () {\r",
+                            "        pm.expect([201, 400]).to.include(code);\r",
+                            "    });\r",
+                            "    if (code === 201) {\r",
+                            "        successCount++;\r",
+                            "    }\r",
+                            "    if (code === 400) {\r",
+                            "        failCount++;\r",
+                            "        pm.test(`${name} fail booking limit`, function () {\r",
+                            "            pm.expect(responseJson.message).to.include(\"Tài khoản đã đạt giới hạn đặt trong ngày (3 lần/ngày)\");\r",
+                            "        });\r",
+                            "    }\r",
+                            "    doneCount++;\r",
+                            "    if (doneCount === totalRequests) {\r",
+                            "        pm.test(\"3 booking success\", function () {\r",
+                            "            pm.expect(successCount).to.eql(3);\r",
+                            "        });\r",
+                            "        pm.test(\"2 booking fail\", function () {\r",
+                            "            pm.expect(failCount).to.eql(2);\r",
+                            "        });\r",
+                            "    }\r",
+                            "}\r",
+                            "\r",
+                            "if (pm.response.code === 201) {\r",
+                            "    result(`Booking ${index}`,201);\r",
+                            "} else {\r",
+                            "    result(`Booking ${index}`,400,pm.response.json());\r",
+                            "}\r",
+                            "\r",
+                            "const bookingDates = [\r",
+                            "    \"2026-06-09\",\r",
+                            "    \"2026-06-10\",\r",
+                            "    \"2026-06-11\",\r",
+                            "    \"2026-06-12\"\r",
+                            "];\r",
+                            "\r",
+                            "bookingDates.forEach(function (bookingDate) {\r",
+                            "    body.booking_date=bookingDate\r",
+                            "    pm.sendRequest({\r",
+                            "        url: pm.request.url.toString(),\r",
+                            "        method: \"POST\",\r",
+                            "        header: {\r",
+                            "            \"Content-Type\": \"application/json\"\r",
+                            "        },\r",
+                            "        body: {\r",
+                            "            mode: \"raw\",\r",
+                            "            raw: JSON.stringify(body)\r",
+                            "        }\r",
+                            "    }, function (err, res) {\r",
+                            "        if (err) {\r",
+                            "            console.log(err);\r",
+                            "            return;\r",
+                            "        }\r",
+                            "        const jsonData =\r",
+                            "            res.code === 400\r",
+                            "                ? res.json()\r",
+                            "                : null;\r",
+                            "        result(`Booking ${index}`,res.code,jsonData);\r",
+                            "    });\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": " { \r\n\"booking_date\":\"2026-06-08\", \r\n\"start_time\":\"13:00\", \r\n\"end_time\":\"15:30\" \r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/{{field_id}}/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "{{field_id}}",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra khả năng xử lý đồng thời (concurrency) khi một người dùng gửi nhiều request đặt sân cùng lúc. API phải đảm bảo giới hạn đặt sân trong ngày được áp dụng chính xác, chỉ cho phép tối đa 3 booking thành công và từ chối các booking vượt giới hạn với thông báo 'Tài khoản đã đạt giới hạn đặt trong ngày (3 lần/ngày)'."
+            },
+            "response": []
+        },
+        {
+            "name": "TC24 - 2 user gửi đồng thời 1 request",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "const body = JSON.parse(pm.request.body.raw);\r",
+                            "body.booking_date=\"2026-06-19\"\r",
+                            "const baseUrl = pm.environment.get(\"base_url\");\r",
+                            "\r",
+                            "let successCount = 0;\r",
+                            "let failCount = 0;\r",
+                            "let doneCount = 0;\r",
+                            "\r",
+                            "const cookie1 = pm.cookies.toObject();\r",
+                            "\r",
+                            "function generateUser() {\r",
+                            "    const random = Date.now();\r",
+                            "    return {\r",
+                            "        username: `user_${random}`,\r",
+                            "        password: \"Aa@123456\"\r",
+                            "    };\r",
+                            "}\r",
+                            "\r",
+                            "const account2 = generateUser();\r",
+                            "pm.sendRequest({\r",
+                            "    url: `${baseUrl}/api/auth/register`,\r",
+                            "    method: \"POST\",\r",
+                            "    header: {\r",
+                            "        \"Content-Type\": \"application/json\"\r",
+                            "    },\r",
+                            "    body: {\r",
+                            "        mode: \"raw\",\r",
+                            "        raw: JSON.stringify({\r",
+                            "            username: account2.username,\r",
+                            "            password: account2.password,\r",
+                            "            confirm: account2.password\r",
+                            "        })\r",
+                            "    }\r",
+                            "}, function (err, res) {\r",
+                            "    if (err) {\r",
+                            "        console.log(err);\r",
+                            "        return;\r",
+                            "    }\r",
+                            "    pm.sendRequest({\r",
+                            "        url: `${baseUrl}/api/auth/login`,\r",
+                            "        method: \"POST\",\r",
+                            "        header: {\r",
+                            "            \"Content-Type\": \"application/json\"\r",
+                            "        },\r",
+                            "        body: {\r",
+                            "            mode: \"raw\",\r",
+                            "            raw: JSON.stringify({\r",
+                            "                username: account2.username,\r",
+                            "                password: account2.password\r",
+                            "            })\r",
+                            "        }\r",
+                            "    }, function (err, res) {\r",
+                            "        if (err) {\r",
+                            "            console.log(err);\r",
+                            "            return;\r",
+                            "        }\r",
+                            "        const cookie2 = res.headers.get(\"set-cookie\");\r",
+                            "        sendBooking(\"User1\",cookieToHeader(cookie1));\r",
+                            "        sendBooking(\"User2\",cookie2);\r",
+                            "    });\r",
+                            "});\r",
+                            "\r",
+                            "function cookieToHeader(cookieObj) {\r",
+                            "    return Object.entries(cookieObj)\r",
+                            "        .map(([k, v]) => `${k}=${v}`)\r",
+                            "        .join(\"; \");\r",
+                            "}\r",
+                            "\r",
+                            "function sendBooking(name, cookie) {\r",
+                            "    pm.sendRequest({\r",
+                            "        url: pm.request.url.toString(),\r",
+                            "        method: \"POST\",\r",
+                            "        header: {\r",
+                            "            \"Content-Type\": \"application/json\",\r",
+                            "            \"Cookie\": cookie\r",
+                            "        },\r",
+                            "        body: {\r",
+                            "            mode: \"raw\",\r",
+                            "            raw: JSON.stringify(body)\r",
+                            "        }\r",
+                            "    }, function (err, res) {\r",
+                            "        if (err) {\r",
+                            "            console.log(err);\r",
+                            "            return;\r",
+                            "        }\r",
+                            "        if (res.code === 201) {\r",
+                            "            successCount++;\r",
+                            "            const jsonData = res.json();\r",
+                            "            pm.test(`${name} success`, function () {\r",
+                            "                pm.expect(res.code).to.eql(201);\r",
+                            "            });\r",
+                            "        }\r",
+                            "        if (res.code === 400) {\r",
+                            "            failCount++;\r",
+                            "            const jsonData = res.json();\r",
+                            "            pm.test(`${name} duplicate booking validation`, function () {\r",
+                            "                pm.expect(jsonData.message).to.include(\"Khung giờ đặt bị trùng\");\r",
+                            "            });\r",
+                            "        }\r",
+                            "        doneCount++;\r",
+                            "        if (doneCount === 2) {\r",
+                            "            pm.test(\"Chỉ 1 request success\", function () {\r",
+                            "                pm.expect(successCount).to.eql(1);\r",
+                            "            });\r",
+                            "            pm.test(\"Chỉ 1 request fail\", function () {\r",
+                            "                pm.expect(failCount).to.eql(1);\r",
+                            "            });\r",
+                            "        }\r",
+                            "    });\r",
+                            "}"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \r\n\"booking_date\":\"2026-06-18\", \r\n\"start_time\":\"13:00\", \r\n\"end_time\":\"15:30\" \r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/{{field_id}}/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "{{field_id}}",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra khả năng xử lý race condition khi hai người dùng khác nhau đồng thời gửi request đặt cùng một sân và cùng khung giờ. API phải đảm bảo chỉ một booking được tạo thành công, request còn lại phải bị từ chối với mã lỗi 400 kèm thông báo 'Khung giờ đặt bị trùng'."
+            },
+            "response": []
+        },
+        {
+            "name": "TC26 – User không có quyền đặt sân",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Role denied\", function () {\r",
+                            "    pm.response.to.have.status(403);\r",
+                            "    var jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.message).to.include(\"Tài khoản của bạn không đủ quyền để thực hiện hành động này\");\r",
+                            "});\r",
+                            ""
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "",
+                        "value": "",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n    \"booking_date\":\"2026-07-30\",\r\n    \"start_time\":\"18:00\",\r\n    \"end_time\":\"20:00\"\r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/fields/{{field_id}}/booking",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "fields",
+                        "{{field_id}}",
+                        "booking"
+                    ]
+                },
+                "description": "Kiểm tra hệ thống xử lý khi người dùng không đủ quyền thực hiện chức năng đặt sân. API phải từ chối yêu cầu và trả về mã lỗi 403 kèm thông báo 'Tài khoản của bạn không đủ quyền để thực hiện hành động này'."
+            },
+            "response": []
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "exec": [
+                    "const baseUrl = pm.environment.get(\"base_url\");\r",
+                    "const requestName = pm.info.requestName;\r",
+                    "\r",
+                    "pm.sendRequest({\r",
+                    "    url: baseUrl + \"/api/auth/logout\",\r",
+                    "    method: \"POST\",\r",
+                    "    header: {\r",
+                    "        \"Content-Type\": \"application/json\"\r",
+                    "    }\r",
+                    "}, function (err, res) {\r",
+                    "    if (err) {\r",
+                    "        console.log(err);\r",
+                    "        return;\r",
+                    "    }\r",
+                    "});\r",
+                    "\r",
+                    "\r",
+                    "if (requestName === \"TC1 - Không đăng nhập\") {\r",
+                    "    return;\r",
+                    "}\r",
+                    "\r",
+                    "if (requestName === \"TC26 – User không có quyền đặt sân\") {\r",
+                    "    pm.sendRequest({\r",
+                    "        url: `${baseUrl}/api/auth/login`,\r",
+                    "        method: \"POST\",\r",
+                    "        header: {\r",
+                    "            \"Content-Type\": \"application/json\"\r",
+                    "        },\r",
+                    "        body: {\r",
+                    "            mode: \"raw\",\r",
+                    "            raw: JSON.stringify({\r",
+                    "                username:pm.environment.get(\"admin\"),\r",
+                    "                password:pm.environment.get(\"password_admin\")\r",
+                    "            })\r",
+                    "        }\r",
+                    "    })\r",
+                    "    return;\r",
+                    "}\r",
+                    "\r",
+                    "function generateUser() {\r",
+                    "    const random = Date.now();\r",
+                    "    return {\r",
+                    "        username: `user_${random}`,\r",
+                    "        password: \"Aa@123456\"\r",
+                    "    };\r",
+                    "}\r",
+                    "\r",
+                    "var account = generateUser();\r",
+                    "\r",
+                    "pm.sendRequest({\r",
+                    "    url: baseUrl + \"/api/auth/register\",\r",
+                    "    method: \"POST\",\r",
+                    "    header: {\r",
+                    "        \"Content-Type\": \"application/json\"\r",
+                    "    },\r",
+                    "    body: {\r",
+                    "        mode: \"raw\",\r",
+                    "        raw: JSON.stringify({\r",
+                    "            username: account.username,\r",
+                    "            password: account.password,\r",
+                    "            confirm: account.password\r",
+                    "        })\r",
+                    "    }\r",
+                    "}, function (err, res) {\r",
+                    "    pm.sendRequest({\r",
+                    "        url: baseUrl + \"/api/auth/login\",\r",
+                    "        method: \"POST\",\r",
+                    "        header: {\r",
+                    "            \"Content-Type\": \"application/json\"\r",
+                    "        },\r",
+                    "        body: {\r",
+                    "            mode: \"raw\",\r",
+                    "            raw: JSON.stringify({\r",
+                    "                username: account.username,\r",
+                    "                password: account.password\r",
+                    "            })\r",
+                    "        }\r",
+                    "    }, function (err, res) {\r",
+                    "    });\r",
+                    "});\r",
+                    ""
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "exec": [
+                    ""
+                ]
+            }
+        }
+    ]
+}

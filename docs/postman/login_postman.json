@@ -1,83 +1,29 @@
 {
-    "name": "register",
+    "info": {
+        "_postman_id": "af51234a-40fc-4b09-95fb-50b69b7a282e",
+        "name": "SPFM - LOGIN",
+        "description": "Collection kiểm thử API đăng nhập tài khoản người dùng trong hệ thống quản lý đặt sân thể thao. Mục tiêu nhằm xác minh tính đúng đắn của chức năng đăng nhập thông qua các trường hợp kiểm thử hợp lệ và không hợp lệ, đảm bảo yêu cầu về xác thực thông tin người dùng, phân quyền truy cập, bảo mật tài khoản và khả năng xử lý lỗi của hệ thống.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "54997124",
+        "_collection_link": "https://go.postman.co/collection/50991360-af51234a-40fc-4b09-95fb-50b69b7a282e?source=collection_link"
+    },
     "item": [
         {
-            "name": "TC1 – Đăng ký hợp lệ",
+            "name": "TC1 - Đăng nhập hợp lệ",
             "event": [
                 {
                     "listen": "test",
                     "script": {
                         "exec": [
-                            "pm.test(\"Status code is 200 or 201\", function () {",
-                            "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
-                            "});",
-                            "",
-                            "pm.test(\"Register success message\", function () {",
-                            "    const jsonData = pm.response.json();",
-                            "    pm.expect(jsonData.success).to.eql(true);",
-                            "});",
-                            "",
-                            ""
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                    }
-                },
-                {
-                    "listen": "prerequest",
-                    "script": {
-                        "exec": [
-                            ""
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                    }
-                }
-            ],
-            "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{ \r\n\"username\":\"user01\", \r\n\"password\":\"Aa@123456\", \r\n\"confirm\":\"Aa@123456\" \r\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{base_url}}/api/auth/register",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "api",
-                        "auth",
-                        "register"
-                    ]
-                },
-                "description": "Kiểm tra đăng ký tài khoản thành công khi nhập đầy đủ và hợp lệ username, password và confirm password. Kết quả mong đợi: trả về success = true và mã 200/201."
-            },
-            "response": []
-        },
-        {
-            "name": "TC2 – Username rỗng",
-            "event": [
-                {
-                    "listen": "test",
-                    "script": {
-                        "exec": [
-                            "pm.test(\"Status code is 400\", function () {",
-                            "    pm.response.to.have.status(400);",
-                            "});",
-                            "",
-                            "pm.test(\"Username empty validation\", function () {",
-                            "    const jsonData = pm.response.json();",
-                            "    pm.expect(jsonData.success).to.eql(false);",
-                            "    pm.expect(jsonData.message.username).to.include(\"Tên người dùng không được để trống\");",
+                            "pm.test(\"Status code is 200\", function () {\r",
+                            "    pm.response.to.have.status(200);\r",
+                            "});\r",
+                            "\r",
+                            "pm.test(\"Login success\", function () {\r",
+                            "    const jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(true);\r",
+                            "    pm.expect(jsonData.user).to.not.be.null\r",
+                            "    pm.expect(jsonData.access_token).to.not.be.null;\r",
                             "});"
                         ],
                         "type": "text/javascript",
@@ -91,7 +37,7 @@
                 "header": [],
                 "body": {
                     "mode": "raw",
-                    "raw": "{ \n\"username\":\"\", \n\"password\":\"Aa@123456\", \n\"confirm\":\"Aa@123456\" \n}",
+                    "raw": "{ \r\n\"username\":\"user02\", \r\n\"password\":\"Aa@123456\" \r\n}",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -99,47 +45,36 @@
                     }
                 },
                 "url": {
-                    "raw": "{{base_url}}/api/auth/register",
+                    "raw": "{{base_url}}/api/auth/login",
                     "host": [
                         "{{base_url}}"
                     ],
                     "path": [
                         "api",
                         "auth",
-                        "register"
+                        "login"
                     ]
                 },
-                "description": "Kiểm tra hệ thống xử lý khi trường username bị để trống. API phải từ chối yêu cầu đăng ký và trả về mã lỗi 400 kèm thông báo validation 'Tên người dùng không được để trống'."
+                "description": "Kiểm tra đăng nhập thành công khi nhập đúng username và password đã tồn tại trong hệ thống. API phải xác thực thành công, trả về mã 200, success = true, thông tin người dùng và access token."
             },
             "response": []
         },
         {
-            "name": "TC3 – Username chứa khoảng trắng",
+            "name": "TC2 - Tên người dùng không tồn tại",
             "event": [
                 {
                     "listen": "test",
                     "script": {
                         "exec": [
-                            "pm.test(\"Status code is 400\", function () {",
-                            "    pm.response.to.have.status(400);",
-                            "});",
-                            "",
-                            "pm.test(\"Username contains whitespace\", function () {",
-                            "    const jsonData = pm.response.json();",
-                            "    pm.expect(jsonData.success).to.eql(false);",
-                            "    pm.expect(jsonData.message.username).to.include(\"Tên người dùng không được chứa khoảng trắng\");",
+                            "pm.test(\"Status code is 401\", function () {\r",
+                            "    pm.response.to.have.status(401);\r",
+                            "});\r",
+                            "\r",
+                            "pm.test(\"Username does not exist\", function () {\r",
+                            "    const jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message).to.include(\"Sai tài khoản hoặc mật khẩu\");\r",
                             "});"
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                    }
-                },
-                {
-                    "listen": "prerequest",
-                    "script": {
-                        "exec": [
-                            ""
                         ],
                         "type": "text/javascript",
                         "packages": {},
@@ -152,7 +87,7 @@
                 "header": [],
                 "body": {
                     "mode": "raw",
-                    "raw": "{ \n\"username\":\"us er02\",\n\"password\":\"Aa@123456\", \n\"confirm\":\"Aa@123456\" \n}",
+                    "raw": "{ \r\n\"username\":\"user08\",\r\n\"password\":\"Aa@123456\" \r\n}",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -160,47 +95,36 @@
                     }
                 },
                 "url": {
-                    "raw": "{{base_url}}/api/auth/register",
+                    "raw": "{{base_url}}/api/auth/login",
                     "host": [
                         "{{base_url}}"
                     ],
                     "path": [
                         "api",
                         "auth",
-                        "register"
+                        "login"
                     ]
                 },
-                "description": "Kiểm tra hệ thống không cho phép username chứa ký tự khoảng trắng. Khi gửi dữ liệu không hợp lệ, API phải trả về lỗi 400 và thông báo phù hợp về việc username không được chứa khoảng trắng."
+                "description": "Kiểm tra hệ thống xử lý khi username không tồn tại trong cơ sở dữ liệu. API phải từ chối đăng nhập và trả về mã lỗi 401 kèm thông báo 'Sai tài khoản hoặc mật khẩu'."
             },
             "response": []
         },
         {
-            "name": "TC4 – Username quá dài",
+            "name": "TC3 - Tên người dùng rỗng",
             "event": [
                 {
                     "listen": "test",
                     "script": {
                         "exec": [
-                            "pm.test(\"TC4 - Status code is 400\", function () {",
-                            "    pm.response.to.have.status(400);",
-                            "});",
-                            "",
-                            "pm.test(\"TC4 - Username too long\", function () {",
-                            "    const jsonData = pm.response.json();",
-                            "    pm.expect(jsonData.success).to.eql(false);",
-                            "    pm.expect(jsonData.message.username).to.include(\"Tên người dùng phải từ 3-30 ký tự\");",
+                            "pm.test(\"Status code is 400\", function () {\r",
+                            "    pm.response.to.have.status(400);\r",
+                            "});\r",
+                            "\r",
+                            "pm.test(\"Username is required\", function () {\r",
+                            "    const jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message.username).to.include(\"Tên người dùng không được để trống\");\r",
                             "});"
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                    }
-                },
-                {
-                    "listen": "prerequest",
-                    "script": {
-                        "exec": [
-                            ""
                         ],
                         "type": "text/javascript",
                         "packages": {},
@@ -213,7 +137,7 @@
                 "header": [],
                 "body": {
                     "mode": "raw",
-                    "raw": "{ \n\"username\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\n\"password\":\"Aa@123456\", \n\"confirm\":\"Aa@123456\" \n}",
+                    "raw": "{ \r\n\"username\":\"\",\r\n\"password\":\"Aa@123456\" \r\n}",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -221,47 +145,36 @@
                     }
                 },
                 "url": {
-                    "raw": "{{base_url}}/api/auth/register",
+                    "raw": "{{base_url}}/api/auth/login",
                     "host": [
                         "{{base_url}}"
                     ],
                     "path": [
                         "api",
                         "auth",
-                        "register"
+                        "login"
                     ]
                 },
-                "description": "Kiểm tra hệ thống validate độ dài username khi vượt quá giới hạn tối đa (30 ký tự). API phải trả về lỗi 400 và thông báo 'Tên người dùng phải từ 3-30 ký tự'."
+                "description": "Kiểm tra hệ thống xử lý khi trường username bị để trống. API phải từ chối yêu cầu đăng nhập và trả về mã lỗi 400 kèm thông báo validation 'Tên người dùng không được để trống'."
             },
             "response": []
         },
         {
-            "name": "TC5 – Username quá ngắn",
+            "name": "TC4 - Mật khẩu rỗng",
             "event": [
                 {
                     "listen": "test",
                     "script": {
                         "exec": [
-                            "pm.test(\"Status code is 400\", function () {",
-                            "    pm.response.to.have.status(400);",
-                            "});",
-                            "",
-                            "pm.test(\"Username too long\", function () {",
-                            "    const jsonData = pm.response.json();",
-                            "    pm.expect(jsonData.success).to.eql(false);",
-                            "    pm.expect(jsonData.message.username).to.include(\"Tên người dùng phải từ 3-30 ký tự\");",
+                            "pm.test(\"Status code is 400\", function () {\r",
+                            "    pm.response.to.have.status(400);\r",
+                            "});\r",
+                            "\r",
+                            "pm.test(\"Password is required\", function () {\r",
+                            "    const jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message.password).to.include(\"Mật khẩu không được để trống\");\r",
                             "});"
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                    }
-                },
-                {
-                    "listen": "prerequest",
-                    "script": {
-                        "exec": [
-                            ""
                         ],
                         "type": "text/javascript",
                         "packages": {},
@@ -274,7 +187,7 @@
                 "header": [],
                 "body": {
                     "mode": "raw",
-                    "raw": "{ \n\"username\":\"us\",\n\"password\":\"Aa@123456\", \n\"confirm\":\"Aa@123456\" \n}",
+                    "raw": "{ \r\n\"username\":\"user02\", \r\n\"password\":\"\" \r\n}",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -282,47 +195,36 @@
                     }
                 },
                 "url": {
-                    "raw": "{{base_url}}/api/auth/register",
+                    "raw": "{{base_url}}/api/auth/login",
                     "host": [
                         "{{base_url}}"
                     ],
                     "path": [
                         "api",
                         "auth",
-                        "register"
+                        "login"
                     ]
                 },
-                "description": "Kiểm tra hệ thống validate độ dài username khi nhỏ hơn giới hạn tối thiểu (3 ký tự). API phải trả về lỗi 400 và thông báo 'Tên người dùng phải từ 3-30 ký tự'."
+                "description": "Kiểm tra hệ thống xử lý khi trường password bị để trống. API phải từ chối yêu cầu đăng nhập và trả về mã lỗi 400 kèm thông báo validation 'Mật khẩu không được để trống'."
             },
             "response": []
         },
         {
-            "name": "TC6 – Username bị trùng",
+            "name": "TC5 - Mật khẩu không khớp",
             "event": [
                 {
                     "listen": "test",
                     "script": {
                         "exec": [
-                            "pm.test(\"Status code is 400\", function () {",
-                            "    pm.response.to.have.status(400);",
-                            "});",
-                            "",
-                            "pm.test(\"Username already exists\", function () {",
-                            "    const jsonData = pm.response.json();",
-                            "    pm.expect(jsonData.success).to.eql(false);",
-                            "    pm.expect(jsonData.message).to.include(\"Tên người dùng đã tồn tại\");",
+                            "pm.test(\"Status code is 401\", function () {\r",
+                            "    pm.response.to.have.status(401);\r",
+                            "});\r",
+                            "\r",
+                            "pm.test(\"Wrong password\", function () {\r",
+                            "    const jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message).to.include(\"Sai tài khoản hoặc mật khẩu\");\r",
                             "});"
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                    }
-                },
-                {
-                    "listen": "prerequest",
-                    "script": {
-                        "exec": [
-                            ""
                         ],
                         "type": "text/javascript",
                         "packages": {},
@@ -335,7 +237,7 @@
                 "header": [],
                 "body": {
                     "mode": "raw",
-                    "raw": "{ \n\"username\":\"user04\",\n\"password\":\"Aa@123456\", \n\"confirm\":\"Aa@123456\" \n}",
+                    "raw": "{ \r\n\"username\":\"user02\", \r\n\"password\":\"Aa@678912\" \r\n}",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -343,47 +245,36 @@
                     }
                 },
                 "url": {
-                    "raw": "{{base_url}}/api/auth/register",
+                    "raw": "{{base_url}}/api/auth/login",
                     "host": [
                         "{{base_url}}"
                     ],
                     "path": [
                         "api",
                         "auth",
-                        "register"
+                        "login"
                     ]
                 },
-                "description": "Kiểm tra hệ thống không cho phép đăng ký username đã tồn tại trong cơ sở dữ liệu. Khi username bị trùng, API phải trả về lỗi 400 và thông báo 'Tên người dùng đã tồn tại'."
+                "description": "Kiểm tra hệ thống xử lý khi password không đúng với username đã tồn tại. API phải từ chối đăng nhập và trả về mã lỗi 401 kèm thông báo 'Sai tài khoản hoặc mật khẩu'."
             },
             "response": []
         },
         {
-            "name": "TC7 – Password rỗng",
+            "name": "TC6 - Tên đăng nhập và mật khẩu đều sai",
             "event": [
                 {
                     "listen": "test",
                     "script": {
                         "exec": [
-                            "pm.test(\"Status code is 400\", function () {",
-                            "    pm.response.to.have.status(400);",
-                            "});",
-                            "",
-                            "pm.test(\"Password is empty\", function () {",
-                            "    const jsonData = pm.response.json();",
-                            "    pm.expect(jsonData.success).to.eql(false);",
-                            "    pm.expect(jsonData.message.password).to.include(\"Mật khẩu không được để trống\");",
+                            "pm.test(\"Status code is 401\", function () {\r",
+                            "    pm.response.to.have.status(401);\r",
+                            "});\r",
+                            "\r",
+                            "pm.test(\"Username and password invalid\", function () {\r",
+                            "    const jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message).to.include(\"Sai tài khoản hoặc mật khẩu\");\r",
                             "});"
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                    }
-                },
-                {
-                    "listen": "prerequest",
-                    "script": {
-                        "exec": [
-                            ""
                         ],
                         "type": "text/javascript",
                         "packages": {},
@@ -396,7 +287,7 @@
                 "header": [],
                 "body": {
                     "mode": "raw",
-                    "raw": "{ \n\"username\":\"user03\",\n\"password\":\"\", \n\"confirm\":\"Aa@123456\" \n}",
+                    "raw": " { \r\n\"username\":\"us\", \r\n\"password\":\"Aa@678912\"\r\n}",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -404,47 +295,36 @@
                     }
                 },
                 "url": {
-                    "raw": "{{base_url}}/api/auth/register",
+                    "raw": "{{base_url}}/api/auth/login",
                     "host": [
                         "{{base_url}}"
                     ],
                     "path": [
                         "api",
                         "auth",
-                        "register"
+                        "login"
                     ]
                 },
-                "description": "Kiểm tra hệ thống xử lý khi password bị để trống. API phải trả về lỗi 400 và thông báo 'Mật khẩu không được để trống'."
+                "description": "Kiểm tra hệ thống xử lý khi cả username và password đều không hợp lệ. API phải từ chối đăng nhập và trả về mã lỗi 401 kèm thông báo 'Sai tài khoản hoặc mật khẩu'."
             },
             "response": []
         },
         {
-            "name": "TC8 – Password thiếu chữ hoa",
+            "name": "TC7 - Đăng nhập tài khoản bị khóa",
             "event": [
                 {
                     "listen": "test",
                     "script": {
                         "exec": [
-                            "pm.test(\"Status code is 400\", function () {",
-                            "    pm.response.to.have.status(400);",
-                            "});",
-                            "",
-                            "pm.test(\"Password missing uppercase\", function () {",
-                            "    const jsonData = pm.response.json();",
-                            "    pm.expect(jsonData.success).to.eql(false);",
-                            "    pm.expect(jsonData.message.password).to.include(\"Mật khẩu phải chứa ký tự hoa\");",
+                            "pm.test(\"Status code is 403\", function () {\r",
+                            "    pm.response.to.have.status(403);\r",
+                            "});\r",
+                            "\r",
+                            "pm.test(\"Account banned\", function () {\r",
+                            "    const jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message).to.include(\"Tài khoản bị cấm\");\r",
                             "});"
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                    }
-                },
-                {
-                    "listen": "prerequest",
-                    "script": {
-                        "exec": [
-                            ""
                         ],
                         "type": "text/javascript",
                         "packages": {},
@@ -457,7 +337,7 @@
                 "header": [],
                 "body": {
                     "mode": "raw",
-                    "raw": "{ \n\"username\":\"user03\", \n\"password\":\"aa@123456\",\n\"confirm\":\"Aa@123456\" \n}",
+                    "raw": "{ \r\n\"username\":\"user01\",\r\n\"password\":\"Aa@123456\"\r\n}",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -465,47 +345,35 @@
                     }
                 },
                 "url": {
-                    "raw": "{{base_url}}/api/auth/register",
+                    "raw": "{{base_url}}/api/auth/login",
                     "host": [
                         "{{base_url}}"
                     ],
                     "path": [
                         "api",
                         "auth",
-                        "register"
+                        "login"
                     ]
                 },
-                "description": "Kiểm tra hệ thống không cho phép password thiếu chữ hoa. Khi không thỏa điều kiện, API trả về lỗi 400 và thông báo 'Mật khẩu phải chứa ký tự hoa'."
+                "description": "Kiểm tra hệ thống xử lý khi người dùng đăng nhập bằng tài khoản đã bị khóa hoặc bị cấm. API phải từ chối truy cập và trả về mã lỗi 403 kèm thông báo 'Tài khoản bị cấm'."
             },
             "response": []
         },
         {
-            "name": "TC9 – Password thiếu chữ thường",
+            "name": "TC8 - Tấn công XSS",
             "event": [
                 {
                     "listen": "test",
                     "script": {
                         "exec": [
-                            "pm.test(\"Status code is 400\", function () {",
-                            "    pm.response.to.have.status(400);",
-                            "});",
-                            "",
-                            "pm.test(\"Password missing lowercase\", function () {",
-                            "    const jsonData = pm.response.json();",
-                            "    pm.expect(jsonData.success).to.eql(false);",
-                            "    pm.expect(jsonData.message.password).to.include(\"Mật khẩu phải chứa ký tự thường\");",
+                            "pm.test(\"TC8 - Status code is 400 or 401\", function () {\r",
+                            "    pm.expect(pm.response.code).to.be.oneOf([400, 401]);\r",
+                            "});\r",
+                            "\r",
+                            "pm.test(\"TC8 - XSS blocked\", function () {\r",
+                            "    const jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
                             "});"
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                    }
-                },
-                {
-                    "listen": "prerequest",
-                    "script": {
-                        "exec": [
-                            ""
                         ],
                         "type": "text/javascript",
                         "packages": {},
@@ -518,7 +386,7 @@
                 "header": [],
                 "body": {
                     "mode": "raw",
-                    "raw": "{ \n\"username\":\"user03\", \n\"password\":\"AA@123456\",\n\"confirm\":\"Aa@123456\" \n}",
+                    "raw": "{ \r\n\"username\":\"<script>alert('XSS')</script>\",\r\n\"password\":\"Aa@123456\"\r\n}",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -526,47 +394,36 @@
                     }
                 },
                 "url": {
-                    "raw": "{{base_url}}/api/auth/register",
+                    "raw": "{{base_url}}/api/auth/login",
                     "host": [
                         "{{base_url}}"
                     ],
                     "path": [
                         "api",
                         "auth",
-                        "register"
+                        "login"
                     ]
                 },
-                "description": "Kiểm tra hệ thống không cho phép password thiếu chữ thường. Khi không thỏa điều kiện, API trả về lỗi 400 và thông báo 'Mật khẩu phải chứa ký tự thường'."
+                "description": "Kiểm tra khả năng chống tấn công XSS khi người dùng nhập đoạn mã script độc hại vào trường username. API phải từ chối yêu cầu, không thực thi script và trả về mã lỗi 400 hoặc 401 với success = false."
             },
             "response": []
         },
         {
-            "name": "TC10 – Password thiếu số",
+            "name": "TC9 - SQL Injection",
             "event": [
                 {
                     "listen": "test",
                     "script": {
                         "exec": [
-                            "pm.test(\"Status code is 400\", function () {",
-                            "    pm.response.to.have.status(400);",
-                            "});",
-                            "",
-                            "pm.test(\"Password missing number\", function () {",
-                            "    const jsonData = pm.response.json();",
-                            "    pm.expect(jsonData.success).to.eql(false);",
-                            "    pm.expect(jsonData.message.password).to.include(\"Mật khẩu phải chứa số\");",
+                            "pm.test(\"Status code is 401\", function () {\r",
+                            "    pm.response.to.have.status(401);\r",
+                            "});\r",
+                            "\r",
+                            "pm.test(\"SQL Injection blocked\", function () {\r",
+                            "    const jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message).to.include(\"Sai tài khoản hoặc mật khẩu\");\r",
                             "});"
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                    }
-                },
-                {
-                    "listen": "prerequest",
-                    "script": {
-                        "exec": [
-                            ""
                         ],
                         "type": "text/javascript",
                         "packages": {},
@@ -579,7 +436,7 @@
                 "header": [],
                 "body": {
                     "mode": "raw",
-                    "raw": "{ \n\"username\":\"user03\", \n\"password\":\"Aa@aaaaaa\",\n\"confirm\":\"Aa@123456\" \n}",
+                    "raw": "{ \r\n\"username\":\"' OR 1=1 --\",\r\n\"password\":\"Aa@123456\"\r\n}",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -587,445 +444,17 @@
                     }
                 },
                 "url": {
-                    "raw": "{{base_url}}/api/auth/register",
+                    "raw": "{{base_url}}/api/auth/login",
                     "host": [
                         "{{base_url}}"
                     ],
                     "path": [
                         "api",
                         "auth",
-                        "register"
+                        "login"
                     ]
                 },
-                "description": "Kiểm tra hệ thống không cho phép password thiếu số. Khi không thỏa điều kiện, API trả về lỗi 400 và thông báo 'Mật khẩu phải chứa số'."
-            },
-            "response": []
-        },
-        {
-            "name": "TC11 – Password thiếu ký tự đặc biệt",
-            "event": [
-                {
-                    "listen": "test",
-                    "script": {
-                        "exec": [
-                            "pm.test(\"Status code is 400\", function () {",
-                            "    pm.response.to.have.status(400);",
-                            "});",
-                            "",
-                            "pm.test(\"Password missing special character\", function () {",
-                            "    const jsonData = pm.response.json();",
-                            "    pm.expect(jsonData.success).to.eql(false);",
-                            "    pm.expect(jsonData.message.password).to.include(\"Mật khẩu phải chứa ký tự đặc biệt\");",
-                            "});"
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                    }
-                },
-                {
-                    "listen": "prerequest",
-                    "script": {
-                        "exec": [
-                            ""
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                    }
-                }
-            ],
-            "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{ \n\"username\":\"user03\", \n\"password\":\"Aaa123456\",\n\"confirm\":\"Aaa123456\" \n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{base_url}}/api/auth/register",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "api",
-                        "auth",
-                        "register"
-                    ]
-                },
-                "description": "Kiểm tra hệ thống không cho phép password thiếu ký tự đặc biệt. Khi không thỏa điều kiện, API trả về lỗi 400 và thông báo 'Mật khẩu phải chứa ký tự đặc biệt'."
-            },
-            "response": []
-        },
-        {
-            "name": "TC12 – Password chứa khoảng trắng",
-            "event": [
-                {
-                    "listen": "test",
-                    "script": {
-                        "exec": [
-                            "pm.test(\"Status code is 400\", function () {",
-                            "    pm.response.to.have.status(400);",
-                            "});",
-                            "",
-                            "pm.test(\"Password contains whitespace\", function () {",
-                            "    const jsonData = pm.response.json();",
-                            "    pm.expect(jsonData.success).to.eql(false);",
-                            "    pm.expect(jsonData.message.password).to.include(\"Mật khẩu không được chứa khoảng trắng\");",
-                            "});"
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                    }
-                },
-                {
-                    "listen": "prerequest",
-                    "script": {
-                        "exec": [
-                            ""
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                    }
-                }
-            ],
-            "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{ \n\"username\":\"user03\",\n\"password\":\"Aa @123456\",\n\"confirm\":\"Aa@123456\" \n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{base_url}}/api/auth/register",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "api",
-                        "auth",
-                        "register"
-                    ]
-                },
-                "description": "Kiểm tra hệ thống không cho phép password chứa khoảng trắng. Khi phát hiện khoảng trắng, API trả về lỗi 400 và thông báo 'Mật khẩu không được chứa khoảng trắng'."
-            },
-            "response": []
-        },
-        {
-            "name": "TC13 – Password quá ngắn",
-            "event": [
-                {
-                    "listen": "test",
-                    "script": {
-                        "exec": [
-                            "pm.test(\"Status code is 400\", function () {",
-                            "    pm.response.to.have.status(400);",
-                            "});",
-                            "",
-                            "pm.test(\"Password too short\", function () {",
-                            "    const jsonData = pm.response.json();",
-                            "    pm.expect(jsonData.success).to.eql(false);",
-                            "    pm.expect(jsonData.message.password).to.include(\"Mật khẩu phải từ 8-30 ký tự\");",
-                            "});"
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                    }
-                },
-                {
-                    "listen": "prerequest",
-                    "script": {
-                        "exec": [
-                            ""
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                    }
-                }
-            ],
-            "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{ \n\"username\":\"user03\",\n\"password\":\"Aa@123\", \n\"confirm\":\"Aa@123\" \n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{base_url}}/api/auth/register",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "api",
-                        "auth",
-                        "register"
-                    ]
-                },
-                "description": "Kiểm tra hệ thống không cho phép password có độ dài nhỏ hơn 8 ký tự. Khi không thỏa điều kiện, API trả về lỗi 400 và thông báo 'Mật khẩu phải từ 8 ký tự trở lên'."
-            },
-            "response": []
-        },
-        {
-            "name": "TC14 – Password quá dài",
-            "event": [
-                {
-                    "listen": "test",
-                    "script": {
-                        "exec": [
-                            "pm.test(\"Status code is 400\", function () {",
-                            "    pm.response.to.have.status(400);",
-                            "});",
-                            "",
-                            "pm.test(\"Password too long\", function () {",
-                            "    const jsonData = pm.response.json();",
-                            "    pm.expect(jsonData.success).to.eql(false);",
-                            "    pm.expect(jsonData.message.password).to.include(\"Mật khẩu phải từ 8-30 ký tự\");",
-                            "});"
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                    }
-                },
-                {
-                    "listen": "prerequest",
-                    "script": {
-                        "exec": [
-                            ""
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                    }
-                }
-            ],
-            "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{ \n\"username\":\"user03\",\n\"password\":\"Aaaaaaaaaaaaaaaaaaaaa@123456789\",\n\"confirm\":\"Aaaaaaaaaaaaaaaaaaaaa@123456789\"\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{base_url}}/api/auth/register",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "api",
-                        "auth",
-                        "register"
-                    ]
-                },
-                "description": "Kiểm tra hệ thống không cho phép password vượt quá 30 ký tự. Khi không thỏa điều kiện, API trả về lỗi 400 và thông báo 'Mật khẩu phải từ 8–30 ký tự'."
-            },
-            "response": []
-        },
-        {
-            "name": "TC15 – Confirm password rỗng",
-            "event": [
-                {
-                    "listen": "test",
-                    "script": {
-                        "exec": [
-                            "pm.test(\"Status code is 400\", function () {",
-                            "    pm.response.to.have.status(400);",
-                            "});",
-                            "",
-                            "pm.test(\"Confirm password is empty\", function () {",
-                            "    const jsonData = pm.response.json();",
-                            "    pm.expect(jsonData.success).to.eql(false);",
-                            "    pm.expect(jsonData.message._schema).to.include(\"Mật khẩu nhập lại không được rỗng\");",
-                            "});"
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                    }
-                },
-                {
-                    "listen": "prerequest",
-                    "script": {
-                        "exec": [
-                            ""
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                    }
-                }
-            ],
-            "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{ \n\"username\":\"user02\",\n\"password\":\"Aa@123456\",\n\"confirm\":\"\" \n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{base_url}}/api/auth/register",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "api",
-                        "auth",
-                        "register"
-                    ]
-                },
-                "description": "Kiểm tra hệ thống không cho phép confirm password bị rỗng. API phải trả về lỗi 400 và thông báo 'Mật khẩu nhập lại không được rỗng'."
-            },
-            "response": []
-        },
-        {
-            "name": "TC16 – Confirm password không khớp",
-            "event": [
-                {
-                    "listen": "test",
-                    "script": {
-                        "exec": [
-                            "pm.test(\"Status code is 400\", function () {",
-                            "    pm.response.to.have.status(400);",
-                            "});",
-                            "",
-                            "pm.test(\"Confirm password does not match\", function () {",
-                            "    const jsonData = pm.response.json();",
-                            "    pm.expect(jsonData.success).to.eql(false);",
-                            "    pm.expect(jsonData.message._schema).to.include(\"Mật khẩu nhập lại không khớp\");",
-                            "});"
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                    }
-                },
-                {
-                    "listen": "prerequest",
-                    "script": {
-                        "exec": [
-                            ""
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                    }
-                }
-            ],
-            "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{ \n\"username\":\"user02\",\n\"password\":\"Aa@123456\", \n\"confirm\":\"Aacde123\"\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{base_url}}/api/auth/register",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "api",
-                        "auth",
-                        "register"
-                    ]
-                },
-                "description": "Kiểm tra hệ thống không cho phép confirm password không trùng với password. API phải trả về lỗi 400 và thông báo 'Mật khẩu nhập lại không khớp'."
-            },
-            "response": []
-        },
-        {
-            "name": "TC17 – Username, Password và Confirm password đều không hợp lệ",
-            "event": [
-                {
-                    "listen": "test",
-                    "script": {
-                        "exec": [
-                            "pm.test(\"Status code is 400\", function () {",
-                            "    pm.response.to.have.status(400);",
-                            "});",
-                            "",
-                            "pm.test(\"Username, password and confirm are invalid\", function () {",
-                            "    const jsonData = pm.response.json();",
-                            "    pm.expect(jsonData.success).to.eql(false);",
-                            "    pm.expect(jsonData.message.username).to.include(\"Tên người dùng không được chứa khoảng trắng\");",
-                            "    pm.expect(jsonData.message.password).to.include(\"Mật khẩu phải chứa ký tự thường\");",
-                            "});"
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                    }
-                },
-                {
-                    "listen": "prerequest",
-                    "script": {
-                        "exec": [
-                            ""
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                    }
-                }
-            ],
-            "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{ \n\"username\":\"ue 01\", \n\"password\":\"AA@123456\", \n\"confirm\":\"Aa@123\"\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "{{base_url}}/api/auth/register",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "api",
-                        "auth",
-                        "register"
-                    ]
-                },
-                "description": "Kiểm tra hệ thống xử lý khi nhiều trường input không hợp lệ cùng lúc. API phải trả về lỗi 400 và danh sách thông báo lỗi tương ứng cho từng trường (username, password, confirm password)."
+                "description": "Kiểm tra khả năng chống tấn công SQL Injection khi người dùng nhập chuỗi truy vấn độc hại vào trường username. API phải từ chối đăng nhập, không bị vượt qua xác thực và trả về mã lỗi 401 kèm thông báo 'Sai tài khoản hoặc mật khẩu'."
             },
             "response": []
         }

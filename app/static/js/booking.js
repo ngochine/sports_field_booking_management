@@ -16,7 +16,7 @@ function cancelBooking(bookingId){
         return res.json()
     })
     .then(data => {
-        alert("Huỷ sân thành công!")
+        alert("Hủy sân thành công!")
         window.location.href = "/bookings"
     })
    .catch(err => {

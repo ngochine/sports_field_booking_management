@@ -49,7 +49,7 @@ def test_authorizer_cancel_booking(test_session, test_auth, sample_booking):
     data = response.get_json()
     assert response.status_code == 403
     assert data["success"] == False
-    assert data["message"] == "Booking này không phải của bạn, bạn không có quyền huỷ"
+    assert data["message"] == "Booking này không phải của bạn, bạn không có quyền hủy"
 
 
     user = User.query.first()
@@ -98,7 +98,7 @@ def test_invalid_data_cancel_booking(test_session, test_auth, sample_booking, st
     data = response.get_json()
     assert response.status_code == 400
     assert data["success"] == False
-    assert data["message"] == {"status": ["Trạng thái huỷ không hợp lệ"]}
+    assert data["message"] == {"status": ["Trạng thái hủy không hợp lệ"]}
 
 
 def test_invalid_status_cancel_booking(test_session, test_auth, sample_booking):
@@ -115,7 +115,7 @@ def test_invalid_status_cancel_booking(test_session, test_auth, sample_booking):
     data = response.get_json()
     assert response.status_code == 400
     assert data["success"] == False
-    assert data["message"] == {"status": ["Chỉ được phép huỷ booking"]}
+    assert data["message"] == {"status": ["Chỉ được phép hủy booking"]}
 
     response = test_auth.patch(
         f"/api/bookings/{booking.id}",
@@ -126,7 +126,7 @@ def test_invalid_status_cancel_booking(test_session, test_auth, sample_booking):
     data = response.get_json()
     assert response.status_code == 400
     assert data["success"] == False
-    assert data["message"] == {"status": ["Chỉ được phép huỷ booking"]}
+    assert data["message"] == {"status": ["Chỉ được phép hủy booking"]}
 
     response = test_auth.patch(
         f"/api/bookings/{booking.id}",
@@ -167,7 +167,7 @@ def test_invalid_booking_status(test_session, test_auth, sample_booking):
     data = response.get_json()
     assert response.status_code == 400
     assert data["success"] == False
-    assert data["message"] == ['Chỉ được huỷ khi booking có trạng thái PENDING hoặc PAID']
+    assert data["message"] == ['Chỉ được hủy khi booking có trạng thái PENDING hoặc PAID']
 
 
 def test_invalid_finish_time_cancel_booking(test_session, test_auth, sample_fields, sample_field_price):
@@ -196,7 +196,7 @@ def test_invalid_finish_time_cancel_booking(test_session, test_auth, sample_fiel
     data = response.get_json()
     assert response.status_code == 400
     assert data["success"] == False
-    assert data["message"] == ["Không được huỷ booking đã kết thúc"]
+    assert data["message"] == ["Không được hủy booking đã kết thúc"]
 
 
 def test_invalid_usage_time_cancel_booking(test_session, test_auth, sample_fields, sample_field_price):
@@ -227,7 +227,7 @@ def test_invalid_usage_time_cancel_booking(test_session, test_auth, sample_field
     data = response.get_json()
     assert response.status_code == 400
     assert data["success"] == False
-    assert data["message"] == ["Không được huỷ nếu sân đang trong thời gian sử dụng"]
+    assert data["message"] == ["Không được hủy nếu sân đang trong thời gian sử dụng"]
 
 
 def test_invalid_time_cancel_booking(test_session, test_auth, sample_fields, sample_field_price):
@@ -256,7 +256,7 @@ def test_invalid_time_cancel_booking(test_session, test_auth, sample_fields, sam
     data = response.get_json()
     assert response.status_code == 400
     assert data["success"] == False
-    assert data["message"] == ["Không được huỷ khi còn dưới 2 giờ trước giờ chơi"]
+    assert data["message"] == ["Không được hủy khi còn dưới 2 giờ trước giờ chơi"]
 
 
 def test_cancel_booking_pending_success(test_session, test_auth, sample_fields, sample_field_price):

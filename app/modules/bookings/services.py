@@ -110,29 +110,29 @@ def get_list_booking_service(user_id: str, filters: dict):
 
 def validate_cancelled_booking(booking, user_id):
     if booking.user_id != user_id:
-        raise Forbidden("Booking này không phải của bạn, bạn không có quyền huỷ")
+        raise Forbidden("Booking này không phải của bạn, bạn không có quyền hủy")
 
     if booking.status not in [BookingStatusEnum.PENDING, BookingStatusEnum.PAID]:
-        raise ValidationError("Chỉ được huỷ khi booking có trạng thái PENDING hoặc PAID")
+        raise ValidationError("Chỉ được hủy khi booking có trạng thái PENDING hoặc PAID")
 
     start_datetime = datetime.combine(booking.booking_date, booking.start_time)
     end_datetime = datetime.combine(booking.booking_date, booking.end_time)
 
     if start_datetime <= datetime.now() <= end_datetime:
-        raise ValidationError("Không được huỷ nếu sân đang trong thời gian sử dụng")
+        raise ValidationError("Không được hủy nếu sân đang trong thời gian sử dụng")
 
     if end_datetime <= datetime.now():
-        raise ValidationError("Không được huỷ booking đã kết thúc")
+        raise ValidationError("Không được hủy booking đã kết thúc")
 
     diff = (start_datetime - datetime.now()).total_seconds() / 3600
     if diff < 2:
-        raise ValidationError("Không được huỷ khi còn dưới 2 giờ trước giờ chơi")
+        raise ValidationError("Không được hủy khi còn dưới 2 giờ trước giờ chơi")
 
 
 def cancelled_booking_service(booking_id, user_id, data: dict):
     status = data.get("status")
     if status != BookingStatusEnum.CANCELLED.name:
-        raise ValidationError({"status": ["Chỉ được phép huỷ booking"]})
+        raise ValidationError({"status": ["Chỉ được phép hủy booking"]})
 
     booking = dao.get_booking_by_id(booking_id=booking_id)
     if booking is None:
