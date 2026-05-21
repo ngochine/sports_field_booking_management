@@ -38,9 +38,9 @@ def test_tc1_cancel_booking_success(driver):
     time.sleep(1)
     history_page.confirm_cancel_booking()
     success_msg = history_page.get_text_alert()
-    assert "Huỷ sân thành công!" in success_msg
+    assert "hủy sân thành công!" in success_msg
     updated = history_page.find_booking_by_info(booking_info)
-    assert history_page.get_status_booking(updated) == "Đã huỷ"
+    assert history_page.get_status_booking(updated) == "Đã hủy"
     assert history_page.get_status_booking(updated) != old_status
     history_page.screen_cancel("TC1_cancel_booking_success.png")
 
@@ -67,9 +67,9 @@ def test_tc2_cancel_booking_exactly_2_hours_before(driver):
         time.sleep(wait_seconds)
     history_page.confirm_cancel_booking()
     success_msg = history_page.get_text_alert()
-    assert "Huỷ sân thành công!" in success_msg
+    assert "hủy sân thành công!" in success_msg
     updated = history_page.find_booking_by_info(booking_info)
-    assert history_page.get_status_booking(updated) == "Đã huỷ"
+    assert history_page.get_status_booking(updated) == "Đã hủy"
     history_page.screen_cancel("TC2_cancel_booking_exactly_2_hours_before.png")
 
 
@@ -83,7 +83,7 @@ def test_tc3_cannot_cancel_booking_under_2_hours(driver):
     history_page.click_cancel(el)
     history_page.confirm_cancel_booking()
     error_msg = history_page.get_text_alert()
-    assert "Không được huỷ khi còn dưới 2 giờ trước giờ chơi" in error_msg
+    assert "Không được hủy khi còn dưới 2 giờ trước giờ chơi" in error_msg
     updated = history_page.find_booking_by_info(booking_info)
     assert history_page.get_status_booking(updated) == old_status
     history_page.screen_cancel("TC3_cannot_cancel_booking_under_2_hours.png")
@@ -154,15 +154,15 @@ def test_tc7_double_click_cancel_booking(driver):
     history_page.double_click_cancel()
     msg = history_page.get_text_alert()
     msg2 = history_page.get_text_alert()
-    if "Huỷ sân thành công!" in msg2:
-        history_page.screen_cancel("TC8_double_click_cancel.png")
+    if "hủy sân thành công!" in msg2:
+        history_page.screen_cancel("TC7_double_click_cancel.png")
         assert False
-    assert "Huỷ sân thành công!" in msg
+    assert "hủy sân thành công!" in msg
     updated = history_page.find_booking_by_info(booking_info)
     new_status = history_page.get_status_booking(updated)
     assert new_status == "Đã hủy"
     assert new_status != old_status
-    history_page.screen_cancel("TC8_double_click_cancel.png")
+    history_page.screen_cancel("TC7_double_click_cancel.png")
 
 def test_tc8_cannot_cancel_other_user_booking(driver,driver2):
     driver = register_login(driver=driver)
@@ -187,9 +187,6 @@ def test_tc8_cannot_cancel_other_user_booking(driver,driver2):
     assert new_status == old_status
     history_page.screen_cancel("TC8_no_permission_cancel.png")
 
-from tests.selenium.pages.HistoryPage import HistoryPage
-from tests.selenium.fixture import login
-from tests.selenium.data.booking_data import CANCEL_CASE
 
 
 def test_tc9_cancel_booking_not_exist(driver):
@@ -218,14 +215,14 @@ def test_tc10_cancel_booking_multi_tab(driver,driver2):
     time.sleep(1)
     detail_tab1.click_cancel()
     alert1 = detail_tab1.get_text_alert()
-    assert "Huỷ sân thành công!" in alert1
+    assert "hủy sân thành công!" in alert1
     time.sleep(1)
     detail_tab2.scroll(8000)
     time.sleep(1)
     detail_tab2.click_cancel()
     alert2 = detail_tab2.get_text_alert()
     print(alert2)
-    assert "Chỉ được huỷ khi booking có trạng thái PENDING hoặc PAID" in alert2
+    assert "Chỉ được hủy khi booking có trạng thái PENDING hoặc PAID" in alert2
     driver.switch_to.window(driver.window_handles[0])
     history_page.open_page()
     updated = history_page.find_booking_by_info(booking_info)

@@ -10,9 +10,9 @@ class HistoryLocators(object):
     ACTIVE_PAGE = (By.CSS_SELECTOR,'.pagination .page-item.active')
 
 class BookingCardLocators(object):
-    PAY_BUTTON = (By.XPATH, '//button[contains(@onclick,"payBooking(")]')
-    CANCEL_BUTTON=(By.XPATH, './/a[contains(text(),"Huỷ đặt vé")]')
-    DETAIL_BUTTON=(By.XPATH, '//a[contains(text(),"Chi tiết")]')
+    PAY_BUTTON = (By.XPATH, './/button[contains(@onclick,"payBooking(")]')
+    CANCEL_BUTTON=(By.XPATH, './/a[contains(text(),"Hủy đặt vé")]')
+    DETAIL_BUTTON=(By.XPATH, './/a[contains(text(),"Chi tiết")]')
     BOOKING_DATE=(By.CSS_SELECTOR,'div.row.g-3.mb-4 > div:nth-child(1) > div > div.fw-semibold')
     BOOKING_TIME=(By.CSS_SELECTOR,'div.row.g-3.mb-4 > div:nth-child(2) > div > div.fw-semibold')
     TOTAL_PRICE=(By.CSS_SELECTOR,'div.row.g-3.mb-4 > div:nth-child(3) > div > div.fw-bold')

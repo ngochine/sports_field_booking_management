@@ -2,13 +2,8 @@ import time
 from datetime import datetime, timedelta
 from selenium.webdriver.common.by import By
 from selenium.webdriver import ActionChains
-
 from tests.selenium.pages.BasePage import BasePage
-from tests.selenium.locators.HistoryLocators import (
-    HistoryLocators,
-    BookingCardLocators,
-    CancelPopupLocators
-)
+from tests.selenium.locators.HistoryLocators import (HistoryLocators,BookingCardLocators,CancelPopupLocators)
 
 
 class HistoryPage(BasePage):
@@ -21,7 +16,10 @@ class HistoryPage(BasePage):
         self.open(f"/bookings?page={page_number}")
 
     def get_cards(self):
-        return self.finds(*HistoryLocators.BOOKING_CARD)
+        try:
+            return self.finds(*HistoryLocators.BOOKING_CARD)
+        except:
+            return []
 
     def get_status(self, el):
         return el.find_element(*BookingCardLocators.TAG_STATUS).text.strip()
@@ -43,6 +41,16 @@ class HistoryPage(BasePage):
 
     def get_detail(self,el):
         return el.find_element(*BookingCardLocators.DETAIL_BUTTON)
+
+    def get_detail_button(self, el):
+        return el.find_elements(*BookingCardLocators.DETAIL_BUTTON)
+
+    def get_cancel_button(self, el):
+        return el.find_elements(*BookingCardLocators.CANCEL_BUTTON)
+
+    def get_pay_button(self, el):
+        return el.find_elements(*BookingCardLocators.PAY_BUTTON)
+
 
     def click_detail(self,el):
         e=self.get_detail(el)
@@ -127,6 +135,31 @@ class HistoryPage(BasePage):
         return result
 
 
+    def get_all_bookings(self):
+        result = []
+        page = 1
+        while True:
+            cards = self.get_cards()
+            for i, el in enumerate(cards):
+                result.append({
+                    "page": page,
+                    "index": i,
+                    "field_name": self.get_name(el),
+                    "booking_date": self.get_date(el),
+                    "time_range": self.get_time(el),
+                    "price": self.get_price(el),
+                    "status": self.get_status(el),
+                    "cancel_buttons": len(self.get_cancel_button(el)),
+                    "detail_buttons": len(self.get_detail_button(el)),
+                    "pay_buttons": len(self.get_pay_button(el)),
+                })
+            if not self.has_next_page():
+                break
+            self.go_to_next_page()
+            page += 1
+        return result
+
+
     def get_booking_info(self,el):
         return {
             "field_name": self.get_name(el),
@@ -171,6 +204,9 @@ class HistoryPage(BasePage):
 
     def screen_cancel(self, name):
         self.screen("cancel", name)
+
+    def screen_history(self, name):
+        self.screen("history", name)
 
     def get_link(self,el):
         button = self.get_detail(el)

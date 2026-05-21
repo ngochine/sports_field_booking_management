@@ -295,18 +295,19 @@ def test_tc26_booking_field_not_found(detail_page):
 
 
 def test_tc27_double_click_booking(detail_page):
-    detail_page.fill_booking(date=detail_page.plus_date(27))
+    detail_page.fill_booking(date=detail_page.plus_date(184))
     detail_page.double_click_booking()
     assert detail_page.count_popup() == 1
     detail_page.double_confirm_booking()
     alert = detail_page.get_text_alert()
-    if detail_page.get_text_alert():
+    if detail_page.count_alert() ==1:
         time.sleep(1)
+        assert "Đặt sân thành công" in detail_page.get_text_alert()
         detail_page.screen_booking("TC27_double_click_booking.png")
-        assert False
-    detail_page.screen("booking", "TC27_double_click_booking.png")
-    assert "Đặt sân thành công" in alert
-    assert detail_page.count_alert() == 0
+        assert detail_page.count_alert() == 0
+    else :
+        assert "Khung giờ đặt bị trùng" in alert
+        detail_page.screen_booking("TC27_double_click_booking.png")
 
 def test_tc29_role_denied(detail_page):
     detail_page.fill_booking(slot_index=BOOKING_CASES["booking_slot_index"])

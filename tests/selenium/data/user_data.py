@@ -9,7 +9,8 @@ LOGIN_USERS = {
     "empty_password": ("user02", ""),
     "injection":("" " OR 1=1","Abc@123456"),
     "xss":("<script>alert('XSS')</script>","Abc@123456"),
-    "denied_user":("user_10", "Aa@123456"),
+    "denied_user":("admin", "Admin@123"),
+    "admin":("admin", "Admin@123"),
 }
 
 REGISTER_USERS = {

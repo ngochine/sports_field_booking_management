@@ -20,5 +20,5 @@ BOOKING_CASES = {
 }
 
 CANCEL_CASE={
-    "valid_user": ("user03", "Aa@123456"),
+    "valid_user": ("test_booking", "Abc@12345"),
 }
