@@ -2,6 +2,7 @@ import time
 from datetime import datetime, timedelta
 from tests.selenium.data.booking_data import CANCEL_CASE
 from tests.selenium.pages.DetailBookingPage import DetailBookingPage
+from tests.selenium.pages.DetailFieldPage import DetailFieldPage
 from tests.selenium.pages.HistoryPage import HistoryPage
 from tests.selenium.fixture import cancel_history_page, open_detail_page, login, register_login
 from tests.selenium.locators.HistoryLocators import HistoryLocators
@@ -9,7 +10,8 @@ from tests.test_base import driver,test_app,driver2
 
 
 def create_booking(driver, hours_before, minutes_before=0):
-    detail_page = open_detail_page(driver=driver)
+    detail_page = DetailFieldPage(driver=driver)
+    detail_page.open("/fields/3")
     booking_time = (datetime.now().replace(second=0, microsecond=0)+ timedelta(hours=hours_before, minutes=minutes_before))
     detail_page.select_booking_info(
         date=booking_time.strftime("%Y-%m-%d"),
@@ -231,3 +233,54 @@ def test_tc10_cancel_booking_multi_tab(driver,driver2):
     assert "Đã hủy" in new_status
     history_page.screen_cancel("TC10_multi_tab_cancel.png")
 
+def test_tc11_booking_cancel_3_times_limit(driver):
+    driver,account = register_login(driver=driver,get_account=True)
+    booking_date = (datetime.now() + timedelta(days=600)).strftime("%Y-%m-%d")
+    for i in range(3):
+        # driver3=login(driver=driver,username=account["username"],password=account["password"])
+        detail_page=DetailFieldPage(driver=driver)
+        detail_page.open("/fields/3")
+        start_time = (datetime.now().replace(second=0,microsecond=0) + timedelta(hours=5 + i))
+        end_time = start_time + timedelta(hours=1)
+        detail_page.select_booking_info(
+            date=booking_date,
+            start_time=start_time.strftime("%H:%M"),
+            end_time=end_time.strftime("%H:%M")
+        )
+        time.sleep(1)
+        detail_page.open_popup()
+        booking_info = detail_page.get_booking_popup_info()
+        detail_page.confirm_booking()
+        alert = detail_page.get_text_alert()
+        assert "Đặt sân thành công!" in alert
+        history_page = HistoryPage(driver)
+        history_page.open_page()
+        time.sleep(1)
+        el = history_page.find_booking_by_info(booking_info)
+        old_status = history_page.get_status_booking(el)
+        history_page.click_cancel(el)
+        time.sleep(1)
+        history_page.confirm_cancel_booking()
+        cancel_alert = history_page.get_text_alert()
+        assert "Hủy sân thành công!" in cancel_alert
+        updated = history_page.find_booking_by_info(booking_info)
+        new_status = history_page.get_status_booking(updated)
+        assert old_status != new_status
+        assert new_status == "Đã hủy"
+
+    detail_page = DetailFieldPage(driver=driver)
+    detail_page.open("/fields/3")
+    start_time = (datetime.now().replace(second=0,microsecond=0) + timedelta(hours=10))
+    end_time = start_time + timedelta(hours=1)
+    detail_page.select_booking_info(
+        date=booking_date,
+        start_time=start_time.strftime("%H:%M"),
+        end_time=end_time.strftime("%H:%M")
+    )
+    time.sleep(1)
+    detail_page.open_popup()
+    detail_page.confirm_booking()
+    time.sleep(1)
+    final_alert = detail_page.get_text_alert()
+    detail_page.screen_booking("TC11_booking_cancel_3_times_limit.png")
+    assert "Tài khoản đã đạt giới hạn đặt trong ngày" in final_alert

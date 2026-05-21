@@ -1,7 +1,5 @@
-from selenium.webdriver.common.by import By
 from tests.selenium.pages.BasePage import BasePage
 from tests.selenium.locators.FieldsLocators import ListFieldsLocators
-
 
 class FieldsPage(BasePage):
     PATH = "/fields"

@@ -285,7 +285,6 @@ def test_cancel_booking_pending_success(test_session, test_auth, sample_fields, 
     assert data["booking"]["status"] == "CANCELLED"
 
 
-#bổ sung transaction sau
 def test_cancel_booking_paid_success(test_session, test_auth, sample_fields, sample_field_price):
     field = sample_fields[0]
     response = test_auth.post(

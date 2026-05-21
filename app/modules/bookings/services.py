@@ -10,7 +10,7 @@ from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError, OperationalError
 from werkzeug.exceptions import Forbidden, NotFound
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 import math
 from flask import current_app
 from app.extension import db
@@ -20,7 +20,7 @@ def caculator_total_time(booking_date, start_time, end_time):
     start = datetime.combine(booking_date, start_time)
     end = datetime.combine(booking_date, end_time)
 
-    return (end - start).total_seconds() / 3600
+    return round((end - start).total_seconds() / 3600, 2)
 
 
 def caculator_total_price(booking_date, start_time, end_time, field):
@@ -33,7 +33,10 @@ def caculator_total_price(booking_date, start_time, end_time, field):
     cover_seconds = 0.0
     for fp in field_prices:
         start_fp = datetime.combine(booking_date, fp.start_time)
-        end_fp = datetime.combine(booking_date, fp.end_time)
+        if fp.end_time == time(0, 0):
+            end_fp = datetime.combine(booking_date + timedelta(days=1),time(0, 0))
+        else:
+            end_fp = datetime.combine(booking_date,fp.end_time)
 
         overlap_start = max(start, start_fp)
         overlap_end = min(end, end_fp)
@@ -46,7 +49,7 @@ def caculator_total_price(booking_date, start_time, end_time, field):
 
     if cover_seconds < (end-start).total_seconds():
         raise ValidationError("Khung giờ này chưa được cấu hình giá")
-    return total_price
+    return round(total_price)
 
 
 def create_booking_service(field_id, user_id, data):

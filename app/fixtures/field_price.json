@@ -146,7 +146,7 @@
   {
     "id": 17,
     "start_time": "22:00:00",
-    "end_time": "00:00:00",
+    "end_time": "23:59:59",
     "price": 500000.00,
     "day_of_week": null,
     "special_date": null,
