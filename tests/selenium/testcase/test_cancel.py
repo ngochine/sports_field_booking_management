@@ -30,7 +30,7 @@ def create_booking(driver, hours_before, minutes_before=0):
 
 def test_tc1_cancel_booking_success(driver):
     driver = login(driver=driver,username=CANCEL_CASE["valid_user"][0],password=CANCEL_CASE["valid_user"][1])
-    booking_info = create_booking(driver, 2, 20)
+    booking_info = create_booking(driver, 3, 20)
     history_page = HistoryPage(driver)
     history_page.open_page()
     time.sleep(1)
