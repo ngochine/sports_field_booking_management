@@ -54,7 +54,7 @@ pytest-metadata==3.1.1
 python-dotenv==1.2.2
 python-engineio==4.13.1
 python-socketio==5.16.1
-pywin32==311
+pywin32==311; platform_system == "Windows"
 pyzmq==27.1.0
 requests==2.33.1
 selenium==4.44.0
