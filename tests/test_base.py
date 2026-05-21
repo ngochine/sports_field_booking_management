@@ -99,6 +99,7 @@ def mock_cloudinary(monkeypatch):
 #         fake_trigger_task
 #     )
 
+
 @pytest.fixture
 def test_auth(test_client):
     test_client.post(
