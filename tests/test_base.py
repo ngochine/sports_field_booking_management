@@ -123,7 +123,7 @@ def test_auth(test_client):
 def driver():
     options = Options()
     service = Service(executable_path=Config.URL_SELENIUM)
-    options.add_argument("--headless=new")
+    # options.add_argument("--headless=new")
     options.add_argument("--window-size=1920,1080")
     driver = webdriver.Chrome(service=service, options=options)
     yield driver
@@ -133,7 +133,7 @@ def driver():
 def driver2():
     options = Options()
     service = Service(executable_path=Config.URL_SELENIUM)
-    options.add_argument("--headless=new")
+    # options.add_argument("--headless=new")
     options.add_argument("--window-size=1920,1080")
     driver = webdriver.Chrome(service=service, options=options)
     yield driver

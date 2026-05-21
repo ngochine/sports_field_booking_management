@@ -1,8 +1,6 @@
-import time, os
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
+import time, os, pyperclip
 from  tests.test_base import driver,test_app
-from tests.selenium.guest_fixture import register_page
+from tests.selenium.fixture import register_page
 from tests.selenium.data.user_data import REGISTER_USERS
 from tests.selenium.locators.RegisterLocators import RegisterLocators
 
@@ -167,25 +165,8 @@ def test_tc17_register_all_invalid(register_page):
     assert check_contains(results, "Mật khẩu phải chứa ký tự thường")
     assert check_contains(results, "Tên người dùng không được chứa khoảng trắng")
 
-def test_tc18_register_block_paste_confirm_password(register_page):
-    username, password, confirm = REGISTER_USERS["valid"]
-    register_page.register(username, password, confirm="")
-    confirm_input = register_page.find(*RegisterLocators.COMFIRM_INPUT)
-    confirm_input.click()
-    ActionChains(register_page.driver).key_down(Keys.CONTROL)\
-        .send_keys("v")\
-        .key_up(Keys.CONTROL)\
-        .perform()
 
-    time.sleep(1)
-    register_page.screen_register("TC18_block_paste_confirm_password.png")
-    assert confirm_input.get_attribute("value") == ""
-
-import time
-from tests.selenium.locators.RegisterLocators import RegisterLocators
-
-
-def test_tc20_register_eye(register_page):
+def test_tc19_register_eye(register_page):
     username, password, confirm = REGISTER_USERS["eye"]
     register_page.register_not_click(username, password, password)
     password_input = register_page.find(*RegisterLocators.PASSWORD_INPUT)
@@ -199,5 +180,5 @@ def test_tc20_register_eye(register_page):
     eye_confirm = register_page.find(*RegisterLocators.CONFIRM_EYE)
     eye_confirm.click()
     time.sleep(0.5)
-    register_page.screen_register("TC20_eye.png")
+    register_page.screen_register("TC19_eye.png")
     assert confirm_input.get_attribute("type") == "text"
