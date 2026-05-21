@@ -8,6 +8,868 @@
         "_collection_link": "https://go.postman.co/collection/50991360-af51234a-40fc-4b09-95fb-50b69b7a282e?source=collection_link"
     },
     "item": [
-       
+        {
+            "name": "TC1 - Không đăng nhập",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"No login\", function () {\r",
+                            "    pm.expect(pm.response.code).to.eql(401);\r",
+                            "    const jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message).to.include(\"Vui lòng đăng nhập để thực hiện chức năng này\");\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                },
+                {
+                    "listen": "prerequest",
+                    "script": {
+                        "exec": [
+                            "pm.environment.set(\"booking_id\", 1);"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \r\n\"status\":\"CANCELLED\" \r\n} ",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/bookings/{{booking_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "bookings",
+                        "{{booking_id}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "TC2 – Hủy hợp lệ -Booking Over",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Cancelled success\", function () {\r",
+                            "    pm.response.to.have.status(200);\r",
+                            "    const jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(true);\r",
+                            "    pm.expect(jsonData.booking[\"id\"]).to.eql(pm.environment.get(\"booking_id\"));\r",
+                            "    pm.expect(jsonData.booking[\"status\"]).to.eql(\"CANCELLED\");\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                },
+                {
+                    "listen": "prerequest",
+                    "script": {
+                        "exec": [
+                            ""
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \r\n\"status\":\"CANCELLED\" \r\n} ",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/bookings/{{booking_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "bookings",
+                        "{{booking_id}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "TC3 – Hủy đúng 2 giờ -Booking Equal",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Equal 2h cancel success\", function () {\r",
+                            "    pm.response.to.have.status(200);\r",
+                            "    const jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(true);\r",
+                            "    pm.expect(jsonData.booking[\"id\"]).to.eql(pm.environment.get(\"booking_id\"));\r",
+                            "    pm.expect(jsonData.booking[\"status\"]).to.eql(\"CANCELLED\");\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \r\n\"status\":\"CANCELLED\" \r\n} ",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/bookings/{{booking_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "bookings",
+                        "{{booking_id}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "TC4 – Hủy dưới 2 giờ -Booking Under",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Under 2h cancel Fail\", function () {\r",
+                            "    pm.response.to.have.status(400);\r",
+                            "    const jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message[0]).to.eql(\"Không được hủy khi còn dưới 2 giờ trước giờ chơi\");\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \r\n\"status\":\"CANCELLED\" \r\n} ",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/bookings/{{booking_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "bookings",
+                        "{{booking_id}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "TC6 – Không có quyền - Booking Over",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Forbidden\", () => {\r",
+                            "    pm.response.to.have.status(403);\r",
+                            "    const jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message).to.eql(\"Tài khoản của bạn không đủ quyền để thực hiện hành động này\");\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                },
+                {
+                    "listen": "prerequest",
+                    "script": {
+                        "exec": [
+                            "const baseUrl = pm.environment.get(\"base_url\");\r",
+                            "pm.sendRequest({\r",
+                            "    url: `${baseUrl}/api/auth/login`,\r",
+                            "    method: \"POST\",\r",
+                            "    header: {\r",
+                            "        \"Content-Type\": \"application/json\"\r",
+                            "    },\r",
+                            "    body: {\r",
+                            "        mode: \"raw\",\r",
+                            "        raw: JSON.stringify({\r",
+                            "            username: pm.environment.get(\"admin\"),\r",
+                            "            password: pm.environment.get(\"password_admin\")\r",
+                            "        })\r",
+                            "    }\r",
+                            "})"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \r\n\"status\":\"CANCELLED\" \r\n} ",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/bookings/{{booking_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "bookings",
+                        "{{booking_id}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "TC7 – Không tồn tại",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Not found\", () => {\r",
+                            "    pm.response.to.have.status(404);\r",
+                            "    const jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message).to.include(\"Không tồn tại booking\");\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                },
+                {
+                    "listen": "prerequest",
+                    "script": {
+                        "exec": [
+                            "pm.environment.set(\"booking_id\", 80858288);"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \r\n\"status\":\"CANCELLED\" \r\n} ",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/bookings/{{booking_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "bookings",
+                        "{{booking_id}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "TC8 – Hủy 2 lần - Booking Over",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"First cancel success\", () => {\r",
+                            "    pm.response.to.have.status(200);\r",
+                            "    const jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(true);\r",
+                            "    pm.expect(jsonData.booking[\"id\"]).to.eql(pm.environment.get(\"booking_id\"));\r",
+                            "    pm.expect(jsonData.booking[\"status\"]).to.eql(\"CANCELLED\");\r",
+                            "});\r",
+                            "let body = JSON.parse(pm.request.body.raw);\r",
+                            "pm.sendRequest({\r",
+                            "    url: pm.request.url.toString(),\r",
+                            "    method: \"PATCH\",\r",
+                            "    header: {\r",
+                            "        \"Content-Type\": \"application/json\"\r",
+                            "    },\r",
+                            "    body: {\r",
+                            "        mode: \"raw\",\r",
+                            "        raw: JSON.stringify(body)\r",
+                            "    }\r",
+                            "}, function (err, res) {\r",
+                            "    if (err) {\r",
+                            "        pm.test(\"Second cancel failed (network error)\",() => {pm.expect.fail(err);\r",
+                            "        });\r",
+                            "        return;\r",
+                            "    }\r",
+                            "    pm.test(\"Second cancel Fail\", () => {\r",
+                            "        pm.expect(res.code).to.eql(400);\r",
+                            "        let jsonData = res.json();\r",
+                            "        pm.expect(jsonData.success).to.eql(false);\r",
+                            "        pm.expect(jsonData.message[0]).to.include(\"Chỉ được hủy khi booking có trạng thái PENDING hoặc PAID\");\r",
+                            "    });\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                },
+                {
+                    "listen": "prerequest",
+                    "script": {
+                        "exec": [
+                            ""
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \r\n\"status\":\"CANCELLED\" \r\n} ",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/bookings/{{booking_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "bookings",
+                        "{{booking_id}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "TC9 – Dữ liệu không hợp lệ -Booking Over",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Invalid status\", function () {\r",
+                            "    pm.response.to.have.status(400);\r",
+                            "    const jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message[\"status\"]).to.include(\"Trạng thái hủy không hợp lệ\");\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \r\n\"status\":\"ABC\"\r\n} ",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/bookings/{{booking_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "bookings",
+                        "{{booking_id}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "TC10 – Dữ liệu rỗng -Booking Over",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Empty body invalid\", function () {\r",
+                            "    pm.response.to.have.status(400);\r",
+                            "    const jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message[\"status\"]).to.include(\"Vui lòng cung cấp trạng thái\");\r",
+                            "})"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \r\n} ",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/bookings/{{booking_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "bookings",
+                        "{{booking_id}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "TC12 – Hủy nhiều lần cùng lúc -Booking Over",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"First cancel success\", () => {\r",
+                            "    pm.response.to.have.status(200);\r",
+                            "    const jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(true);\r",
+                            "    pm.expect(jsonData.booking[\"id\"]).to.eql(Number(pm.environment.get(\"booking_id\")));\r",
+                            "    pm.expect(jsonData.booking[\"status\"]).to.eql(\"CANCELLED\");\r",
+                            "});\r",
+                            "\r",
+                            "let body = JSON.parse(pm.request.body.raw);\r",
+                            "\r",
+                            "[1, 2, 3].forEach((index) => {\r",
+                            "    pm.sendRequest({\r",
+                            "        url: pm.request.url.toString(),\r",
+                            "        method: \"PATCH\",\r",
+                            "        header: {\r",
+                            "            \"Content-Type\": \"application/json\"\r",
+                            "        },\r",
+                            "        body: {\r",
+                            "            mode: \"raw\",\r",
+                            "            raw: JSON.stringify(body)\r",
+                            "        }\r",
+                            "    }, function (err, res) {\r",
+                            "        pm.test(`Cancel lần ${index+1} Fail`, () => {\r",
+                            "            if (err) {\r",
+                            "                pm.expect.fail(err);\r",
+                            "            }\r",
+                            "            pm.expect(res.code).to.eql(400);\r",
+                            "            let jsonData = res.json();\r",
+                            "            pm.expect(jsonData.success).to.eql(false);\r",
+                            "            pm.expect(jsonData.message[0]).to.include(\"Chỉ được hủy khi booking có trạng thái PENDING hoặc PAID\");\r",
+                            "        });\r",
+                            "\r",
+                            "    });\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                },
+                {
+                    "listen": "prerequest",
+                    "script": {
+                        "exec": [
+                            ""
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \r\n\"status\":\"CANCELLED\" \r\n} ",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/bookings/{{booking_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "bookings",
+                        "{{booking_id}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "TC13 – SQL Injection",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"SQL injection\", function () {\r",
+                            "    pm.response.to.have.status(404);\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                },
+                {
+                    "listen": "prerequest",
+                    "script": {
+                        "exec": [
+                            "pm.environment.set(\"booking_id\", ' OR 1=1 -- ');"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \r\n\"status\":\"CANCELLED\" \r\n} ",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/bookings/{{booking_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "bookings",
+                        "{{booking_id}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "TC14 – Body có thêm field -Booking Over",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Validation error\", function () {\r",
+                            "    pm.response.to.have.status(400);\r",
+                            "    const jsonData = pm.response.json();\r",
+                            "    pm.expect(jsonData.success).to.eql(false);\r",
+                            "    pm.expect(jsonData.message.role[0]).to.include(\"Unknown field\");\r",
+                            "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                },
+                {
+                    "listen": "prerequest",
+                    "script": {
+                        "exec": [
+                            ""
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \r\n\"status\":\"CANCELLED\",\r\n\"role\":\"ADMIN\"\r\n} ",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/bookings/{{booking_id}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "bookings",
+                        "{{booking_id}}"
+                    ]
+                }
+            },
+            "response": []
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "exec": [
+                    "const baseUrl = pm.environment.get(\"base_url\");\r",
+                    "const requestName = pm.info.requestName;\r",
+                    "const field_id = pm.environment.get(\"field_id\")\r",
+                    "const id = pm.environment.get(\"booking_id\");\r",
+                    "\r",
+                    "let BeforeTime = parseInt(pm.environment.get(\"time\"), 10)\r",
+                    "\r",
+                    "pm.sendRequest({\r",
+                    "    url: `${baseUrl}/api/auth/logout`,\r",
+                    "    method: \"POST\",\r",
+                    "    header: {\r",
+                    "        \"Content-Type\": \"application/json\"\r",
+                    "    }\r",
+                    "});\r",
+                    "\r",
+                    "\r",
+                    "if (requestName === \"TC1 - Không đăng nhập\" || requestName === \"TC6 – Không có quyền\") {\r",
+                    "    return;\r",
+                    "}\r",
+                    "\r",
+                    "// if (requestName === \"TC26 – User không có quyền đặt sân\") {\r",
+                    "//     pm.sendRequest({\r",
+                    "//         url: `${baseUrl}/api/auth/login`,\r",
+                    "//         method: \"POST\",\r",
+                    "//         header: {\r",
+                    "//             \"Content-Type\": \"application/json\"\r",
+                    "//         },\r",
+                    "//         body: {\r",
+                    "//             mode: \"raw\",\r",
+                    "//             raw: JSON.stringify({\r",
+                    "//                 username:pm.environment.get(\"admin\"),\r",
+                    "//                 password:pm.environment.get(\"password_admin\")\r",
+                    "//             })\r",
+                    "//         }\r",
+                    "//     })\r",
+                    "//     return;\r",
+                    "// }\r",
+                    "\r",
+                    "function generateBookingTime(hoursFromNow, minutesFromNow = 0) {\r",
+                    "    const now = new Date();\r",
+                    "    let start = new Date(now);\r",
+                    "    start.setHours(start.getHours() + hoursFromNow);\r",
+                    "    start.setMinutes(start.getMinutes() + minutesFromNow);\r",
+                    "    start.setSeconds(0);\r",
+                    "    if (start.getHours() >= 23) {\r",
+                    "        start.setDate(start.getDate() + 1);\r",
+                    "    }\r",
+                    "    const end = new Date(start);\r",
+                    "    end.setHours(end.getHours() + 1);\r",
+                    "\r",
+                    "    return {\r",
+                    "        booking_date: start.toISOString().split(\"T\")[0],\r",
+                    "        start_time: start.toTimeString().slice(0, 5),\r",
+                    "        end_time: end.toTimeString().slice(0, 5)\r",
+                    "    };\r",
+                    "}\r",
+                    "\r",
+                    "function setTime(name) {\r",
+                    "    if (name.includes(\"Over\")) return generateBookingTime(BeforeTime);\r",
+                    "    if (name.includes(\"Equal\")) return generateBookingTime(2, 1);\r",
+                    "    if (name.includes(\"Under\")) return generateBookingTime(1, 30);\r",
+                    "    return generateBookingTime(3);\r",
+                    "}\r",
+                    "\r",
+                    "\r",
+                    "function generateUser() {\r",
+                    "    const random = Date.now();\r",
+                    "    return {\r",
+                    "        username: `user_${random}`,\r",
+                    "        password: \"Aa@123456\"\r",
+                    "    };\r",
+                    "}\r",
+                    "\r",
+                    "var account = generateUser();\r",
+                    "\r",
+                    "pm.sendRequest({\r",
+                    "    url: `${baseUrl}/api/auth/register`,\r",
+                    "    method: \"POST\",\r",
+                    "    header: {\r",
+                    "        \"Content-Type\": \"application/json\"\r",
+                    "    },\r",
+                    "    body: {\r",
+                    "        mode: \"raw\",\r",
+                    "        raw: JSON.stringify({\r",
+                    "            username: account.username,\r",
+                    "            password: account.password,\r",
+                    "            confirm: account.password\r",
+                    "        })\r",
+                    "    }\r",
+                    "}, function (err, res) {\r",
+                    "    pm.sendRequest({\r",
+                    "        url: `${baseUrl}/api/auth/login`,\r",
+                    "        method: \"POST\",\r",
+                    "        header: {\r",
+                    "            \"Content-Type\": \"application/json\"\r",
+                    "        },\r",
+                    "        body: {\r",
+                    "            mode: \"raw\",\r",
+                    "            raw: JSON.stringify({\r",
+                    "                username: account.username,\r",
+                    "                password: account.password\r",
+                    "            })\r",
+                    "        }\r",
+                    "    }, function (err, res) {\r",
+                    "        if (err) {\r",
+                    "            return;\r",
+                    "        }\r",
+                    "        if(requestName.includes(\"Booking\")){\r",
+                    "            const timeData = setTime(requestName);\r",
+                    "            pm.sendRequest({\r",
+                    "                url: `${baseUrl}/api/fields/${field_id}/booking`,\r",
+                    "                method: \"POST\",\r",
+                    "                header: {\r",
+                    "                    \"Content-Type\": \"application/json\"\r",
+                    "                },\r",
+                    "                body: {\r",
+                    "                    mode: \"raw\",\r",
+                    "                    raw: JSON.stringify(timeData)\r",
+                    "                }\r",
+                    "            }, function (err, res) {\r",
+                    "                if (err) {\r",
+                    "                    pm.environment.set(\"time\", BeforeTime + 1); \r",
+                    "                    return;\r",
+                    "                }\r",
+                    "                const json = res.json();\r",
+                    "                if(json.booking?.id){\r",
+                    "                    pm.environment.set(\"booking_id\", json.booking?.id);\r",
+                    "                }\r",
+                    "                pm.environment.set(\"time\", BeforeTime + 1);\r",
+                    "            });\r",
+                    "        }\r",
+                    "    });\r",
+                    "});\r",
+                    ""
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "exec": [
+                    ""
+                ]
+            }
+        }
     ]
 }
