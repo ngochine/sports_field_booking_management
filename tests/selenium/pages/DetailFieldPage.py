@@ -1,9 +1,7 @@
 import time
 from datetime import datetime, timedelta
-
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
-
 from tests.selenium.data.booking_data import BOOKING_CASES
 from tests.selenium.pages.BasePage import BasePage
 from tests.selenium.locators.DetailFieldLocators import DetailFieldLocators,BookingInfoLocators,PopupLocator
@@ -296,3 +294,12 @@ class DetailFieldPage(BasePage):
             return 1
         except:
             return 0
+
+    def get_booking_popup_info(self):
+        return {
+            "field_name": self.get_confirm_field_name(),
+            "booking_date": datetime.strptime(self.get_date(),"%Y-%m-%d").strftime("%d/%m/%Y"),
+            "time_range": (f'{self.get_start_time()}:00 - {self.get_end_time()}:00'),
+            "total_price": self.get_total_price_popup(),
+        }
+

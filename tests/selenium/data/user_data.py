@@ -9,6 +9,7 @@ LOGIN_USERS = {
     "empty_password": ("user02", ""),
     "injection":("" " OR 1=1","Abc@123456"),
     "xss":("<script>alert('XSS')</script>","Abc@123456"),
+    "denied_user":("user_10", "Aa@123456"),
 }
 
 REGISTER_USERS = {
@@ -29,13 +30,13 @@ REGISTER_USERS = {
     "empty_confirm": ("user02", "Aa@123456", ""),
     "confirm_not_match": ("user02", "Aa@123456", "Aacde123"),
     "all_invalid": ("ue 01", "A@123456", "Aa@123"),
-
     "valid_user": [
         ("user02", "Aa@123456", "Aa@123456"),
         ("user03", "Aa@123456", "Aa@123456"),
         ("user04", "Aa@123456", "Aa@123456"),
         ("user05", "Aa@123456", "Aa@123456"),
         ("user06", "Aa@123456", "Aa@123456"),
+        ("user07", "Aa@123456", "Aa@123456"),
     ],
     "eye": ("user07", "Aa@123456", "Aa@123456"),
 }

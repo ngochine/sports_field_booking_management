@@ -1,16 +1,9 @@
-import time, os
+import time, os, pytest
 from datetime import datetime, timedelta
-
-import pytest
-
 from tests.selenium.data.booking_data import BOOKING_CASES
-from tests.selenium.data.user_data import REGISTER_USERS
-from tests.selenium.pages.DetailFieldPage import DetailFieldPage
 from tests.test_base import driver, test_app, driver2
-from tests.selenium.fixture import detail_page, auth_driver, auth_driver2, open_detail_page
-from tests.selenium.guest_fixture import register_page, login_page
-from tests.selenium.guest_fixture import guest_detail_page,guest_fields_page
-from tests.selenium.locators.DetailFieldLocators import DetailFieldLocators,BookingInfoLocators,PopupLocator
+from tests.selenium.fixture import detail_page, guest_detail_page,detail_page_2
+from tests.selenium.locators.DetailFieldLocators import BookingInfoLocators
 
 
 
@@ -236,9 +229,9 @@ def test_tc21_partial_overlap_booking(detail_page):
     assert "Khung giờ đặt bị trùng" in alert
 
 
-def test_tc22_concurrent_booking(driver, auth_driver2):
-    page1 = open_detail_page(driver=driver,username=REGISTER_USERS["valid_user"][1][0], password=REGISTER_USERS["valid_user"][1][1])
-    page2 = DetailFieldPage(auth_driver2)
+def test_tc22_concurrent_booking(detail_page,detail_page_2):
+    page1 = detail_page
+    page2 = detail_page_2
     current_url = page1.get_url()
     page2.driver.get(current_url)
     start, end = page1.fill_booking(date=page1.plus_date(57))
@@ -263,8 +256,8 @@ def test_tc23_cross_day_booking(detail_page):
     assert not detail_page.is_enabled(*BookingInfoLocators.BOOK_BUTTON)
 
 
-def test_tc24_booking_three_times(driver):
-    page= open_detail_page(driver=driver,username=REGISTER_USERS["valid_user"][2][0], password=REGISTER_USERS["valid_user"][2][1])
+def test_tc24_booking_three_times(detail_page):
+    page= detail_page
     current_url = page.get_url()
     for i in range(3):
         page.fill_booking(date=page.plus_date(i+21))
@@ -278,8 +271,8 @@ def test_tc24_booking_three_times(driver):
     assert True
 
 
-def test_tc25_booking_fourth_time(driver):
-    page= open_detail_page(driver=driver,username=REGISTER_USERS["valid_user"][3][0], password=REGISTER_USERS["valid_user"][3][1])
+def test_tc25_booking_fourth_time(detail_page):
+    page= detail_page
     current_url = page.get_url()
     alert =""
     for i in range(4):
@@ -301,13 +294,26 @@ def test_tc26_booking_field_not_found(detail_page):
     assert "404" in detail_page.driver.page_source
 
 
-def test_tc27_double_click_booking(driver):
-    page= open_detail_page(driver=driver,username=REGISTER_USERS["valid_user"][1][0], password=REGISTER_USERS["valid_user"][1][1])
-    page.fill_booking(date=page.plus_date(27))
-    page.double_click_booking()
-    assert page.count_popup() == 1
-    page.double_confirm_booking()
-    alert = page.get_text_alert()
+def test_tc27_double_click_booking(detail_page):
+    detail_page.fill_booking(date=detail_page.plus_date(27))
+    detail_page.double_click_booking()
+    assert detail_page.count_popup() == 1
+    detail_page.double_confirm_booking()
+    alert = detail_page.get_text_alert()
+    if detail_page.get_text_alert():
+        time.sleep(1)
+        detail_page.screen_booking("TC27_double_click_booking.png")
+        assert False
+    detail_page.screen("booking", "TC27_double_click_booking.png")
     assert "Đặt sân thành công" in alert
-    assert page.count_alert() == 0
-    page.screen_booking("TC27_double_click_booking.png")
+    assert detail_page.count_alert() == 0
+
+def test_tc29_role_denied(detail_page):
+    detail_page.fill_booking(slot_index=BOOKING_CASES["booking_slot_index"])
+    detail_page.open_popup()
+    detail_page.confirm_booking()
+    alert = detail_page.get_text_alert()
+    time.sleep(1)
+    detail_page.screen_booking("TC29_role_denied.png")
+    assert "Tài khoản của bạn không đủ quyền để thực hiện hành động này" in alert
+

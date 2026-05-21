@@ -17,7 +17,6 @@ class RegisterPage(BasePage):
     def register_not_click(self, username, password, confirm):
         self.typing(*RegisterLocators.USERNAME_INPUT,username)
         self.typing(*RegisterLocators.PASSWORD_INPUT,password)
-        self.typing(*RegisterLocators.COMFIRM_INPUT,confirm)
 
     def result(self):
         elements = self.finds(*RegisterLocators.NOTIFICATION)

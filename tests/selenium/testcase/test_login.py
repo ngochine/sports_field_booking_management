@@ -1,6 +1,6 @@
 import time, os
 from  tests.test_base import driver,test_app
-from tests.selenium.guest_fixture import login_page
+from tests.selenium.fixture import login_page
 from tests.selenium.data.user_data import LOGIN_USERS
 from tests.selenium.locators.LoginLocators import LoginLocator
 

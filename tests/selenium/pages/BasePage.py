@@ -12,11 +12,14 @@ class BasePage:
     def open(self, path=""):
         self.driver.get(Config.BASE_URL + path)
 
+    def close(self):
+        self.driver.quit()
+
     def open_not_base(self,path=""):
         self.driver.get(path)
 
     def wait(self, by, value):
-        WebDriverWait(self.driver, 100).until(
+        WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located((by, value)))
 
     def find(self,by,value):
