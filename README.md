@@ -14,7 +14,7 @@ Dự án phục vụ cho bài tập lớn môn Kiểm thử phần mềm, cho ph
 - **Frontend**: HTML + CSS + JavaScript + Bootstrap Framework
 - **Database**: MySQL  
 - **Version control**: Git + GitHub
-- **Deployment**: PythonAnyWhere (Dự tính)
+- **Deployment**: PythonAnyWhere
 
 ## Cấu trúc thư mục
 ```bash
@@ -67,7 +67,7 @@ chmod +x setup.sh
 
 ## Truy cập
 - Local: http://localhost:5000
-- Production: [Chưa cập nhật]
+- Production: https://spfm.pythonanywhere.com/
 
 ## Tài liệu
 - [Diagram](docs/diagram)

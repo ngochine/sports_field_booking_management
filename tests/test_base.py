@@ -89,15 +89,16 @@ def mock_cloudinary(monkeypatch):
     monkeypatch.setattr('cloudinary.uploader.upload', fake_upload)
 
 
-@pytest.fixture
-def mock_scheduler(monkeypatch):
-    def fake_trigger_task(*args, **kwargs):
-        return None
+# @pytest.fixture
+# def mock_scheduler(monkeypatch):
+#     def fake_trigger_task(*args, **kwargs):
+#         return None
+#
+#     monkeypatch.setattr(
+#         "app.common.tasks.trigger_task",
+#         fake_trigger_task
+#     )
 
-    monkeypatch.setattr(
-        "app.common.tasks.trigger_task",
-        fake_trigger_task
-    )
 
 @pytest.fixture
 def test_auth(test_client):
@@ -128,6 +129,7 @@ def driver():
     driver = webdriver.Chrome(service=service, options=options)
     yield driver
     driver.quit()
+
 
 @pytest.fixture
 def driver2():
