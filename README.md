@@ -68,9 +68,11 @@ chmod +x setup.sh
 ## Truy cập
 - Local: http://localhost:5000
 - Production: https://spfm.pythonanywhere.com/
+- [Test case report](https://docs.google.com/spreadsheets/d/1IL2bUV4k74dawUMtdIsizfxO3wxfEjzk/edit?gid=409438096#gid=409438096)
 
 ## Tài liệu
 - [Diagram](docs/diagram)
+- [Test case report](docs/test-case.pdf)
 - [Api test](docs/postman)
 - [Selenium test](docs/screenshots/selenium)
 - [Coverage test](docs/coverage)
