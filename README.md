@@ -18,7 +18,7 @@ Dự án phục vụ cho bài tập lớn môn Kiểm thử phần mềm, cho ph
 
 ## Cấu trúc thư mục
 ```bash
-sports_field_booking_management_team8
+sports_field_booking_management
 ├── .github/
 │   └── workflows/ 
 ├── app/
