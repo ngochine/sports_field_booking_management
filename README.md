@@ -57,7 +57,7 @@ sports_field_booking_management_team8
 ## Chạy và cài đặt
 1. Tải dự án về máy
 ```
-git clone "https://github.com/ngochine/sports_field_booking_management_team8.git"
+git clone "https://github.com/ngochine/sports_field_booking_management.git"
 ```
 2. Chạy ứng dụng 
 ```
